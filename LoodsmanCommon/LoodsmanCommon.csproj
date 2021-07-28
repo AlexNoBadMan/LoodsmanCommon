@@ -44,8 +44,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IContext.cs" />
     <Compile Include="ILoodsmanMeta.cs" />
     <Compile Include="ILoodsmanProxy.cs" />
+    <Compile Include="LoodsmanPluginBase.cs" />
     <Compile Include="LoodsmanWPFPluginBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
