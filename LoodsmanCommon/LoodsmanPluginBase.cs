@@ -14,7 +14,7 @@ namespace LoodsmanCommon
         protected IntPtr _appHandle;
         protected ILoodsmanProxy _loodsmanProxy;
         protected ILoodsmanMeta _loodsmanMeta;
-        protected abstract string SharedLibrariesPath { get; set; }
+        protected string SharedLibrariesPath { get; set; }
 
         protected static ILoodsmanApplication GetLoodsmanApplication(INetPluginCall iNetPC)
         {
