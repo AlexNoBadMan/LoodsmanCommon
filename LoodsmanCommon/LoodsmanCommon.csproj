@@ -35,11 +35,17 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\ASCON\Loodsman\Client\Ascon.Plm.Loodsman.PluginSDK.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ILoodsmanMeta.cs" />
+    <Compile Include="ILoodsmanProxy.cs" />
     <Compile Include="LoodsmanWPFPluginBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

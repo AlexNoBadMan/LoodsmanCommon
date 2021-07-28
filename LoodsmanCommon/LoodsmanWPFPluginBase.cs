@@ -6,17 +6,17 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 
-namespace UHM.PluginHelper
+namespace LoodsmanCommon
 {
     public abstract class LoodsmanWPFPluginBase : ILoodsmanNetPlugin
     {
-        protected ILoodsmanApplication LoodsmanApplication;
-        protected IntPtr AppHandle;
-        //private ILoodsmanProxy _loodsmanProxy;
-        //private ILoodsmanMeta _loodsmanMeta;
-        protected Application WPFApp;
+        protected ILoodsmanApplication _loodsmanApplication;
+        protected IntPtr _appHandle;
+        private ILoodsmanProxy _loodsmanProxy;
+        private ILoodsmanMeta _loodsmanMeta;
+        protected Application _WPFApp;
         //private IContext _context;
-        protected string SharedLibrariesPath;
+        protected abstract string SharedLibrariesPath { get; set; }
 
         public abstract void BindMenu(IMenuDefinition menu);
 
@@ -26,26 +26,28 @@ namespace UHM.PluginHelper
 
         public virtual void PluginLoad()
         {
-            WPFApp = Application.Current ?? new Application() { ShutdownMode = ShutdownMode.OnExplicitShutdown };
-            var assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var parentDirectory = new DirectoryInfo(assemblyDirectory).Parent.FullName;
-            SharedLibrariesPath = $"{parentDirectory}\\Shared libraries";
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            _WPFApp = Application.Current ?? new Application() { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+            //var assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //var parentDirectory = new DirectoryInfo(assemblyDirectory).Parent.FullName;
+            //SharedLibrariesPath = $"{parentDirectory}\\Shared libraries";
+            if (!string.IsNullOrEmpty(SharedLibrariesPath)) 
+                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
         public virtual void PluginUnload()
         {
-            AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
+            if (!string.IsNullOrEmpty(SharedLibrariesPath))
+                AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
         }
 
         protected virtual void PluginInit(INetPluginCall iNetPC)
         {
-            if (iNetPC != null)
+            if (_loodsmanProxy is null && iNetPC != null)
             {
-                LoodsmanApplication = GetLoodsmanApplication(iNetPC);
-                AppHandle = new IntPtr(LoodsmanApplication.AppHandle);
-                //_loodsmanMeta = new LoodsmanMeta(iNetPC);
-                //_loodsmanProxy = new LoodsmanProxy(iNetPC, _loodsmanMeta);
+                _loodsmanApplication = GetLoodsmanApplication(iNetPC);
+                _appHandle = new IntPtr(_loodsmanApplication.AppHandle);
+                _loodsmanMeta = new LoodsmanMeta(iNetPC);
+                _loodsmanProxy = new LoodsmanProxy(iNetPC, _loodsmanMeta);
             }
         }
 
