@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using System.Threading;
+using System.Data;
 
 namespace LoodsmanCommon
 {
@@ -21,20 +22,26 @@ namespace LoodsmanCommon
         string RegistrationOfFile(int idDocumet, string filePath, string fileName);
         void SaveSecondaryView(int docId, string pathToPdf);
         bool CheckUniqueName(string typeName, string designation);
+        DataTable GetReport(string reportName, int[] objectsIds, string reportParams = null);
+        DataTable GetReport(string reportName, int objectId, string reportParams = null);
+        List<int> GetLockedObjects();
         string CheckOut();
-        void SaveCheckOut();
+        void AddToCheckOut(int objectId, bool isRoot = false);
+        void CheckIn();
+        void SaveChanges();
         void CancelCheckOut();
     }
 
     internal class LoodsmanProxy : ILoodsmanProxy
     {
         public const string DEFAULT_NEW_VERSION = " ";
-        private bool _wasCheckout;
+
+
         private string _checkOutName;
         private INetPluginCall _iNetPC;
         private readonly List<(string TypeName, string Designation)> _uniqueNames = new List<(string typeName, string designation)>();
         private readonly List<(string TypeName, string Designation)> _notUniqueNames = new List<(string typeName, string designation)>();
-        public INetPluginCall INetPC 
+        public virtual INetPluginCall INetPC 
         { 
             get => _iNetPC; 
             set 
@@ -47,11 +54,6 @@ namespace LoodsmanCommon
         public string CurrentUser { get; }
         public string UserFileDir { get; }
         public ILoodsmanMeta LoodsmanMeta { get; }
-
-        //internal static void Init(INetPluginCall iNetPC)
-        //{
-        //    NetPluginCall = iNetPC;
-        //}
 
         public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
         {
@@ -70,7 +72,6 @@ namespace LoodsmanCommon
             Thread.CurrentThread.CurrentUICulture = culture;
 
             LoodsmanMeta = loodsmanMeta;
-            //Application.CurrentCulture = culture;
         }
 
         public int InsertObject(string parentTypeName, string parentDesignation, string parentVersion, string relationName, string stateName, 
@@ -150,36 +151,60 @@ namespace LoodsmanCommon
             return isUnique;
         }
 
+        public DataTable GetReport(string reportName, int[] objectsIds, string reportParams = null)
+        {
+            return _iNetPC.GetDataTable("GetReport", reportName, objectsIds, reportParams);
+        }
+        
+        public DataTable GetReport(string reportName, int objectId, string reportParams = null)
+        {
+            return _iNetPC.GetDataTable("GetReport", reportName, objectId, reportParams);
+        }
+
+        public List<int> GetLockedObjects()
+        {
+            return _iNetPC.GetDataTable("GetLockedObjects", 0).Select().Select(x => (int)x[0]).ToList();
+        }
+
         #region CheckOut
         public string CheckOut()
         {
-            _wasCheckout = _iNetPC.PluginCall.CheckOut != 0;
-            _checkOutName = _wasCheckout
+            var wasCheckout = _iNetPC.PluginCall.CheckOut != 0;
+            _checkOutName = wasCheckout
                 ? _iNetPC.PluginCall.CheckOut.ToString()
                 : (string)_iNetPC.RunMethod("CheckOut", _iNetPC.PluginCall.stType, _iNetPC.PluginCall.stProduct, _iNetPC.PluginCall.stVersion, 0);
-            if (!_wasCheckout)
+            if (!wasCheckout)
                 _iNetPC.RunMethod("ConnectToCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
             return _checkOutName;
         }
 
-        public void SaveCheckOut()
+        public void AddToCheckOut(int objectId, bool isRoot = false)
         {
-            if (!_wasCheckout)
-            {
-                _iNetPC.RunMethod("DisconnectCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
-                _iNetPC.RunMethod("CheckIn", _checkOutName, _iNetPC.PluginCall.DBName);
-            }
-            else
-            {
-                _iNetPC.RunMethod("SaveChanges", _checkOutName, _iNetPC.PluginCall.DBName);
-            }
+            if (!(_iNetPC.PluginCall.CheckOut != 0))
+                CheckOut();
+            _iNetPC.RunMethod("AddToCheckOut", objectId, isRoot);
+        }
+
+        public void CheckIn()
+        {
+            _iNetPC.RunMethod("DisconnectCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
+            _iNetPC.RunMethod("CheckIn", _checkOutName, _iNetPC.PluginCall.DBName);
+        }
+
+        public void SaveChanges()
+        {
+            _iNetPC.RunMethod("SaveChanges", _checkOutName, _iNetPC.PluginCall.DBName);
         }
 
         public void CancelCheckOut()
         {
+            if (!(_iNetPC.PluginCall.CheckOut != 0))
+                return;
+            
             _iNetPC.RunMethod("DisconnectCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
             _iNetPC.RunMethod("CancelCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
         }
+        
         #endregion
     }
 }
