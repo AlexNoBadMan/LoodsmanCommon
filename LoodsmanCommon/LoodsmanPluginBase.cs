@@ -55,9 +55,19 @@ namespace LoodsmanCommon
             {
                 _loodsmanApplication = GetLoodsmanApplication(iNetPC);
                 _appHandle = new IntPtr(_loodsmanApplication.AppHandle);
-                _loodsmanMeta = new LoodsmanMeta(iNetPC);
-                _loodsmanProxy = new LoodsmanProxy(iNetPC, _loodsmanMeta);
+                _loodsmanMeta = GetLoodsmanMeta(iNetPC);
+                _loodsmanProxy = GetLoodsmanProxy(iNetPC);
             }
+        }
+
+        protected virtual ILoodsmanProxy GetLoodsmanProxy(INetPluginCall iNetPC)
+        {
+            return new LoodsmanProxy(iNetPC, _loodsmanMeta);
+        }
+
+        protected virtual ILoodsmanMeta GetLoodsmanMeta(INetPluginCall iNetPC)
+        {
+            return new LoodsmanMeta(iNetPC);
         }
 
         /// <summary>
