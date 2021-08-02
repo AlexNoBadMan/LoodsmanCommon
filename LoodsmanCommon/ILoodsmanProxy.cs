@@ -22,8 +22,8 @@ namespace LoodsmanCommon
         string RegistrationOfFile(int idDocumet, string filePath, string fileName);
         void SaveSecondaryView(int docId, string pathToPdf);
         bool CheckUniqueName(string typeName, string designation);
-        DataTable GetReport(string reportName, int[] objectsIds, string reportParams = null);
-        DataTable GetReport(string reportName, int objectId, string reportParams = null);
+        DataTable GetReport(string reportName, IEnumerable<int> objectsIds, string reportParams = null);
+        List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds);
         List<int> GetLockedObjects();
         string CheckOut();
         void AddToCheckOut(int objectId, bool isRoot = false);
@@ -151,14 +151,17 @@ namespace LoodsmanCommon
             return isUnique;
         }
 
-        public DataTable GetReport(string reportName, int[] objectsIds, string reportParams = null)
+        public DataTable GetReport(string reportName, IEnumerable<int> objectsIds, string reportParams = null)
         {
             return _iNetPC.GetDataTable("GetReport", reportName, objectsIds, reportParams);
         }
-        
-        public DataTable GetReport(string reportName, int objectId, string reportParams = null)
+
+        public List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds)
         {
-            return _iNetPC.GetDataTable("GetReport", reportName, objectId, reportParams);
+            var objects = new List<ILoodsmanObject>();
+            var dtProps = _iNetPC.GetDataTable("GetPropObjects", string.Join(",", objectsIds), 0);
+            objects.AddRange(dtProps.Select().Select(x => new LoodsmanObject(x)));
+            return objects;
         }
 
         public List<int> GetLockedObjects()
