@@ -48,7 +48,8 @@ namespace LoodsmanCommon
         {
             return iNetPC != null &&
                    iNetPC.PluginCall.IdVersion != 0 &&
-                 ((iNetPC.PluginCall.Selected.LockLevel == PDMObjects.PDMLockLevels.NoLock) || (iNetPC.PluginCall.Selected.LockLevel == PDMObjects.PDMLockLevels.SelfLock && iNetPC.PluginCall.CheckOut != 0));
+                   iNetPC.PluginCall.Selected.LockLevel == PDMObjects.PDMLockLevels.NoLock;
+            // || (iNetPC.PluginCall.Selected.LockLevel == PDMObjects.PDMLockLevels.SelfLock && iNetPC.PluginCall.CheckOut != 0));
         }
 
         protected virtual void PluginInit(INetPluginCall iNetPC)
