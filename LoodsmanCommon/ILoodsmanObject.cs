@@ -10,10 +10,10 @@ namespace LoodsmanCommon
     public interface ILoodsmanObject
     {
         int Id { get; set; }
-        string Product { get; set; }
-        string State { get; set; }
         string Type { get; set; }
+        string Product { get; set; }
         string Version { get; set; }
+        string State { get; set; }
         bool IsDocument { get; set; }
     }
 
