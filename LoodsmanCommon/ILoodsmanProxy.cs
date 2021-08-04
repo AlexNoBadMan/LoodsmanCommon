@@ -13,6 +13,7 @@ namespace LoodsmanCommon
     {
         INetPluginCall INetPC { get; set; }
         ILoodsmanMeta LoodsmanMeta { get; }
+        ILoodsmanObject SelectedObject { get; }
         bool IsAdmin { get; }
         string CurrentUser { get; }
         string UserFileDir { get; }
@@ -36,20 +37,23 @@ namespace LoodsmanCommon
     {
         public const string DEFAULT_NEW_VERSION = " ";
 
-
         private string _checkOutName;
         private INetPluginCall _iNetPC;
         private readonly List<(string TypeName, string Designation)> _uniqueNames = new List<(string typeName, string designation)>();
         private readonly List<(string TypeName, string Designation)> _notUniqueNames = new List<(string typeName, string designation)>();
-        public virtual INetPluginCall INetPC 
-        { 
-            get => _iNetPC; 
-            set 
-            { 
+        private ILoodsmanObject _selectedObject;
+
+        public virtual INetPluginCall INetPC
+        {
+            get => _iNetPC;
+            set
+            {
                 _iNetPC = value;
                 _uniqueNames.Clear();
-            } 
+            }
         }
+
+        public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall);
         public bool IsAdmin { get; }
         public string CurrentUser { get; }
         public string UserFileDir { get; }
@@ -74,13 +78,13 @@ namespace LoodsmanCommon
             LoodsmanMeta = loodsmanMeta;
         }
 
-        public int InsertObject(string parentTypeName, string parentDesignation, string parentVersion, string relationName, string stateName, 
-                                string  childTypeName, string  childDesignation, string  childVersion = DEFAULT_NEW_VERSION, bool reuse = false)
+        public int InsertObject(string parentTypeName, string parentDesignation, string parentVersion, string relationName, string stateName,
+                                string childTypeName, string childDesignation, string childVersion = DEFAULT_NEW_VERSION, bool reuse = false)
         {
             //Id = (int)proxy.INetPC.RunMethod("NewObject", TypeName, LoodsmanType.DefaultState.Name, Designation, 0);
             //proxy.INetPC.RunMethod("UpLink", parent.TypeName, parent.Designation, parent.Version, 
             //                                        TypeName, Designation, Version, 0, 0, 0, string.Empty, false, relationName);
-            return (int)_iNetPC.RunMethod("InsertObject", parentTypeName, parentDesignation, parentVersion,  childTypeName, childDesignation, childVersion, relationName, stateName, reuse);
+            return (int)_iNetPC.RunMethod("InsertObject", parentTypeName, parentDesignation, parentVersion, childTypeName, childDesignation, childVersion, relationName, stateName, reuse);
         }
 
         public void FillInfoFromLink(int idLink, string parentDesignation, string childDesignation, out int parentId, out string parentVersion, out int childId, out string childVersion)
@@ -203,11 +207,11 @@ namespace LoodsmanCommon
         {
             if (!(_iNetPC.PluginCall.CheckOut != 0))
                 return;
-            
+
             _iNetPC.RunMethod("DisconnectCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
             _iNetPC.RunMethod("CancelCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
         }
-        
+
         #endregion
     }
 }
