@@ -17,12 +17,14 @@ namespace LoodsmanCommon
         bool IsAdmin { get; }
         string CurrentUser { get; }
         string UserFileDir { get; }
-        int InsertObject(string parentTypeName, string parentDesignation, string parentVersion, string relationName, string stateName, string childTypeName, string childDesignation, string childVersion = " ", bool reuse = false);
-        void FillInfoFromLink(int idLink, string parentDesignation, string childDesignation, out int parentId, out string parentVersion, out int childId, out string childVersion);
+        void NewObject(ILoodsmanObject loodsmanObject, int isProject = 0);
+        int NewObject(string typeName, string product, int isProject = 0, string stateName = null);
+        int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string relationName, string stateName, string childTypeName, string childProduct, string childVersion = " ", bool reuse = false);
+        void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion);
         void UpAttrValueById(int id, string attributeName, string attributeValue, object unit = null);
         string RegistrationOfFile(int idDocumet, string filePath, string fileName);
         void SaveSecondaryView(int docId, string pathToPdf);
-        bool CheckUniqueName(string typeName, string designation);
+        bool CheckUniqueName(string typeName, string product);
         DataTable GetReport(string reportName, IEnumerable<int> objectsIds, string reportParams = null);
         List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds);
         List<int> GetLockedObjects();
@@ -39,8 +41,9 @@ namespace LoodsmanCommon
 
         private string _checkOutName;
         private INetPluginCall _iNetPC;
-        private readonly List<(string TypeName, string Designation)> _uniqueNames = new List<(string typeName, string designation)>();
-        private readonly List<(string TypeName, string Designation)> _notUniqueNames = new List<(string typeName, string designation)>();
+        private readonly List<(string TypeName, string Product)> _uniqueNames = new List<(string typeName, string product)>();
+        private readonly List<(string TypeName, string Product)> _notUniqueNames = new List<(string typeName, string product)>();
+        private readonly ILoodsmanMeta _loodsmanMeta;
         private ILoodsmanObject _selectedObject;
 
         public virtual INetPluginCall INetPC
@@ -52,13 +55,11 @@ namespace LoodsmanCommon
                 _uniqueNames.Clear();
             }
         }
-
+        public ILoodsmanMeta LoodsmanMeta => _loodsmanMeta;
         public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall);
         public bool IsAdmin { get; }
         public string CurrentUser { get; }
         public string UserFileDir { get; }
-        public ILoodsmanMeta LoodsmanMeta { get; }
-
         public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
         {
             IsAdmin = (int)iNetPC.RunMethod("IsAdmin") == 1;
@@ -75,22 +76,36 @@ namespace LoodsmanCommon
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
 
-            LoodsmanMeta = loodsmanMeta;
+            _loodsmanMeta = loodsmanMeta;
         }
 
-        public int InsertObject(string parentTypeName, string parentDesignation, string parentVersion, string relationName, string stateName,
-                                string childTypeName, string childDesignation, string childVersion = DEFAULT_NEW_VERSION, bool reuse = false)
+        public void NewObject(ILoodsmanObject loodsmanObject, int isProject = 0)
         {
-            //Id = (int)proxy.INetPC.RunMethod("NewObject", TypeName, LoodsmanType.DefaultState.Name, Designation, 0);
-            //proxy.INetPC.RunMethod("UpLink", parent.TypeName, parent.Designation, parent.Version, 
-            //                                        TypeName, Designation, Version, 0, 0, 0, string.Empty, false, relationName);
-            return (int)_iNetPC.RunMethod("InsertObject", parentTypeName, parentDesignation, parentVersion, childTypeName, childDesignation, childVersion, relationName, stateName, reuse);
+            if (string.IsNullOrEmpty(loodsmanObject.State))
+                loodsmanObject.State = _loodsmanMeta.Types.First(x => x.Name == loodsmanObject.Type).DefaultState.Name;
+            loodsmanObject.Id = NewObject(loodsmanObject.Type, loodsmanObject.Product, isProject, loodsmanObject.State);
         }
 
-        public void FillInfoFromLink(int idLink, string parentDesignation, string childDesignation, out int parentId, out string parentVersion, out int childId, out string childVersion)
+        public int NewObject(string typeName, string product, int isProject = 0, string stateName = null)
+        {
+            if (string.IsNullOrEmpty(stateName))
+                stateName = _loodsmanMeta.Types.First(x => x.Name == typeName).DefaultState.Name;
+            return (int)_iNetPC.RunMethod("NewObject", typeName, stateName, product, isProject);
+        }
+
+        public int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string relationName, string stateName,
+                                string childTypeName, string childProduct, string childVersion = DEFAULT_NEW_VERSION, bool reuse = false)
+        {
+            //Id = (int)proxy.INetPC.RunMethod("NewObject", TypeName, LoodsmanType.DefaultState.Name, Product, 0);
+            //proxy.INetPC.RunMethod("UpLink", parent.TypeName, parent.Product, parent.Version, 
+            //                                        TypeName, Product, Version, 0, 0, 0, string.Empty, false, relationName);
+            return (int)_iNetPC.RunMethod("InsertObject", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, relationName, stateName, reuse);
+        }
+
+        public void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion)
         {
             var linkInfo = _iNetPC.GetDataTable("GetInfoAboutLink", idLink, 2).Select()
-                                       .FirstOrDefault(x => x["_PARENT_PRODUCT"] as string == parentDesignation && x["_CHILD_PRODUCT"] as string == childDesignation);
+                                       .FirstOrDefault(x => x["_PARENT_PRODUCT"] as string == parentProduct && x["_CHILD_PRODUCT"] as string == childProduct);
             parentId = (int)linkInfo["_ID_PARENT"];
             parentVersion = linkInfo["_PARENT_VERSION"] as string;
             childId = (int)linkInfo["_ID_CHILD"];
@@ -102,16 +117,15 @@ namespace LoodsmanCommon
             _iNetPC.RunMethod("UpAttrValueById", id, attributeName, attributeValue, unit, string.IsNullOrEmpty(attributeValue));
         }
 
-
         public string RegistrationOfFile(int idDocumet, string filePath, string fileName)//, string workDirFilePath)
         {
             try
             {
-                //var floderPath = string.Join("\\", Ancestors().OrderBy(x => x.Level).Cast<LoodsmanObjectVM>().Where(x => x.TypeName == _settingImport.FolderTypeName).Select(x => x.Designation));
+                //var floderPath = string.Join("\\", Ancestors().OrderBy(x => x.Level).Cast<LoodsmanObjectVM>().Where(x => x.TypeName == _settingImport.FolderTypeName).Select(x => x.Product));
                 //var workDirPath = $"{proxy.UserFileDir}\\{floderPath}";
                 //if (!Directory.Exists(workDirPath))
                 //    Directory.CreateDirectory(workDirPath);
-                //var newPath = $"{workDirPath}\\{Designation} - {Name} ({TypeName}){FileNode.Info.Extension}";
+                //var newPath = $"{workDirPath}\\{Product} - {Name} ({TypeName}){FileNode.Info.Extension}";
                 //Лоцман не чистит за собой папки, поэтому пока без структуры папок и ложим всё в корень W:\
                 var newPath = $"{UserFileDir}\\{fileName}";
                 File.Copy(filePath, newPath, true);
@@ -131,25 +145,25 @@ namespace LoodsmanCommon
             _iNetPC.RunMethod("SaveSecondaryView", docId, pathToPdf);
         }
 
-        public bool CheckUniqueName(string typeName, string designation)
+        public bool CheckUniqueName(string typeName, string product)
         {
             //Этот вариант оказался медленнее
-            //    item.IsUniqueName = ((DataProvider.DataSet)_iNetPC.PluginCall.GetDataSet("CheckUniqueName", new object[] { item.TypeName, item.Designation })).Eof;
+            //    item.IsUniqueName = ((DataProvider.DataSet)_iNetPC.PluginCall.GetDataSet("CheckUniqueName", new object[] { item.TypeName, item.Product })).Eof;
             var isUnique = true;
-            if (!_uniqueNames.Any(x => x.TypeName == typeName && x.Designation.Equals(designation, StringComparison.OrdinalIgnoreCase))) // белый список для объектов которых нет в Лоцман
+            if (!_uniqueNames.Any(x => x.TypeName == typeName && x.Product.Equals(product, StringComparison.OrdinalIgnoreCase))) // белый список для объектов которых нет в Лоцман
             {
-                if (_notUniqueNames.Any(x => x.TypeName == typeName && x.Designation.Equals(designation, StringComparison.OrdinalIgnoreCase)))
+                if (_notUniqueNames.Any(x => x.TypeName == typeName && x.Product.Equals(product, StringComparison.OrdinalIgnoreCase)))
                 {
                     isUnique = false;
                 }
-                else if (_iNetPC.GetDataTable("CheckUniqueName", typeName, designation).Rows.Count != 0)
+                else if (_iNetPC.GetDataTable("CheckUniqueName", typeName, product).Rows.Count != 0)
                 {
-                    _notUniqueNames.Add((typeName, designation));
+                    _notUniqueNames.Add((typeName, product));
                     isUnique = false;
                 }
                 else
                 {
-                    _uniqueNames.Add((typeName, designation));
+                    _uniqueNames.Add((typeName, product));
                 }
             }
             return isUnique;
