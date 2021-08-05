@@ -37,7 +37,8 @@ namespace LoodsmanCommon
 
     internal class LoodsmanProxy : ILoodsmanProxy
     {
-        public const string DEFAULT_NEW_VERSION = " ";
+        public const string DEFAULT_INSERT_NEW_VERSION = " ";
+        public const string DEFAULT_NEW_VERSION = "1.0";
 
         private string _checkOutName;
         private INetPluginCall _iNetPC;
@@ -79,22 +80,39 @@ namespace LoodsmanCommon
             _loodsmanMeta = loodsmanMeta;
         }
 
+        #region NewObject
         public void NewObject(ILoodsmanObject loodsmanObject, int isProject = 0)
         {
-            if (string.IsNullOrEmpty(loodsmanObject.State))
-                loodsmanObject.State = _loodsmanMeta.Types.First(x => x.Name == loodsmanObject.Type).DefaultState.Name;
-            loodsmanObject.Id = NewObject(loodsmanObject.Type, loodsmanObject.Product, isProject, loodsmanObject.State);
+            loodsmanObject.State = CheckState(loodsmanObject.Type, loodsmanObject.State);
+            loodsmanObject.Id = NewObject(loodsmanObject.Type, loodsmanObject.State, loodsmanObject.Product, isProject);
+            loodsmanObject.Version = _loodsmanMeta.Types.First(x => x.Name == loodsmanObject.Type).Versioned ? DEFAULT_NEW_VERSION : string.Empty;
+            //Метод NewObject отрабатывает даже если объект с такими Type и Product уже есть в базе, просто вернёт Id,
+            //присвоение Version в таком случае ошибочно
         }
 
         public int NewObject(string typeName, string product, int isProject = 0, string stateName = null)
         {
+            return NewObject(typeName, CheckState(typeName, stateName), product, isProject);
+        }
+
+        private int NewObject(string typeName, string stateName, string product, int isProject)
+        {
+            if (string.IsNullOrEmpty(typeName) || string.IsNullOrEmpty(product))
+                throw new FormatException("Задан некорректный тип или ключевой атрибут для создания объекта");
+
+            return (int)_iNetPC.RunMethod("NewObject", typeName, stateName, product, isProject);
+        }
+        #endregion
+
+        private string CheckState(string typeName, string stateName)
+        {
             if (string.IsNullOrEmpty(stateName))
                 stateName = _loodsmanMeta.Types.First(x => x.Name == typeName).DefaultState.Name;
-            return (int)_iNetPC.RunMethod("NewObject", typeName, stateName, product, isProject);
+            return stateName;
         }
 
         public int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string relationName, string stateName,
-                                string childTypeName, string childProduct, string childVersion = DEFAULT_NEW_VERSION, bool reuse = false)
+                                string childTypeName, string childProduct, string childVersion = DEFAULT_INSERT_NEW_VERSION, bool reuse = false)
         {
             //Id = (int)proxy.INetPC.RunMethod("NewObject", TypeName, LoodsmanType.DefaultState.Name, Product, 0);
             //proxy.INetPC.RunMethod("UpLink", parent.TypeName, parent.Product, parent.Version, 
