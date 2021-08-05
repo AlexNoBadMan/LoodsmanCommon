@@ -59,7 +59,6 @@ namespace LoodsmanCommon
                     _linksInfoBetweenTypes = new List<LLinkInfoBetweenTypes>();
                     var dt = _iNetPC.GetDataTable("GetLinkListEx");
                     FillLinksInfoBetweenTypes(dt, _linksInfoBetweenTypes);
-                    //_linksInfoBetweenTypes.AddRange(dt.Select().Select(x => new LLinkInfoBetweenTypes(x)));
                 }
                 return _linksInfoBetweenTypes; 
             } 
@@ -125,10 +124,10 @@ namespace LoodsmanCommon
         {
             _iNetPC = iNetPC;
         }
-        //public List<int> IdsTypesDSE { get; private set; } = GetTypesByNames(new string[] { "Деталь", "Сборочная единица", "Папка" });
-        //public List<int> IdsTypes3D { get; private set; } = GetTypesByNames(new string[] { "3D-модель детали", "3D-модель детали SW", "3D-модель сборки", "3D-модель сборки SW", "3D-сборка технологическая" });
-        //public List<int> IdsTypesTP { get; private set; } = GetTypesByNames(new string[] { "Гальваника", "Литье", "Механообработка", "Нанесение покрытия", "Плановый ТП", "Сборка", "Сварка", "Сквозной ТП", "Термообработка", "Штамповка" });
-        //public List<int> IdsTypesDocument { get; private set; } = Types.Where(type => type.IsDocument).Select(type => type.Id);
+        //public List<int> IdsTypesDSE { get; } = GetTypesByNames(new string[] { "Деталь", "Сборочная единица", "Папка" });
+        //public List<int> IdsTypes3D { get; } = GetTypesByNames(new string[] { "3D-модель детали", "3D-модель детали SW", "3D-модель сборки", "3D-модель сборки SW", "3D-сборка технологическая" });
+        //public List<int> IdsTypesTP { get; } = GetTypesByNames(new string[] { "Гальваника", "Литье", "Механообработка", "Нанесение покрытия", "Плановый ТП", "Сборка", "Сварка", "Сквозной ТП", "Термообработка", "Штамповка" });
+        //public List<int> IdsTypesDocument { get; } = Types.Where(type => type.IsDocument).Select(type => type.Id);
 
         //private static List<int> GetTypesByNames(string[] typeNames)
         //{
@@ -215,8 +214,8 @@ namespace LoodsmanCommon
     
     public abstract class Entity
     {
-        public int Id { get; private set; }
-        public string Name { get; private set; }
+        public int Id { get; }
+        public string Name { get; }
 
         public Entity(DataRow dataRow, string nameField = "_NAME")
         {
@@ -227,8 +226,8 @@ namespace LoodsmanCommon
     
     public abstract class EntityIcon : Entity
     {
-        public Image Icon { get; private set; }
-        public ImageSource BitmapSource { get; private set; }
+        public Image Icon { get; }
+        public ImageSource BitmapSource { get; }
         public EntityIcon(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
         {
             var iconField = dataRow["_ICON"];
@@ -241,7 +240,22 @@ namespace LoodsmanCommon
                     {
                         try
                         {
-                            FillIcon(icon);
+                            var bitmap = new Bitmap(icon);
+                            bitmap.MakeTransparent(bitmap.GetPixel(0, bitmap.Height - 1));
+                            Icon = bitmap;
+                            IntPtr hBitmap = bitmap.GetHbitmap();
+                            try
+                            {
+                                BitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
+                                             hBitmap,
+                                             IntPtr.Zero,
+                                             Int32Rect.Empty,
+                                             BitmapSizeOptions.FromEmptyOptions());
+                            }
+                            finally
+                            {
+                                DeleteObject(hBitmap);
+                            }
                         }
                         catch
                         {
@@ -251,40 +265,27 @@ namespace LoodsmanCommon
             }
         }
 
-        private void FillIcon(MemoryStream icon)
-        {
-            var bitmap = new Bitmap(icon);
-            bitmap.MakeTransparent(bitmap.GetPixel(0, bitmap.Height - 1));
-            Icon = bitmap;
-            IntPtr hBitmap = bitmap.GetHbitmap();
-            try
-            {
-                BitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
-                             hBitmap,
-                             IntPtr.Zero,
-                             Int32Rect.Empty,
-                             BitmapSizeOptions.FromEmptyOptions());
-            }
-            finally
-            {
-                DeleteObject(hBitmap);
-            }
-        }
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]
         private static extern bool DeleteObject(IntPtr hObject);
     }
 
     public class LType : EntityIcon
     {
-        public LAttribute KeyAttr { get; private set; }
-        public bool IsDocument { get; private set; }
-        public LState DefaultState { get; private set; }
+        public LAttribute KeyAttr { get; }
+        public bool IsDocument { get; }
+        public bool Versioned { get; }
+        public LState DefaultState { get; }
+        public bool CanBeProject { get; }
+        public bool CanCreate { get; }
 
         public LType(DataRow dataRow, List<LAttribute> attributes, List<LState> states, string nameField = "_NAME") : base(dataRow, nameField)
         {
             KeyAttr = attributes.FirstOrDefault(a => a.Name == dataRow["_ATTRNAME"] as string);
             IsDocument = (int)dataRow["_DOCUMENT"] == 1;
+            Versioned = (int)dataRow["_NOVERSIONS"] == 0;
             DefaultState = states.FirstOrDefault(a => a.Name == dataRow["_DEFAULTSTATE"] as string);
+            CanBeProject = (int)dataRow["_CANBEPROJECT"] == 1;
+            CanCreate = (int)dataRow["_CANCREATE"] == 1;
         }
         public override string ToString()
         {
@@ -367,10 +368,10 @@ namespace LoodsmanCommon
 
     public class LAttribute : Entity
     {
-        public AttributeType AttrType { get; private set; }
-        public string Default { get; private set; }
-        public List<string> ListValue { get; private set; }
-        public bool OnlyIsItems { get; private set; }
+        public AttributeType AttrType { get; }
+        public string Default { get; }
+        public List<string> ListValue { get; }
+        public bool OnlyIsItems { get; }
         public bool System { get; set; }
         public LAttribute(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
         {
