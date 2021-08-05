@@ -17,12 +17,13 @@ namespace LoodsmanCommon
     {
         List<LType> Types { get; }
         List<LLink> Links { get; }
+        List<LLinkInfoBetweenTypes> LinksInfoBetweenTypes { get; }
         List<LState> States { get; }
         List<LAttribute> Attributes { get; }
         List<LProxyUseCase> ProxyUseCases { get; }
         LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension);
-        //IEnumerable<Types> GetChildTypesForType(string typeName); 
-        //IEnumerable<Types> GetChildTypesForType(Types type);
+        //List<Types> GetChildTypesForType(string typeName); 
+        //List<Types> GetChildTypesForType(Types type);
         void Clear();
     }
 
@@ -34,6 +35,7 @@ namespace LoodsmanCommon
         private List<LAttribute> _attributes;
         private List<LProxyUseCase> _proxyUseCases;
         private readonly INetPluginCall _iNetPC;
+        private List<LLinkInfoBetweenTypes> _linksInfoBetweenTypes;
 
         public List<LType> Types
         {
@@ -48,7 +50,21 @@ namespace LoodsmanCommon
                 return _types;
             }
         }
-        
+        public List<LLinkInfoBetweenTypes> LinksInfoBetweenTypes 
+        { 
+            get 
+            {
+                if (_linksInfoBetweenTypes is null)
+                {
+                    _linksInfoBetweenTypes = new List<LLinkInfoBetweenTypes>();
+                    var dt = _iNetPC.GetDataTable("GetLinkListEx");
+                    FillLinksInfoBetweenTypes(dt, _linksInfoBetweenTypes);
+                    //_linksInfoBetweenTypes.AddRange(dt.Select().Select(x => new LLinkInfoBetweenTypes(x)));
+                }
+                return _linksInfoBetweenTypes; 
+            } 
+        }
+
         public List<LLink> Links
         {
             get
@@ -109,23 +125,23 @@ namespace LoodsmanCommon
         {
             _iNetPC = iNetPC;
         }
-        //public IEnumerable<int> IdsTypesDSE { get; private set; } = GetTypesByNames(new string[] { "Деталь", "Сборочная единица", "Папка" });
-        //public IEnumerable<int> IdsTypes3D { get; private set; } = GetTypesByNames(new string[] { "3D-модель детали", "3D-модель детали SW", "3D-модель сборки", "3D-модель сборки SW", "3D-сборка технологическая" });
-        //public IEnumerable<int> IdsTypesTP { get; private set; } = GetTypesByNames(new string[] { "Гальваника", "Литье", "Механообработка", "Нанесение покрытия", "Плановый ТП", "Сборка", "Сварка", "Сквозной ТП", "Термообработка", "Штамповка" });
-        //public IEnumerable<int> IdsTypesDocument { get; private set; } = Types.Where(type => type.IsDocument).Select(type => type.Id);
+        //public List<int> IdsTypesDSE { get; private set; } = GetTypesByNames(new string[] { "Деталь", "Сборочная единица", "Папка" });
+        //public List<int> IdsTypes3D { get; private set; } = GetTypesByNames(new string[] { "3D-модель детали", "3D-модель детали SW", "3D-модель сборки", "3D-модель сборки SW", "3D-сборка технологическая" });
+        //public List<int> IdsTypesTP { get; private set; } = GetTypesByNames(new string[] { "Гальваника", "Литье", "Механообработка", "Нанесение покрытия", "Плановый ТП", "Сборка", "Сварка", "Сквозной ТП", "Термообработка", "Штамповка" });
+        //public List<int> IdsTypesDocument { get; private set; } = Types.Where(type => type.IsDocument).Select(type => type.Id);
 
-        //private static IEnumerable<int> GetTypesByNames(string[] typeNames)
+        //private static List<int> GetTypesByNames(string[] typeNames)
         //{
         //    return Types.Where(type => typeNames.Contains(type.Name)).Select(type => type.Id);
         //}
 
-        //public IEnumerable<Types> GetChildTypesForType(string typeName)
+        //public List<Types> GetChildTypesForType(string typeName)
         //{
         //    var typesForType = GetTypes(typeName).Select(x => x["_NAME"] as string).ToList();
         //    return Types.Where(x => typesForType.Contains(x.Name));
         //}
 
-        //public IEnumerable<Types> GetChildTypesForType(Types type)
+        //public List<Types> GetChildTypesForType(Types type)
         //{
         //    var typesForType = GetTypes(type.Name).Select(x => (int)x["_ID"]).ToList();
         //    return Types.Where(x => typesForType.Contains(x.Id));
@@ -135,6 +151,42 @@ namespace LoodsmanCommon
         //{
         //    return _iNetPC.GetDataTable("GetInfoAboutType", typeName, 8).Select();
         //}
+
+
+        private static void FillLinksInfoBetweenTypes(DataTable dt, List<LLinkInfoBetweenTypes> linkInfos)
+        {
+            //Метод GetLinkListEx возвращает данные в которых есть дубликаты
+            /*
+             Например Если связь горизонтальная
+             |_TYPE_ID_1|  _TYPE_NAME_1	  |_TYPE_ID_2| _TYPE_NAME_2    |_ID_LINKTYPE|   _LINKTYPE    |  _INVERSENAME  |_LINKKIND|_DIRECTION|_IS_QUANTITY|
+             |    59    |Сборочная единица|    59    |Сборочная единица|	 19     |Взаимозаменяемые|Взаимозаменяемые|    1    |    1     |     0      |
+             |    59    |Сборочная единица|    59    |Сборочная единица|	 19     |Взаимозаменяемые|Взаимозаменяемые|    1    |    1     |     0      |
+             |    59    |Сборочная единица|    59    |Сборочная единица|	 19     |Взаимозаменяемые|Взаимозаменяемые|    1    |    -1    |     0      |
+             |    59    |Сборочная единица|    59    |Сборочная единица|	 19     |Взаимозаменяемые|Взаимозаменяемые|    1    |    -1    |     0      |
+             
+             Если связь вертикальная и типы могут входить друг в друга
+             |_TYPE_ID_1|  _TYPE_NAME_1	  |_TYPE_ID_2| _TYPE_NAME_2    |_ID_LINKTYPE|   _LINKTYPE          |  _INVERSENAME  |_LINKKIND|_DIRECTION|_IS_QUANTITY|
+             |    59    |Сборочная единица|    59    |Сборочная единица|     8      |Изготавливается из ...|Для изготовления|    0    |   1      |     0      |
+             |    59    |Сборочная единица|    59    |Сборочная единица|     8      |Изготавливается из ...|Для изготовления|    0    |   -1     |     0      |
+             
+              Для исключения дубликатов, если Id, TypeId1 и TypeId2 такие как у предыдущей добавленной строки, 
+              то присваиваем пердыдущей позиции (уже добавленной) Direction = LinkDirection.ForwardAndBackward, не добавляя текущуюю
+             */
+            var previousLinkInfo = new LLinkInfoBetweenTypes();
+            foreach (DataRow dataRow in dt.Rows)
+            {
+                var currentLinkInfo = new LLinkInfoBetweenTypes(dataRow);
+                if (previousLinkInfo.Id == currentLinkInfo.Id && previousLinkInfo.TypeId1 == currentLinkInfo.TypeId1 && previousLinkInfo.TypeId2 == currentLinkInfo.TypeId2)
+                {
+                    previousLinkInfo.Direction = LinkDirection.ForwardAndBackward;
+                }
+                else
+                {
+                    previousLinkInfo = currentLinkInfo;
+                    linkInfos.Add(currentLinkInfo);
+                }
+            }
+        }
 
         public LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension)
         {
@@ -169,7 +221,7 @@ namespace LoodsmanCommon
         public Entity(DataRow dataRow, string nameField = "_NAME")
         {
             Id = (int)dataRow["_ID"];
-            Name = dataRow[nameField].ToString();
+            Name = dataRow[nameField] as string;
         }
     }
     
@@ -230,9 +282,9 @@ namespace LoodsmanCommon
 
         public LType(DataRow dataRow, List<LAttribute> attributes, List<LState> states, string nameField = "_NAME") : base(dataRow, nameField)
         {
-            KeyAttr = attributes.FirstOrDefault(a => a.Name == dataRow["_ATTRNAME"].ToString());
+            KeyAttr = attributes.FirstOrDefault(a => a.Name == dataRow["_ATTRNAME"] as string);
             IsDocument = (int)dataRow["_DOCUMENT"] == 1;
-            DefaultState = states.FirstOrDefault(a => a.Name == dataRow["_DEFAULTSTATE"].ToString());
+            DefaultState = states.FirstOrDefault(a => a.Name == dataRow["_DEFAULTSTATE"] as string);
         }
         public override string ToString()
         {
@@ -243,17 +295,68 @@ namespace LoodsmanCommon
     public class LLink : EntityIcon
     {
         public string InverseName { get; }
-        //public bool VerticalLink { get; }
+        public bool VerticalLink { get; }
 
         public LLink(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
         {
-            InverseName = dataRow["_INVERSENAME"].ToString();
-            //VerticalLink = (System.Int16)dataRow["_TYPE"] == 0; Приведение к Int вызвало ошибку с Int16 проблем не возникло
+            InverseName = dataRow["_INVERSENAME"] as string;
+            VerticalLink = (short)dataRow["_TYPE"] == 0; //Приведение к int вызвало ошибку с short проблем не возникло
             //Order = (int)dataRow["_ORDER"];
+            /*
+             * 1 	_TYPE_ID_1 		ftInteger
+               2 	_TYPE_NAME_1 	ftString
+               3 	_TYPE_ID_2 		ftInteger
+               4 	_TYPE_NAME_2 	ftString
+               5 	_ID_LINKTYPE 	ftInteger
+               6 	_LINKTYPE 		ftString
+               7 	_INVERSENAME 	ftString
+               8 	_LINKKIND 		ftSmallint
+               9 	_DIRECTION 		ftInteger
+               10 	_IS_QUANTITY 	ftSmallint
+             */
         }
 
     }
-    
+    public enum LinkDirection
+    {
+        Forward = 1,
+        Backward = -1,
+        ForwardAndBackward = 0
+    }
+
+    public class LLinkInfoBetweenTypes
+    {
+        public int Id { get; }
+        public string Name { get; }
+        public string InverseName { get; }
+        public int TypeId1 { get; }
+        public string TypeName1 { get; }
+        public int TypeId2 { get; }
+        public string TypeName2 { get; }
+        public bool IsVertical { get; }
+        public LinkDirection Direction { get; internal set; }
+        public bool IsQuantity { get; }
+
+        public LLinkInfoBetweenTypes(DataRow dataRow)
+        {
+            Id = (int)dataRow["_ID_LINKTYPE"];
+            Name = dataRow["_LINKTYPE"] as string;
+            InverseName = dataRow["_INVERSENAME"] as string;
+            TypeId1 = (int)dataRow["_TYPE_ID_1"];
+            TypeName1 = dataRow["_TYPE_NAME_1"] as string;
+            TypeId2 = (int)dataRow["_TYPE_ID_2"];
+            TypeName2 = dataRow["_TYPE_NAME_2"] as string;
+            IsVertical = (short)dataRow["_LINKKIND"] == 0;
+            Direction = (LinkDirection)dataRow["_DIRECTION"];
+            IsQuantity = (short)dataRow["_IS_QUANTITY"] == 1;
+        }
+        internal LLinkInfoBetweenTypes()
+        {
+
+        }
+    }
+
+
     public class LState : EntityIcon
     {
         public LState(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
@@ -272,7 +375,7 @@ namespace LoodsmanCommon
         public LAttribute(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
         {
             AttrType = (AttributeType)dataRow["_ATTRTYPE"];
-            Default = dataRow["_DEFAULT"].ToString();
+            Default = dataRow["_DEFAULT"] as string;
             ListValue = dataRow["_LIST"].ToString().Split(new char[2] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             //Encoding.Default.GetString(dataRow["_LIST"] as byte[])
             //.Split(Eol_sep, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -288,8 +391,8 @@ namespace LoodsmanCommon
         public string Extension { get; }
         public LProxyUseCase(DataRow dataRow, string nameField = "_PROXYNAME") : base(dataRow, nameField)
         {
-            TypeName = dataRow["_PARENTNAME"].ToString();
-            DocumentType = dataRow["_DOCNAME"].ToString();
+            TypeName = dataRow["_PARENTNAME"] as string;
+            DocumentType = dataRow["_DOCNAME"] as string;
             Extension = $".{dataRow["_EXTENSION"]}";
         }
     }
