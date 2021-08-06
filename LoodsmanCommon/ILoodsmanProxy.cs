@@ -35,6 +35,9 @@ namespace LoodsmanCommon
         DataTable GetReport(string reportName, IEnumerable<int> objectsIds, string reportParams = null);
         List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds);
         List<int> GetLockedObjects();
+        void KillVersion(int id);
+        void KillVersion(IEnumerable<int> objectsIds);
+        void KillVersion(string typeName, string product, string version);
         string CheckOut();
         void AddToCheckOut(int objectId, bool isRoot = false);
         void CheckIn();
@@ -361,6 +364,23 @@ namespace LoodsmanCommon
         {
             return _iNetPC.GetDataTable("GetLockedObjects", 0).Select().Select(x => (int)x[0]).ToList();
         }
+
+        #region KillVersion
+        public void KillVersion(int id)
+        {
+            _iNetPC.RunMethod("KillVersionById", id);
+        }
+
+        public void KillVersion(IEnumerable<int> objectsIds)
+        {
+            _iNetPC.RunMethod("KillVersions", string.Join(",", objectsIds));
+        }
+
+        public void KillVersion(string typeName, string product, string version)
+        {
+            _iNetPC.RunMethod("KillVersion", typeName, product, version);
+        }
+        #endregion
 
         #region CheckOut
         public string CheckOut()
