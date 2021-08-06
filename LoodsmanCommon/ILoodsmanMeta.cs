@@ -15,12 +15,12 @@ namespace LoodsmanCommon
 {
     public interface ILoodsmanMeta
     {
-        List<LType> Types { get; }
-        List<LLink> Links { get; }
-        List<LLinkInfoBetweenTypes> LinksInfoBetweenTypes { get; }
-        List<LState> States { get; }
-        List<LAttribute> Attributes { get; }
-        List<LProxyUseCase> ProxyUseCases { get; }
+        IEnumerable<LType> Types { get; }
+        IEnumerable<LLink> Links { get; }
+        IEnumerable<LLinkInfoBetweenTypes> LinksInfoBetweenTypes { get; }
+        IEnumerable<LState> States { get; }
+        IEnumerable<LAttribute> Attributes { get; }
+        IEnumerable<LProxyUseCase> ProxyUseCases { get; }
         LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension);
         void Clear();
     }
@@ -35,7 +35,7 @@ namespace LoodsmanCommon
         private List<LLinkInfoBetweenTypes> _linksInfoBetweenTypes;
         private readonly INetPluginCall _iNetPC;
 
-        public List<LType> Types
+        public IEnumerable<LType> Types
         {
             get
             {
@@ -48,21 +48,8 @@ namespace LoodsmanCommon
                 return _types;
             }
         }
-        public List<LLinkInfoBetweenTypes> LinksInfoBetweenTypes 
-        { 
-            get 
-            {
-                if (_linksInfoBetweenTypes is null)
-                {
-                    _linksInfoBetweenTypes = new List<LLinkInfoBetweenTypes>();
-                    var dt = _iNetPC.GetDataTable("GetLinkListEx");
-                    FillLinksInfoBetweenTypes(dt, _linksInfoBetweenTypes);
-                }
-                return _linksInfoBetweenTypes; 
-            } 
-        }
 
-        public List<LLink> Links
+        public IEnumerable<LLink> Links
         {
             get
             {
@@ -76,7 +63,7 @@ namespace LoodsmanCommon
             }
         }
 
-        public List<LState> States
+        public IEnumerable<LState> States
         {
             get
             {
@@ -90,7 +77,7 @@ namespace LoodsmanCommon
             }
         }
 
-        public List<LAttribute> Attributes
+        public IEnumerable<LAttribute> Attributes
         {
             get
             {
@@ -104,7 +91,7 @@ namespace LoodsmanCommon
             }
         }
 
-        public List<LProxyUseCase> ProxyUseCases
+        public IEnumerable<LProxyUseCase> ProxyUseCases
         {
             get
             {
@@ -116,6 +103,20 @@ namespace LoodsmanCommon
                 }
                 return _proxyUseCases;
             }
+        }
+        
+        public IEnumerable<LLinkInfoBetweenTypes> LinksInfoBetweenTypes 
+        { 
+            get 
+            {
+                if (_linksInfoBetweenTypes is null)
+                {
+                    _linksInfoBetweenTypes = new List<LLinkInfoBetweenTypes>();
+                    var dt = _iNetPC.GetDataTable("GetLinkListEx");
+                    FillLinksInfoBetweenTypes(dt, _linksInfoBetweenTypes);
+                }
+                return _linksInfoBetweenTypes; 
+            } 
         }
 
         public LoodsmanMeta(INetPluginCall iNetPC)
@@ -252,7 +253,7 @@ namespace LoodsmanCommon
         public bool CanBeProject { get; }
         public bool CanCreate { get; }
 
-        public LType(DataRow dataRow, List<LAttribute> attributes, List<LState> states, string nameField = "_NAME") : base(dataRow, nameField)
+        public LType(DataRow dataRow, IEnumerable<LAttribute> attributes, IEnumerable<LState> states, string nameField = "_NAME") : base(dataRow, nameField)
         {
             KeyAttr = attributes.FirstOrDefault(a => a.Name == dataRow["_ATTRNAME"] as string);
             IsDocument = (int)dataRow["_DOCUMENT"] == 1;
