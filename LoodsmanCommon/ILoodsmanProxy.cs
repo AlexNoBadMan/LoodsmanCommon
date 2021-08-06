@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Threading;
 using System.Data;
+using LoodsmanCommon.Entities;
 
 namespace LoodsmanCommon
 {

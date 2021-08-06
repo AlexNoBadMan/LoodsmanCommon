@@ -45,12 +45,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataRowExtensions.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\EntityIcon.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="ILoodsmanMeta.cs" />
     <Compile Include="ILoodsmanObject.cs" />
     <Compile Include="ILoodsmanProxy.cs" />
+    <Compile Include="Entities\LAttribute.cs" />
+    <Compile Include="Entities\LLink.cs" />
+    <Compile Include="Entities\LLinkInfoBetweenTypes.cs" />
     <Compile Include="LoodsmanPluginBase.cs" />
     <Compile Include="LoodsmanWPFPluginBase.cs" />
+    <Compile Include="Entities\LProxyUseCase.cs" />
+    <Compile Include="Entities\LState.cs" />
+    <Compile Include="Entities\LType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
