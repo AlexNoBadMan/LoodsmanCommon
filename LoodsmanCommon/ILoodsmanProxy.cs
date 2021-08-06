@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Data;
 using LoodsmanCommon.Entities;
+using System.Xml.Linq;
 
 namespace LoodsmanCommon
 {
@@ -27,6 +28,7 @@ namespace LoodsmanCommon
         int NewLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
         void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
         void RemoveLink(int idLink);
+        ILoodsmanObject PreviewBoObject(string typeName, string uniqueId);
         void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion);
         void UpAttrValueById(int id, string attributeName, string attributeValue, object unit = null);
         string RegistrationOfFile(int idDocumet, string filePath, string fileName);
@@ -279,6 +281,19 @@ namespace LoodsmanCommon
             childVersion = tVersion;
         }
         #endregion
+
+        public ILoodsmanObject PreviewBoObject(string typeName, string uniqueId)
+        {
+            var xmlString = (string)_iNetPC.RunMethod("PreviewBoObject", typeName, uniqueId);
+            var xDocument = XDocument.Parse(xmlString);
+            var elements = xDocument.Descendants("PreviewBoObjectResult").Elements();
+            var loodsmanObject = new LoodsmanObject();
+            loodsmanObject.Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0;
+            loodsmanObject.State = elements.FirstOrDefault(x => x.Name == "State")?.Value ?? StateIfNullGetDefault(typeName);
+            loodsmanObject.Product = elements.FirstOrDefault(x => x.Name == "Product").Value;
+            loodsmanObject.Version = elements.FirstOrDefault(x => x.Name == "Version")?.Value;
+            return loodsmanObject;
+        }
 
         public void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion)
         {
