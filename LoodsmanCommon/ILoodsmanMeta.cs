@@ -22,8 +22,6 @@ namespace LoodsmanCommon
         List<LAttribute> Attributes { get; }
         List<LProxyUseCase> ProxyUseCases { get; }
         LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension);
-        //List<Types> GetChildTypesForType(string typeName); 
-        //List<Types> GetChildTypesForType(Types type);
         void Clear();
     }
 
@@ -34,8 +32,8 @@ namespace LoodsmanCommon
         private List<LState> _states;
         private List<LAttribute> _attributes;
         private List<LProxyUseCase> _proxyUseCases;
-        private readonly INetPluginCall _iNetPC;
         private List<LLinkInfoBetweenTypes> _linksInfoBetweenTypes;
+        private readonly INetPluginCall _iNetPC;
 
         public List<LType> Types
         {
@@ -124,33 +122,6 @@ namespace LoodsmanCommon
         {
             _iNetPC = iNetPC;
         }
-        //public List<int> IdsTypesDSE { get; } = GetTypesByNames(new string[] { "Деталь", "Сборочная единица", "Папка" });
-        //public List<int> IdsTypes3D { get; } = GetTypesByNames(new string[] { "3D-модель детали", "3D-модель детали SW", "3D-модель сборки", "3D-модель сборки SW", "3D-сборка технологическая" });
-        //public List<int> IdsTypesTP { get; } = GetTypesByNames(new string[] { "Гальваника", "Литье", "Механообработка", "Нанесение покрытия", "Плановый ТП", "Сборка", "Сварка", "Сквозной ТП", "Термообработка", "Штамповка" });
-        //public List<int> IdsTypesDocument { get; } = Types.Where(type => type.IsDocument).Select(type => type.Id);
-
-        //private static List<int> GetTypesByNames(string[] typeNames)
-        //{
-        //    return Types.Where(type => typeNames.Contains(type.Name)).Select(type => type.Id);
-        //}
-
-        //public List<Types> GetChildTypesForType(string typeName)
-        //{
-        //    var typesForType = GetTypes(typeName).Select(x => x["_NAME"] as string).ToList();
-        //    return Types.Where(x => typesForType.Contains(x.Name));
-        //}
-
-        //public List<Types> GetChildTypesForType(Types type)
-        //{
-        //    var typesForType = GetTypes(type.Name).Select(x => (int)x["_ID"]).ToList();
-        //    return Types.Where(x => typesForType.Contains(x.Id));
-        //}
-
-        //private DataRow[] GetTypes(string typeName)
-        //{
-        //    return _iNetPC.GetDataTable("GetInfoAboutType", typeName, 8).Select();
-        //}
-
 
         private static void FillLinksInfoBetweenTypes(DataTable dt, List<LLinkInfoBetweenTypes> linkInfos)
         {
@@ -199,6 +170,9 @@ namespace LoodsmanCommon
             _attributes = null;
             _types = null;
             _states = null;
+            _links = null;
+            _proxyUseCases = null;
+            _linksInfoBetweenTypes = null;
         }
     }
 

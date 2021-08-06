@@ -17,9 +17,15 @@ namespace LoodsmanCommon
         bool IsAdmin { get; }
         string CurrentUser { get; }
         string UserFileDir { get; }
-        void NewObject(ILoodsmanObject loodsmanObject, int isProject = 0);
+        int NewObject(ILoodsmanObject loodsmanObject, int isProject = 0);
         int NewObject(string typeName, string product, int isProject = 0, string stateName = null);
-        int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string relationName, string stateName, string childTypeName, string childProduct, string childVersion = " ", bool reuse = false);
+        int InsertObject(ILoodsmanObject parent, ILoodsmanObject child, string linkType, string stateName = null, bool reuse = false);
+        int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string linkType, string childTypeName, string childProduct, string childVersion = " ", string stateName = null, bool reuse = false);
+        int NewLink(ILoodsmanObject parent, ILoodsmanObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
+        int NewLink(int parentId, int childId, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
+        int NewLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
+        void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
+        void RemoveLink(int idLink);
         void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion);
         void UpAttrValueById(int id, string attributeName, string attributeValue, object unit = null);
         string RegistrationOfFile(int idDocumet, string filePath, string fileName);
@@ -81,44 +87,194 @@ namespace LoodsmanCommon
         }
 
         #region NewObject
-        public void NewObject(ILoodsmanObject loodsmanObject, int isProject = 0)
+        public int NewObject(ILoodsmanObject loodsmanObject, int isProject = 0)
         {
-            loodsmanObject.State = CheckState(loodsmanObject.Type, loodsmanObject.State);
+            loodsmanObject.State = StateIfNullGetDefault(loodsmanObject.Type, loodsmanObject.State);
             loodsmanObject.Id = NewObject(loodsmanObject.Type, loodsmanObject.State, loodsmanObject.Product, isProject);
             loodsmanObject.Version = _loodsmanMeta.Types.First(x => x.Name == loodsmanObject.Type).Versioned ? DEFAULT_NEW_VERSION : string.Empty;
-            //Метод NewObject отрабатывает даже если объект с такими Type и Product уже есть в базе, просто вернёт Id,
-            //присвоение Version в таком случае ошибочно
+            return loodsmanObject.Id;
+            //Метод NewObject отрабатывает даже если объект с такими Type и Product уже есть в базе, просто вернёт Id, присвоение Version в таком случае ошибочно
         }
 
         public int NewObject(string typeName, string product, int isProject = 0, string stateName = null)
         {
-            return NewObject(typeName, CheckState(typeName, stateName), product, isProject);
+            return NewObject(typeName, StateIfNullGetDefault(typeName, stateName), product, isProject);
         }
 
         private int NewObject(string typeName, string stateName, string product, int isProject)
         {
-            if (string.IsNullOrEmpty(typeName) || string.IsNullOrEmpty(product))
-                throw new FormatException("Задан некорректный тип или ключевой атрибут для создания объекта");
+            if (string.IsNullOrEmpty(typeName))
+                throw new ArgumentException($"{nameof(typeName)} - тип не может быть пустым", nameof(typeName));
+
+            if (string.IsNullOrEmpty(stateName))
+                throw new ArgumentException($"{nameof(stateName)} - состояние не может быть пустым", nameof(stateName));
+
+            if (string.IsNullOrEmpty(product))
+                throw new ArgumentException($"{nameof(product)} - ключевой атрибут не может быть пустым", nameof(product)); 
 
             return (int)_iNetPC.RunMethod("NewObject", typeName, stateName, product, isProject);
         }
-        #endregion
 
-        private string CheckState(string typeName, string stateName)
+        private string StateIfNullGetDefault(string typeName, string stateName = null)
         {
             if (string.IsNullOrEmpty(stateName))
                 stateName = _loodsmanMeta.Types.First(x => x.Name == typeName).DefaultState.Name;
             return stateName;
         }
+        #endregion
 
-        public int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string relationName, string stateName,
-                                string childTypeName, string childProduct, string childVersion = DEFAULT_INSERT_NEW_VERSION, bool reuse = false)
+        #region Link - Insert/New/Update/Remove
+        public int InsertObject(ILoodsmanObject parent, ILoodsmanObject child, string linkType, string stateName = null, bool reuse = false)
         {
-            //Id = (int)proxy.INetPC.RunMethod("NewObject", TypeName, LoodsmanType.DefaultState.Name, Product, 0);
-            //proxy.INetPC.RunMethod("UpLink", parent.TypeName, parent.Product, parent.Version, 
-            //                                        TypeName, Product, Version, 0, 0, 0, string.Empty, false, relationName);
-            return (int)_iNetPC.RunMethod("InsertObject", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, relationName, stateName, reuse);
+            CheckLoodsmanObjectsForError(parent, child);
+            CheckInsertedObject(parent);
+            CheckInsertedObject(child);
+            return InsertObject(parent.Type, parent.Product, parent.Version, linkType, child.Type, child.Product, child.Version, stateName, reuse);
         }
+
+        private void CheckInsertedObject(ILoodsmanObject loodsmanObject)
+        {
+            if (loodsmanObject.Id <= 0 && string.IsNullOrEmpty(loodsmanObject.Version))
+                loodsmanObject.Version = DEFAULT_INSERT_NEW_VERSION;
+        }
+
+        public int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string linkType, string childTypeName, string childProduct, string childVersion = DEFAULT_INSERT_NEW_VERSION, string stateName = null, bool reuse = false)
+        {
+            CheckKeyAttributesForErrors(parentTypeName, parentProduct, childTypeName, childProduct);
+            var linkInfo = GetLinkInfo(parentTypeName, childTypeName, linkType);
+            if (linkInfo.Direction == LinkDirection.Backward)
+                Swap(ref parentTypeName, ref parentProduct, ref parentVersion, ref childTypeName, ref childProduct, ref childVersion);
+
+            if (string.IsNullOrEmpty(stateName))
+                stateName = StateIfNullGetDefault(parentVersion == DEFAULT_INSERT_NEW_VERSION ? parentTypeName : childTypeName);
+            return (int)_iNetPC.RunMethod("InsertObject", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, linkType, stateName, reuse);
+        }
+
+        public int NewLink(ILoodsmanObject parent, ILoodsmanObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null)
+        {
+            CheckLoodsmanObjectsForError(parent, child);
+            if (parent.Id <= 0 && child.Id <= 0)
+            {
+                if (string.IsNullOrEmpty(parent.Product) && string.IsNullOrEmpty(parent.Type) && string.IsNullOrEmpty(child.Product) && string.IsNullOrEmpty(child.Type))
+                    throw new InvalidOperationException("Не заданы ключевые атрибуты объектов для формирования связи");
+            }
+            else
+            {
+                if (parent.Id <= 0)
+                    NewObject(parent);
+
+                if (child.Id <= 0)
+                    NewObject(child);
+            }
+            return NewLink(parent.Id, parent.Type, parent.Product, parent.Version, child.Id, child.Type, child.Product, child.Version, linkType, minQuantity, maxQuantity, idUnit);
+        }
+
+
+        public int NewLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null)
+        {
+            CheckKeyAttributesForErrors(parentTypeName, parentProduct, childTypeName, childProduct);
+            return NewLink(0, parentTypeName, parentProduct, parentVersion, 0, childTypeName, childProduct, childVersion, linkType, minQuantity, maxQuantity, idUnit);
+        }
+
+        public int NewLink(int parentId, int childId, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null)
+        {
+            if (parentId <= 0)
+                throw new ArgumentException($"{nameof(parentId)} - отсутствует или неверно задан идентификатор объекта", nameof(parentId));
+
+            if (childId <= 0)
+                throw new ArgumentException($"{nameof(childId)} - отсутствует или неверно задан идентификатор объекта", nameof(childId));
+
+            return NewLink(parentId, string.Empty, string.Empty, string.Empty, childId, string.Empty, string.Empty, string.Empty, linkType, minQuantity, maxQuantity, idUnit);
+        }
+
+        public void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string idUnit = null)
+        {
+            UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, minQuantity, maxQuantity, idUnit, false, string.Empty);
+        }
+
+        public void RemoveLink(int idLink)
+        {
+            UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, 0, 0, string.Empty, true, string.Empty);
+        }
+
+        private int NewLink(int parentId, string parentTypeName, string parentProduct, string parentVersion, int childId, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity, double maxQuantity, string idUnit)
+        {
+            //if (string.IsNullOrEmpty(linkType))
+            //linkInfo = _loodsmanMeta.LinksInfoBetweenTypes.SingleOrDefault(x => (x.TypeName1 == parentTypeName && x.TypeName2 == childTypeName) || (x.TypeName1 == childTypeName && x.TypeName2 == parentTypeName));
+            //Способ автоматически найти подходящий тип связи, но он будет не стабильным если пользователь произведёт изменение конфигурации бд
+            if (string.IsNullOrEmpty(linkType))
+                throw new ArgumentException($"{nameof(linkType)} не может быть пустым, не указан тип связи", nameof(linkType));
+
+            var linkInfo = GetLinkInfo(parentTypeName, childTypeName, linkType);
+            if (linkInfo.Direction == LinkDirection.Backward)
+                Swap(ref parentId, ref parentTypeName, ref parentProduct, ref parentVersion, ref childId, ref childTypeName, ref childProduct, ref childVersion);
+
+            if (linkInfo.IsQuantity && minQuantity <= 0 && maxQuantity <= 0)
+            {
+                minQuantity = 1;
+                maxQuantity = 1;
+            }
+            return (int)_iNetPC.RunMethod("NewLink", parentId, parentTypeName, parentProduct, parentVersion, childId, childTypeName, childProduct, childVersion, minQuantity, maxQuantity, idUnit, linkType);
+        }
+
+        private int UpLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, int idLink, double minQuantity, double maxQuantity, string idUnit, bool toDel, string linkType)
+        {
+            return (int)_iNetPC.RunMethod("UpLink", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, idLink, minQuantity, maxQuantity, idUnit, toDel, linkType);
+        }
+
+        private static void CheckKeyAttributesForErrors(string parentTypeName, string parentProduct, string childTypeName, string childProduct)
+        {
+            if (string.IsNullOrEmpty(parentTypeName))
+                throw new ArgumentException($"{nameof(parentTypeName)} не может быть пустым или иметь значение null", nameof(parentTypeName));
+
+            if (string.IsNullOrEmpty(parentProduct))
+                throw new ArgumentException($"{nameof(parentProduct)} не может быть пустым или иметь значение null", nameof(parentProduct));
+
+            if (string.IsNullOrEmpty(childTypeName))
+                throw new ArgumentException($"{nameof(childTypeName)} не может быть пустым или иметь значение null", nameof(childTypeName));
+
+            if (string.IsNullOrEmpty(childProduct))
+                throw new ArgumentException($"{nameof(childProduct)} не может быть пустым или иметь значение null", nameof(childProduct));
+        }
+
+        private static void CheckLoodsmanObjectsForError(ILoodsmanObject parent, ILoodsmanObject child)
+        {
+            if (parent is null)
+                throw new ArgumentNullException($"{nameof(parent)} не задан родитель для создания связи");
+
+            if (child is null)
+                throw new ArgumentNullException($"{nameof(child)} не задан потомок для создания связи");
+        }
+
+        private LLinkInfoBetweenTypes GetLinkInfo(string parentTypeName, string childTypeName, string linkType)
+        {
+            var linkInfo = _loodsmanMeta.LinksInfoBetweenTypes.FirstOrDefault(x => x.TypeName1 == parentTypeName && x.TypeName2 == childTypeName && x.Name == linkType);
+            if (linkInfo is null)
+                throw new InvalidOperationException($"Не удалось найти информацию о связи типов {nameof(parentTypeName)} {parentTypeName} - {nameof(childTypeName)} {childTypeName}, по связи - {linkType}");
+            return linkInfo;
+        }
+
+        private static void Swap(ref int parentId, ref string parentTypeName, ref string parentProduct, ref string parentVersion, ref int childId, ref string childTypeName, ref string childProduct, ref string childVersion)
+        {
+            var tId = parentId;
+            parentId = childId;
+            childId = tId;
+            Swap(ref parentTypeName, ref parentProduct, ref parentVersion, ref childTypeName, ref childProduct, ref childVersion);
+        }
+
+        private static void Swap(ref string parentTypeName, ref string parentProduct, ref string parentVersion, ref string childTypeName, ref string childProduct, ref string childVersion)
+        {
+            var tTypeName = parentTypeName;
+            var tProduct = parentProduct;
+            var tVersion = parentVersion;
+            parentTypeName = childTypeName;
+            parentProduct = childProduct;
+            parentVersion = childVersion;
+            childTypeName = tTypeName;
+            childProduct = tProduct;
+            childVersion = tVersion;
+        }
+        #endregion
 
         public void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion)
         {
