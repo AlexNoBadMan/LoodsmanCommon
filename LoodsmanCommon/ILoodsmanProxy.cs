@@ -16,6 +16,7 @@ namespace LoodsmanCommon
         INetPluginCall INetPC { get; set; }
         ILoodsmanMeta LoodsmanMeta { get; }
         ILoodsmanObject SelectedObject { get; }
+        IEnumerable<ILoodsmanObject> SelectedObjects { get; }
         bool IsAdmin { get; }
         string CurrentUser { get; }
         string UserFileDir { get; }
@@ -28,7 +29,6 @@ namespace LoodsmanCommon
         int NewLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
         void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
         void RemoveLink(int idLink);
-        ILoodsmanObject PreviewBoObject(string typeName, string uniqueId);
         void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion);
         void UpAttrValueById(int id, string attributeName, string attributeValue, object unit = null);
         string RegistrationOfFile(int idDocumet, string filePath, string fileName);
@@ -36,6 +36,7 @@ namespace LoodsmanCommon
         bool CheckUniqueName(string typeName, string product);
         DataTable GetReport(string reportName, IEnumerable<int> objectsIds, string reportParams = null);
         List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds);
+        ILoodsmanObject PreviewBoObject(string typeName, string uniqueId);
         List<int> GetLockedObjects();
         void KillVersion(int id);
         void KillVersion(IEnumerable<int> objectsIds);
@@ -58,6 +59,7 @@ namespace LoodsmanCommon
         private readonly List<(string TypeName, string Product)> _notUniqueNames = new List<(string typeName, string product)>();
         private readonly ILoodsmanMeta _loodsmanMeta;
         private ILoodsmanObject _selectedObject;
+        private List<ILoodsmanObject> _selectedObjects = new List<ILoodsmanObject>();
 
         public virtual INetPluginCall INetPC
         {
@@ -70,6 +72,7 @@ namespace LoodsmanCommon
         }
         public ILoodsmanMeta LoodsmanMeta => _loodsmanMeta;
         public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall);
+        public IEnumerable<ILoodsmanObject> SelectedObjects => GetSelectedObjects();
         public bool IsAdmin { get; }
         public string CurrentUser { get; }
         public string UserFileDir { get; }
@@ -90,6 +93,14 @@ namespace LoodsmanCommon
             Thread.CurrentThread.CurrentUICulture = culture;
 
             _loodsmanMeta = loodsmanMeta;
+        }
+
+        private IEnumerable<ILoodsmanObject> GetSelectedObjects()
+        {
+            var ids = _iNetPC.RunMethod("CGetTreeSelectedIDs").ToString().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+            if (!_selectedObjects.Select(x => x.Id).OrderBy(x => x).SequenceEqual(ids.OrderBy(x => x)))
+                _selectedObjects = GetPropObjects(ids);
+            return _selectedObjects;
         }
 
         #region NewObject
@@ -282,19 +293,6 @@ namespace LoodsmanCommon
         }
         #endregion
 
-        public ILoodsmanObject PreviewBoObject(string typeName, string uniqueId)
-        {
-            var xmlString = (string)_iNetPC.RunMethod("PreviewBoObject", typeName, uniqueId);
-            var xDocument = XDocument.Parse(xmlString);
-            var elements = xDocument.Descendants("PreviewBoObjectResult").Elements();
-            var loodsmanObject = new LoodsmanObject();
-            loodsmanObject.Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0;
-            loodsmanObject.State = elements.FirstOrDefault(x => x.Name == "State")?.Value ?? StateIfNullGetDefault(typeName);
-            loodsmanObject.Product = elements.FirstOrDefault(x => x.Name == "Product").Value;
-            loodsmanObject.Version = elements.FirstOrDefault(x => x.Name == "Version")?.Value;
-            return loodsmanObject;
-        }
-
         public void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion)
         {
             var linkInfo = _iNetPC.GetDataTable("GetInfoAboutLink", idLink, 2).Select()
@@ -373,6 +371,19 @@ namespace LoodsmanCommon
             var dtProps = _iNetPC.GetDataTable("GetPropObjects", string.Join(",", objectsIds), 0);
             objects.AddRange(dtProps.Select().Select(x => new LoodsmanObject(x)));
             return objects;
+        }
+
+        public ILoodsmanObject PreviewBoObject(string typeName, string uniqueId)
+        {
+            var xmlString = (string)_iNetPC.RunMethod("PreviewBoObject", typeName, uniqueId);
+            var xDocument = XDocument.Parse(xmlString);
+            var elements = xDocument.Descendants("PreviewBoObjectResult").Elements();
+            var loodsmanObject = new LoodsmanObject();
+            loodsmanObject.Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0;
+            loodsmanObject.State = elements.FirstOrDefault(x => x.Name == "State")?.Value ?? StateIfNullGetDefault(typeName);
+            loodsmanObject.Product = elements.FirstOrDefault(x => x.Name == "Product").Value;
+            loodsmanObject.Version = elements.FirstOrDefault(x => x.Name == "Version")?.Value;
+            return loodsmanObject;
         }
 
         public List<int> GetLockedObjects()
