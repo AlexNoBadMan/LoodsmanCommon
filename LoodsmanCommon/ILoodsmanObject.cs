@@ -43,8 +43,7 @@ namespace LoodsmanCommon
             Version = pc.stVersion;
             State = pc.Selected.StateName;
             IsDocument = pc.Selected.IsDocument;
-            if (pc.ParentObject != null)
-                Parent = new LoodsmanObject(pc.ParentObject);
+            Parent = pc.ParentObject is IPDMObject ? new LoodsmanObject(pc.ParentObject) : null;
         }
 
         public LoodsmanObject(IPDMObject obj)
@@ -55,6 +54,7 @@ namespace LoodsmanCommon
             Version = obj.Version;
             State = obj.StateName;
             IsDocument = obj.IsDocument;
+            Parent = obj.Parent is IPDMLink link ? new LoodsmanObject(link.ParentObject) : null;
         }
 
         public LoodsmanObject()
