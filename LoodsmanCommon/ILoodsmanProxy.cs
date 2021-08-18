@@ -29,6 +29,7 @@ namespace LoodsmanCommon
         int NewLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
         void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
         void RemoveLink(int idLink);
+        List<ILoodsmanObject> GetLinkedFast(int id, string linkType, bool inverse = false);
         void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion);
         void UpAttrValueById(int id, string attributeName, string attributeValue, object unit = null);
         string RegistrationOfFile(int idDocumet, string filePath, string fileName);
@@ -120,9 +121,6 @@ namespace LoodsmanCommon
 
         private int NewObject(string typeName, string stateName, string product, int isProject)
         {
-            if (string.IsNullOrEmpty(typeName))
-                throw new ArgumentException($"{nameof(typeName)} - тип не может быть пустым", nameof(typeName));
-
             if (string.IsNullOrEmpty(stateName))
                 throw new ArgumentException($"{nameof(stateName)} - состояние не может быть пустым", nameof(stateName));
 
@@ -134,6 +132,9 @@ namespace LoodsmanCommon
 
         private string StateIfNullGetDefault(string typeName, string stateName = null)
         {
+            if (string.IsNullOrEmpty(typeName))
+                throw new ArgumentException($"{nameof(typeName)} - тип не может быть пустым", nameof(typeName));
+
             if (string.IsNullOrEmpty(stateName))
                 stateName = _loodsmanMeta.Types.First(x => x.Name == typeName).DefaultState.Name;
             return stateName;
@@ -291,6 +292,11 @@ namespace LoodsmanCommon
             childProduct = tProduct;
             childVersion = tVersion;
         }
+
+        public List<ILoodsmanObject> GetLinkedFast(int id, string linkType, bool inverse = false)
+        {
+            return new List<ILoodsmanObject>(_iNetPC.GetDataTable("GetLinkedFast", id, linkType, inverse).Select().Select(x => new LoodsmanObject(x)));
+        }
         #endregion
 
         public void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion)
@@ -367,10 +373,7 @@ namespace LoodsmanCommon
 
         public List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds)
         {
-            var objects = new List<ILoodsmanObject>();
-            var dtProps = _iNetPC.GetDataTable("GetPropObjects", string.Join(",", objectsIds), 0);
-            objects.AddRange(dtProps.Select().Select(x => new LoodsmanObject(x)));
-            return objects;
+            return new List<ILoodsmanObject>(_iNetPC.GetDataTable("GetPropObjects", string.Join(",", objectsIds), 0).Select().Select(x => new LoodsmanObject(x)));
         }
 
         public ILoodsmanObject PreviewBoObject(string typeName, string uniqueId)
@@ -380,8 +383,9 @@ namespace LoodsmanCommon
             var elements = xDocument.Descendants("PreviewBoObjectResult").Elements();
             var loodsmanObject = new LoodsmanObject();
             loodsmanObject.Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0;
-            loodsmanObject.State = elements.FirstOrDefault(x => x.Name == "State")?.Value ?? StateIfNullGetDefault(typeName);
+            loodsmanObject.Type = typeName;
             loodsmanObject.Product = elements.FirstOrDefault(x => x.Name == "Product").Value;
+            loodsmanObject.State = elements.FirstOrDefault(x => x.Name == "State")?.Value ?? StateIfNullGetDefault(typeName);
             loodsmanObject.Version = elements.FirstOrDefault(x => x.Name == "Version")?.Value;
             return loodsmanObject;
         }
