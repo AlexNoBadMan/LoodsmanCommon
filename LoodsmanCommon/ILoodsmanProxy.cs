@@ -79,6 +79,7 @@ namespace LoodsmanCommon
         public string UserFileDir { get; }
         public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
         {
+            _iNetPC = iNetPC;
             IsAdmin = (int)iNetPC.RunMethod("IsAdmin") == 1;
             var userInfo = iNetPC.GetDataTable("GetInfoAboutCurrentUser").Rows[0];
             CurrentUser = userInfo["_FULLNAME"] as string;
