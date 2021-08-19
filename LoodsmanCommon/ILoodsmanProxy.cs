@@ -14,7 +14,7 @@ namespace LoodsmanCommon
     public interface ILoodsmanProxy
     {
         INetPluginCall INetPC { get; set; }
-        ILoodsmanMeta LoodsmanMeta { get; }
+        ILoodsmanMeta Meta { get; }
         ILoodsmanObject SelectedObject { get; }
         IEnumerable<ILoodsmanObject> SelectedObjects { get; }
         bool IsAdmin { get; }
@@ -71,7 +71,7 @@ namespace LoodsmanCommon
                 _uniqueNames.Clear();
             }
         }
-        public ILoodsmanMeta LoodsmanMeta => _loodsmanMeta;
+        public ILoodsmanMeta Meta => _loodsmanMeta;
         public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall);
         public IEnumerable<ILoodsmanObject> SelectedObjects => GetSelectedObjects();
         public bool IsAdmin { get; }
