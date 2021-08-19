@@ -93,7 +93,38 @@ namespace LoodsmanCommon
             culture.DateTimeFormat.LongDatePattern = "HH:mm:ss";
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+            /*
+            var userInfo = (DataSet)pluginCall.GetDataSet("GetInfoAboutCurrentUser", new object[] { });
+            //CurrentUser = userInfo["_FULLNAME"] as string;
+            var userFileDir = userInfo.FieldValue["_FILEDIR"] as string;
+            var reportName = "Ведомость покупных.fp3";
+            var reports = pluginCall.GetDataSet("GetReportsAndFolders", new object[] { -1 });//"rep_VEDOMOST_SPECIFIKACIY"
 
+
+
+
+            var report = pluginCall.GetDataSet("GetReport", new object[] { "rep_VEDOMOST_SPECIFIKACIY", pluginCall.IdVersion, null });//"rep_VEDOMOST_MATERIALOV"
+            var guid = typeof(ILoodsmanApplication).GUID;
+            var hr = Marshal.QueryInterface(pc, ref guid, out var pI); 
+            var application = (ILoodsmanApplication)Marshal.GetTypedObjectForIUnknown(pI, typeof(ILoodsmanApplication));
+            var fRDesigner = new FRDesigner();
+            fRDesigner.ReportParams = null;// "Изделие (заказ №)=123;Программа=2";
+            fRDesigner.ParentHWND = application.AppHandle;
+            fRDesigner.Connection = application.DataBase.Connection;
+            fRDesigner.Context = pluginCall.Selected;
+            fRDesigner.FileName = @"C:\Program Files (x86)\Common Files\ASCON Shared\COD\ReportTemplates\Конструкторские\Ведомость спецификаций ГОСТ 2.106-96.fr3";// "C:\Program Files (x86)\Common Files\ASCON Shared\COD\ReportTemplates\ПМЗ\tem_VEDOMOST_MATERIALOV.fr3";
+            fRDesigner.ExternalDataset = report;
+            var thread = new Thread(new ThreadStart(() =>
+            {
+                while (Thread.CurrentThread.ThreadState == ThreadState.Running)
+                    if (User32.FindWindowsRaw(string.Empty, "TfrmReportsShow").FirstOrDefault() is IntPtr wnd)
+                        User32.SendMessage(wnd, (uint)CMD.WM_CLOSE, 0, 0);
+            }));
+            thread.Start();
+            fRDesigner.Open(frMode.mOpenReportExtData);
+            thread.Abort();
+            File.Copy(fRDesigner.FileName, $"{userFileDir}\\{reportName}", true);
+             */
             _loodsmanMeta = loodsmanMeta;
         }
 
