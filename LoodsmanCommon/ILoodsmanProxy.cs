@@ -435,7 +435,7 @@ namespace LoodsmanCommon
 
         public void KillVersion(IEnumerable<int> objectsIds)
         {
-            _iNetPC.RunMethod("KillVersions", string.Join(",", objectsIds));
+            _iNetPC.RunMethod("KillVersions", string.Join(",", objectsIds), 0);
         }
 
         public void KillVersion(string typeName, string product, string version)
