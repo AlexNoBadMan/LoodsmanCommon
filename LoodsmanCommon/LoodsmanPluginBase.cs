@@ -30,7 +30,7 @@ namespace LoodsmanCommon
 
         public virtual void OnConnectToDb(INetPluginCall iNetPC)
         {
-            if (iNetPC != null)
+            if (_loodsmanProxy is null && iNetPC != null)
                 PluginInit(iNetPC);
         }
 
