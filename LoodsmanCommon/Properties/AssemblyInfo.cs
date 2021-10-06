@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанные со сборкой.
 [assembly: AssemblyTitle("LoodsmanCommon")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Library for working with Loodsman API")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Аскон-Казахстан")]
 [assembly: AssemblyProduct("LoodsmanCommon")]
