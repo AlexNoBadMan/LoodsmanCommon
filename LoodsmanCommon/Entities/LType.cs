@@ -14,7 +14,7 @@ namespace LoodsmanCommon.Entities
         public bool CanBeProject { get; }
         public bool CanCreate { get; }
 
-        public LType(DataRow dataRow, IEnumerable<LAttribute> attributes, IEnumerable<LState> states, string nameField = "_NAME") : base(dataRow, nameField)
+        public LType(DataRow dataRow, IEnumerable<LAttribute> attributes, IEnumerable<LState> states, string nameField = "_TYPENAME") : base(dataRow, nameField)
         {
             KeyAttr = attributes.FirstOrDefault(a => a.Name == dataRow["_ATTRNAME"] as string);
             IsDocument = (int)dataRow["_DOCUMENT"] == 1;

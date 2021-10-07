@@ -37,8 +37,8 @@ namespace LoodsmanCommon
                 if (_types is null)
                 {
                     _types = new List<LType>();
-                    var dt = _iNetPC.GetDataTable("GetTypeListEx");
-                    _types.AddRange(dt.Select().Select(x => new LType(x, Attributes, States, "_TYPENAME")));
+                    using (var dataTable = _iNetPC.GetDataTable("GetTypeListEx"))
+                        _types.AddRange(dataTable.Select().Select(x => new LType(x, Attributes, States)));
                 }
                 return _types;
             }
@@ -51,8 +51,8 @@ namespace LoodsmanCommon
                 if (_links is null)
                 {
                     _links = new List<LLink>();
-                    var dt = _iNetPC.GetDataTable("GetLinkList");
-                    _links.AddRange(dt.Select().Select(x => new LLink(x)));
+                    using (var dataTable = _iNetPC.GetDataTable("GetLinkList"))
+                        _links.AddRange(dataTable.Select().Select(x => new LLink(x)));
                 }
                 return _links;
             }
@@ -65,8 +65,8 @@ namespace LoodsmanCommon
                 if (_states is null)
                 {
                     _states = new List<LState>();
-                    var dt = _iNetPC.GetDataTable("GetStateList");
-                    _states.AddRange(dt.Select().Select(x => new LState(x)));
+                    using (var dataTable = _iNetPC.GetDataTable("GetStateList"))
+                        _states.AddRange(dataTable.Select().Select(x => new LState(x)));
                 }
                 return _states;
             }
@@ -79,8 +79,8 @@ namespace LoodsmanCommon
                 if (_attributes is null)
                 {
                     _attributes = new List<LAttribute>();
-                    var dt = _iNetPC.GetDataTable("GetAttributeList2", 0);
-                    _attributes.AddRange(dt.Select().Select(x => new LAttribute(x)));
+                    using (var dataTable = _iNetPC.GetDataTable("GetAttributeList2", 0))
+                        _attributes.AddRange(dataTable.Select().Select(x => new LAttribute(x)));
                 }
                 return _attributes;
             }
@@ -93,8 +93,8 @@ namespace LoodsmanCommon
                 if (_proxyUseCases is null)
                 {
                     _proxyUseCases = new List<LProxyUseCase>();
-                    var dt = _iNetPC.GetDataTable("GetProxyUseCases", 0, 0, 0);
-                    _proxyUseCases.AddRange(dt.Select().Select(x => new LProxyUseCase(x)));
+                    using (var dataTable = _iNetPC.GetDataTable("GetProxyUseCases", 0, 0, 0))
+                        _proxyUseCases.AddRange(dataTable.Select().Select(x => new LProxyUseCase(x)));
                 }
                 return _proxyUseCases;
             }
@@ -107,8 +107,8 @@ namespace LoodsmanCommon
                 if (_linksInfoBetweenTypes is null)
                 {
                     _linksInfoBetweenTypes = new List<LLinkInfoBetweenTypes>();
-                    var dt = _iNetPC.GetDataTable("GetLinkListEx");
-                    FillLinksInfoBetweenTypes(dt, _linksInfoBetweenTypes);
+                    using (var dataTable = _iNetPC.GetDataTable("GetLinkListEx"))
+                        FillLinksInfoBetweenTypes(dataTable, _linksInfoBetweenTypes);
                 }
                 return _linksInfoBetweenTypes; 
             } 
@@ -119,7 +119,7 @@ namespace LoodsmanCommon
             _iNetPC = iNetPC;
         }
 
-        private static void FillLinksInfoBetweenTypes(DataTable dt, List<LLinkInfoBetweenTypes> linkInfos)
+        private static void FillLinksInfoBetweenTypes(DataTable dataTable, List<LLinkInfoBetweenTypes> linkInfos)
         {
             /* Метод GetLinkListEx возвращает данные в которых есть дубликаты
                Например Если связь горизонтальная
@@ -138,7 +138,7 @@ namespace LoodsmanCommon
                 то присваиваем пердыдущей позиции (уже добавленной) Direction = LinkDirection.ForwardAndBackward, не добавляя текущуюю 
             */
             var previousLinkInfo = new LLinkInfoBetweenTypes();
-            foreach (DataRow dataRow in dt.Rows)
+            foreach (DataRow dataRow in dataTable.Rows)
             {
                 var currentLinkInfo = new LLinkInfoBetweenTypes(dataRow);
                 if (previousLinkInfo.Id == currentLinkInfo.Id && previousLinkInfo.TypeId1 == currentLinkInfo.TypeId1 && previousLinkInfo.TypeId2 == currentLinkInfo.TypeId2)

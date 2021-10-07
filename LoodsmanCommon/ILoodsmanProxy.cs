@@ -13,10 +13,16 @@ namespace LoodsmanCommon
 {
     public interface ILoodsmanProxy
     {
+        [Obsolete("Вместо свойства следует использовать имеющиеся методы/свойства, после того как будет закончена работа над ILoodsmanProxy данное свойство будет удалено.")]
         INetPluginCall INetPC { get; set; }
         ILoodsmanMeta Meta { get; }
         ILoodsmanObject SelectedObject { get; }
         IEnumerable<ILoodsmanObject> SelectedObjects { get; }
+
+        /// <summary>
+        /// Название подключенного чекаута.
+        /// </summary>
+        string CheckOutName { get; }
         bool IsAdmin { get; }
         string CurrentUser { get; }
         string UserFileDir { get; }
@@ -37,16 +43,114 @@ namespace LoodsmanCommon
         bool CheckUniqueName(string typeName, string product);
         DataTable GetReport(string reportName, IEnumerable<int> objectsIds, string reportParams = null);
         List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds);
+
+        /// <summary>
+        /// Проверка на существование бизнес объекта в базе Лоцман.
+        /// </summary>
+        /// <remarks>
+        /// Примечание:
+        /// Если объект не существует то свойство возвращаемого объекта ILoodsmanObject.Id будет равен 0.
+        /// <para>** Для создания бизнес объекта необходимо чтобы product был в формате ***BOSimple</para>
+        /// </remarks>
         ILoodsmanObject PreviewBoObject(string typeName, string uniqueId);
-        List<int> GetLockedObjects();
+
+        /// <summary>
+        /// Возвращает список идентификаторов версий объектов, заблокированных в текущем чекауте.
+        /// </summary>
+        List<int> GetLockedObjectsIds();
+
+        /// <summary>
+        /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.
+        /// </summary>
+        /// <param name="id">Идентификатор версии объекта</param>
         void KillVersion(int id);
+
+        /// <summary>
+        /// Помечает объекты, находящиеся на изменении, как подлежащий удалению при возврате в базу данных.
+        /// </summary>
+        /// <param name="objectsIds">Список идентификаторов версий объектов</param>
         void KillVersion(IEnumerable<int> objectsIds);
+
+        /// <summary>
+        /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.
+        /// </summary>
+        /// <param name="typeName">Название типа</param>
+        /// <param name="product">Ключевой атрибут</param>
+        /// <param name="version">Версия объекта</param>
         void KillVersion(string typeName, string product, string version);
-        string CheckOut();
+
+        /// <summary>
+        /// Берет объект на редактирование.
+        /// </summary>
+        /// <param name="typeName">Название типа</param>
+        /// <param name="product">Ключевой атрибут</param>
+        /// <param name="version">Версия объекта</param>
+        /// <param name="mode">Режим</param>
+        /// <returns>Возвращает внутреннее название редактируемого объекта (название чекаута).</returns>
+        /// <remarks>
+        /// Примечание:
+        /// При пустых значениях typeName, product и version, будет создан пустой чекаут. С ним можно работать, как с обычным. 
+        /// Отличие в том, что в списке, возвращаемым методом GetInfoAboutCurrentBase (режим 2) в качестве значений полей[_ID_VERSION], [_TYPE], [_PRODUCT], [_VERSION] будут пустые значения.
+        /// <para>** Для дальнейшей работы с объектом необходимо подключиться к чекауту методом ConnectToCheckOut.</para>
+        /// </remarks>
+        string CheckOut(string typeName = null, string product = null, string version = null, CheckOutMode mode = CheckOutMode.Default);
+        
+        /// <summary>
+        /// Берет в работу текущий SelectedObject, если он не был в работе (Нет необходимости использовать метод ConnectToCheckOut).
+        /// </summary>
+        /// <returns>Возвращает внутреннее название редактируемого объекта (название чекаута).</returns>
+        string SelectedObjectCheckOut(CheckOutMode mode = CheckOutMode.Default);
+
+        /// <summary>
+        /// Подключается к указанному чекауту.
+        /// </summary>
+        /// <param name="checkOutName">Название чекаута</param>
+        /// <param name="dBName">Название базы данных</param>
+        /// <remarks>
+        /// Примечание:
+        /// При пустых значении: checkOutName - метод не отработает, dBName - используется PluginCall.DBName. 
+        /// </remarks>
+        void ConnectToCheckOut(string checkOutName = null, string dBName = null);
+        
+        /// <summary>
+        /// Делает объект доступным для изменения только в рамках текущего чекаута (блокирует его).
+        /// </summary>
+        /// <param name="objectId">Идентификатор версии</param>
+        /// <param name="isRoot">Признак головного объекта</param>
         void AddToCheckOut(int objectId, bool isRoot = false);
-        void CheckIn();
-        void SaveChanges();
-        void CancelCheckOut();
+
+        /// <summary>
+        /// Возвращает измененный объект в базу данных.
+        /// </summary>
+        /// <param name="checkOutName">Название чекаута</param>
+        /// <param name="dBName">Название базы данных</param>
+        /// <remarks>
+        /// Примечание:
+        /// При пустых значении: checkOutName - используется PluginCall.CheckOut, dBName - используется PluginCall.DBName. 
+        /// </remarks>
+        void CheckIn(string checkOutName = null, string dBName = null);
+
+        /// <summary>
+        /// Возвращает измененный объект в базу данных.
+        /// </summary>
+        /// <param name="checkOutName">Название чекаута</param>
+        /// <param name="dBName">Название базы данных</param>
+        /// <remarks>
+        /// Примечание:
+        /// При пустых значении: checkOutName - используется PluginCall.CheckOut, dBName - используется PluginCall.DBName. 
+        /// </remarks>
+        void SaveChanges(string checkOutName = null, string dBName = null);
+
+        /// <summary>
+        /// Выполняет отказ от изменения объекта и вызывает метод DisconnectCheckOut
+        /// </summary>
+        /// <param name="checkOutName">Название чекаута</param>
+        /// <param name="dBName">Название базы данных</param>
+        /// <remarks>
+        /// Примечание:
+        /// При пустых значении: checkOutName - используется PluginCall.CheckOut, dBName - используется PluginCall.DBName. 
+        /// </remarks>
+        void CancelCheckOut(string checkOutName = null, string dBName = null);
     }
 
     internal class LoodsmanProxy : ILoodsmanProxy
@@ -74,6 +178,7 @@ namespace LoodsmanCommon
         public ILoodsmanMeta Meta => _loodsmanMeta;
         public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall);
         public IEnumerable<ILoodsmanObject> SelectedObjects => GetSelectedObjects();
+        public string CheckOutName => _checkOutName;
         public bool IsAdmin { get; }
         public string CurrentUser { get; }
         public string UserFileDir { get; }
@@ -415,14 +520,14 @@ namespace LoodsmanCommon
             var elements = xDocument.Descendants("PreviewBoObjectResult").Elements();
             var loodsmanObject = new LoodsmanObject();
             loodsmanObject.Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0;
-            loodsmanObject.Type = typeName;
+            loodsmanObject.Type = typeName; 
             loodsmanObject.Product = elements.FirstOrDefault(x => x.Name == "Product").Value;
             loodsmanObject.State = elements.FirstOrDefault(x => x.Name == "State")?.Value ?? StateIfNullGetDefault(typeName);
             loodsmanObject.Version = elements.FirstOrDefault(x => x.Name == "Version")?.Value;
             return loodsmanObject;
         }
 
-        public List<int> GetLockedObjects()
+        public List<int> GetLockedObjectsIds()
         {
             return _iNetPC.GetDataTable("GetLockedObjects", 0).Select().Select(x => (int)x[0]).ToList();
         }
@@ -445,42 +550,59 @@ namespace LoodsmanCommon
         #endregion
 
         #region CheckOut
-        public string CheckOut()
+        public string CheckOut(string typeName, string product, string version, CheckOutMode mode = CheckOutMode.Default)
         {
-            var wasCheckout = _iNetPC.PluginCall.CheckOut != 0;
-            _checkOutName = wasCheckout
-                ? _iNetPC.PluginCall.CheckOut.ToString()
-                : (string)_iNetPC.RunMethod("CheckOut", _iNetPC.PluginCall.stType, _iNetPC.PluginCall.stProduct, _iNetPC.PluginCall.stVersion, 0);
+            return (string)_iNetPC.RunMethod("CheckOut", typeName, product, version, (int)mode);
+        }
+
+        public string SelectedObjectCheckOut(CheckOutMode mode = CheckOutMode.Default)
+        {
+            var pc = _iNetPC.PluginCall;
+            var wasCheckout = pc.CheckOut != 0;
+            _checkOutName = wasCheckout ? pc.CheckOut.ToString() : CheckOut(pc.stType, pc.stProduct, pc.stVersion, mode);
             if (!wasCheckout)
-                _iNetPC.RunMethod("ConnectToCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
+                ConnectToCheckOut(_checkOutName, pc.DBName);
+
             return _checkOutName;
+        }
+
+        public void ConnectToCheckOut(string checkOutName = null, string dBName = null)
+        {
+            if (string.IsNullOrEmpty(checkOutName))
+                return;
+
+            _checkOutName = checkOutName;
+            _iNetPC.RunMethod("ConnectToCheckOut", checkOutName, dBName ?? _iNetPC.PluginCall.DBName);
         }
 
         public void AddToCheckOut(int objectId, bool isRoot = false)
         {
-            if (!(_iNetPC.PluginCall.CheckOut != 0))
-                CheckOut();
             _iNetPC.RunMethod("AddToCheckOut", objectId, isRoot);
         }
 
-        public void CheckIn()
+        public void CheckIn(string checkOutName = null, string dBName = null)
         {
-            _iNetPC.RunMethod("DisconnectCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
-            _iNetPC.RunMethod("CheckIn", _checkOutName, _iNetPC.PluginCall.DBName);
+            var checkOut = checkOutName ?? _checkOutName;
+            var databaseName = dBName ?? _iNetPC.PluginCall.DBName;
+            _iNetPC.RunMethod("DisconnectCheckOut", checkOut, databaseName);
+            _iNetPC.RunMethod("CheckIn", checkOut, databaseName);
+            _checkOutName = string.Empty;
         }
 
-        public void SaveChanges()
+        public void SaveChanges(string checkOutName = null, string dBName = null)
         {
-            _iNetPC.RunMethod("SaveChanges", _checkOutName, _iNetPC.PluginCall.DBName);
+            var checkOut = checkOutName ?? _checkOutName;
+            var databaseName = dBName ?? _iNetPC.PluginCall.DBName;
+            _iNetPC.RunMethod("SaveChanges", checkOut, databaseName);
         }
 
-        public void CancelCheckOut()
+        public void CancelCheckOut(string checkOutName = null, string dBName = null)
         {
-            if (!(_iNetPC.PluginCall.CheckOut != 0))
-                return;
-
-            _iNetPC.RunMethod("DisconnectCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
-            _iNetPC.RunMethod("CancelCheckOut", _checkOutName, _iNetPC.PluginCall.DBName);
+            var checkOut = checkOutName ?? _checkOutName;
+            var databaseName = dBName ?? _iNetPC.PluginCall.DBName;
+            _iNetPC.RunMethod("DisconnectCheckOut", checkOut, databaseName);
+            _iNetPC.RunMethod("CancelCheckOut", checkOut, databaseName);
+            _checkOutName = string.Empty;
         }
 
         #endregion

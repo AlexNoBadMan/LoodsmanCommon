@@ -32,11 +32,7 @@ namespace LoodsmanCommon.Entities
                             IntPtr hBitmap = bitmap.GetHbitmap();
                             try
                             {
-                                BitmapSource = Imaging.CreateBitmapSourceFromHBitmap(
-                                             hBitmap,
-                                             IntPtr.Zero,
-                                             Int32Rect.Empty,
-                                             BitmapSizeOptions.FromEmptyOptions());
+                                BitmapSource = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
                             }
                             finally
                             {
