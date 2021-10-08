@@ -1,52 +1,256 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
+using LoodsmanCommon.Entities;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.IO;
-using System.Threading;
 using System.Data;
-using LoodsmanCommon.Entities;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Xml.Linq;
 
 namespace LoodsmanCommon
 {
     public interface ILoodsmanProxy
     {
-        [Obsolete("Вместо свойства следует использовать имеющиеся методы/свойства, после того как будет закончена работа над ILoodsmanProxy данное свойство будет удалено.")]
-        INetPluginCall INetPC { get; set; }
+        [Obsolete("Вместо свойства следует использовать имеющиеся методы/свойства, после того как будет закончена работа над ILoodsmanProxy данное свойство будет удалено. " +
+            "Для инициализации свойства необходимо использовать метод InitNetPluginCall, обычно используется при нажатии кнопки плагина.")]
+        INetPluginCall INetPC { get; }
+
+        /// <summary>
+        /// Метаданные конфигурации базы Лоцман.
+        /// </summary>
         ILoodsmanMeta Meta { get; }
+
+        /// <summary>
+        /// Выбранный объект в дереве Лоцман.
+        /// </summary>
         ILoodsmanObject SelectedObject { get; }
+        
+        /// <summary>
+        /// Выбранные объекты в дереве Лоцман.
+        /// </summary>
         IEnumerable<ILoodsmanObject> SelectedObjects { get; }
 
         /// <summary>
         /// Название подключенного чекаута.
         /// </summary>
         string CheckOutName { get; }
+
+        /// <summary>
+        /// Возвращает признак того, является ли пользователь, подключенный к текущей базе данных, администратором этой базы.
+        /// </summary>
         bool IsAdmin { get; }
+
+        /// <summary>
+        /// Показывает имя пользователя, который подключился к базе данных.
+        /// </summary>
         string CurrentUser { get; }
+
+        /// <summary>
+        /// Папка для хранения файлов пользователя.
+        /// </summary>
         string UserFileDir { get; }
-        int NewObject(ILoodsmanObject loodsmanObject, int isProject = 0);
-        int NewObject(string typeName, string product, int isProject = 0, string stateName = null);
+
+        /// <summary>
+        /// Инициализирует свойство INetPC.
+        /// </summary>
+        /// <remarks>
+        /// Примечание:
+        /// ** Небходимо использовать в начале метода обработчика команд!
+        /// </remarks>
+        void InitNetPluginCall(INetPluginCall iNetPC);
+
+        /// <summary>
+        /// Регистрирует в базе данных файл, находящийся на рабочем диске пользователя.
+        /// </summary>
+        /// <param name="typeName">Название типа создаваемого объекта</param>
+        /// <param name="product">Ключевой атрибут создаваемого объекта</param>
+        /// <param name="isProject">Признак того, что объект будет являться проектом</param>
+        /// <param name="stateName">Состояние вновь создаваемого объекта (если создается объект)</param>
+        ILoodsmanObject NewObject(string typeName, string product, int isProject = 0, string stateName = null);
+
+        /// <summary>
+        /// Вставляет новое или существующее изделие в редактируемый объект.
+        /// </summary>
+        /// <param name="parent">Объект родителя</param>
+        /// <param name="child">Объект потомка</param>
+        /// <param name="linkType">Название типа связи</param>
+        /// <param name="stateName">Состояние вновь создаваемого объекта (если создается объект)</param>
+        /// <param name="reuse">Устанавливает возможность повторного применения объекта</param>
+        /// <remarks>
+        /// Примечание:
+        /// <para>** reuse:
+        /// Если значение – true, то независимо от существования в базе данных такой пары связанных объектов будет создаваться еще один экземпляр связи.
+        /// Если значение – false, то при существовании в базе данных такой пары связанных объектов новый экземпляр связи создаваться не будет, при этом будет вызвано исключение.</para>
+        /// </remarks>
+        /// <returns>Возвращает идентификатор созданной связи.</returns>
         int InsertObject(ILoodsmanObject parent, ILoodsmanObject child, string linkType, string stateName = null, bool reuse = false);
+
+        /// <summary>
+        /// Вставляет новое или существующее изделие в редактируемый объект.
+        /// </summary>
+        /// <param name="parentTypeName">Тип объекта-родителя</param>
+        /// <param name="parentProduct">Значение ключевого атрибута объекта-родителя</param>
+        /// <param name="parentVersion">Номер версии объекта-родителя</param>
+        /// <param name="childTypeName">Тип объекта-потомка</param>
+        /// <param name="childProduct">Значение ключевого атрибута объекта-потомка</param>
+        /// <param name="childVersion">Номер версии объекта-потомка</param>
+        /// <param name="linkType">Название типа связи</param>
+        /// <param name="stateName">Состояние вновь создаваемого объекта (если создается объект)</param>
+        /// <param name="reuse">Устанавливает возможность повторного применения объекта</param>
+        /// <remarks>
+        /// Примечание:
+        /// <para>** reuse:
+        /// Если значение – true, то независимо от существования в базе данных такой пары связанных объектов будет создаваться еще один экземпляр связи.
+        /// Если значение – false, то при существовании в базе данных такой пары связанных объектов новый экземпляр связи создаваться не будет, при этом будет вызвано исключение.</para>
+        /// </remarks>
+        /// <returns>Возвращает идентификатор созданной связи.</returns>
         int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string linkType, string childTypeName, string childProduct, string childVersion = " ", string stateName = null, bool reuse = false);
-        int NewLink(ILoodsmanObject parent, ILoodsmanObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
-        int NewLink(int parentId, int childId, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
-        int NewLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
-        void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string idUnit = null);
+
+        /// <summary>
+        /// Добавляет связь между объектами.
+        /// </summary>
+        /// <param name="parent">Объект родителя</param>
+        /// <param name="child">Объект потомка</param>
+        /// <param name="linkType">Название типа связи</param>
+        /// <param name="minQuantity">Нижняя граница количества</param>
+        /// <param name="maxQuantity">Верхняя граница количества</param>
+        /// <param name="unitId">Уникальный идентификатор единицы измерения</param>
+        /// <returns>Возвращает идентификатор созданной связи.</returns>
+        int NewLink(ILoodsmanObject parent, ILoodsmanObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
+
+        /// <summary>
+        /// Добавляет связь между объектами.
+        /// </summary>
+        /// <param name="parentId">Идентификатор версии объекта-родителя</param>
+        /// <param name="childId">Идентификатор версии объекта-потомка</param>
+        /// <param name="linkType">Название типа связи</param>
+        /// <param name="minQuantity">Нижняя граница количества</param>
+        /// <param name="maxQuantity">Верхняя граница количества</param>
+        /// <param name="unitId">Уникальный идентификатор единицы измерения</param>
+        /// <returns>Возвращает идентификатор созданной связи.</returns>
+        int NewLink(int parentId, int childId, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
+
+        /// <summary>
+        /// Добавляет связь между объектами.
+        /// </summary>
+        /// <param name="parentTypeName">Тип объекта-родителя</param>
+        /// <param name="parentProduct">Значение ключевого атрибута объекта-родителя</param>
+        /// <param name="parentVersion">Номер версии объекта-родителя</param>
+        /// <param name="childTypeName">Тип объекта-потомка</param>
+        /// <param name="childProduct">Значение ключевого атрибута объекта-потомка</param>
+        /// <param name="childVersion">Номер версии объекта-потомка</param>
+        /// <param name="linkType">Название типа связи</param>
+        /// <param name="minQuantity">Нижняя граница количества</param>
+        /// <param name="maxQuantity">Верхняя граница количества</param>
+        /// <param name="unitId">Уникальный идентификатор единицы измерения</param>
+        /// <returns>Возвращает идентификатор созданной связи.</returns>
+        int NewLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
+
+        /// <summary>
+        /// Обновляет связь между объектами.
+        /// </summary>
+        /// <param name="idLink">Идентификатор связи</param>
+        /// <param name="minQuantity">Нижняя граница количества</param>
+        /// <param name="maxQuantity">Верхняя граница количества</param>
+        /// <param name="unitId">Уникальный идентификатор единицы измерения</param>
+        void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
+
+        /// <summary>
+        /// Удаляет связь между объектами.
+        /// </summary>
+        /// <param name="idLink">Идентификатор связи</param>
         void RemoveLink(int idLink);
-        List<ILoodsmanObject> GetLinkedFast(int id, string linkType, bool inverse = false);
+
+        /// <summary>
+        /// Возвращает список объектов, привязанных соответствующей связью.
+        /// </summary>
+        /// <param name="objectId">Идентификатор версии объекта</param>
+        /// <param name="linkType">Название типа связи</param>
+        /// <param name="inverse">Направление (true – обратное, false – прямое)</param>
+        List<ILoodsmanObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
+        
+        [Obsolete]
         void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion);
-        void UpAttrValueById(int id, string attributeName, string attributeValue, object unit = null);
-        string RegistrationOfFile(int idDocumet, string filePath, string fileName);
-        void SaveSecondaryView(int docId, string pathToPdf);
+
+        /// <summary>
+        /// Добавляет, удаляет, обновляет значение атрибута объекта.
+        /// </summary>
+        /// <param name="objectId">Идентификатор версии объекта</param>
+        /// <param name="attributeName">Название атрибута</param>
+        /// <param name="attributeValue">Значение атрибута. Если null или string.Empty то атрибут будет помечен на удаление</param>
+        /// <param name="unitId">Уникальный идентификатор единицы измерения</param>
+        void UpAttrValueById(int objectId, string attributeName, object attributeValue, string unitId = null);
+
+        /// <summary>
+        /// Регистрирует в базе данных файл, находящийся на рабочем диске пользователя.
+        /// </summary>
+        /// <param name="documentId">Идентификатор версии объекта</param>
+        /// <param name="fileName">Название файла (должен быть уникальным)</param>
+        /// <param name="filePath">Путь к файлу относительно диска из настройки "Буква рабочего диска", доступный серверу приложений</param>  
+        /// <remarks>
+        /// Примечание:
+        /// Если путь указан не на рабочий диск Лоцмана (UserFileDir), то файл будет скопирован на рабочий диск.
+        /// </remarks>
+        string RegistrationOfFile(int documentId, string fileName, string filePath);
+
+        /// <summary>
+        /// Регистрирует в базе данных файл, находящийся на рабочем диске пользователя.
+        /// </summary>
+        /// <param name="typeName">Название типа</param>
+        /// <param name="product">Ключевой атрибут</param>
+        /// <param name="version">Версия объекта</param>
+        /// <param name="fileName">Название файла (должен быть уникальным)</param>        
+        /// <param name="filePath">Путь к файлу относительно диска из настройки "Буква рабочего диска"</param>  
+        /// <remarks>
+        /// Примечание:
+        /// Если путь указан не на рабочий диск Лоцмана (UserFileDir), то файл будет скопирован на рабочий диск.
+        /// </remarks>
+        string RegistrationOfFile(string typeName, string product, string version, string fileName, string filePath);
+
+        /// <summary>
+        /// Сохраняет вторичное представление документа.
+        /// </summary>
+        /// <param name="documentId">Идентификатор версии объекта</param>
+        /// <param name="filePath">Путь к файлу вторичного представления, относительно диска из настройки "Буква рабочего диска", доступный серверу приложений</param>        
+        /// <param name="removeAfterSave">Признак удаления файла с рабочего диска, после сохранения</param>        
+        /// <remarks>
+        /// Примечание:
+        /// Если путь указан не на рабочий диск Лоцмана (UserFileDir), то файл будет скопирован на рабочий диск.
+        /// </remarks>
+        void SaveSecondaryView(int documentId, string filePath, bool removeAfterSave = true);
+
+        /// <summary>
+        /// Возвращает все версии заданного объекта или "похожего" объекта, если в базе данных установлена соответствующая настройка.
+        /// </summary>
+        /// <param name="typeName">Название типа</param>
+        /// <param name="product">Ключевой атрибут</param>
         bool CheckUniqueName(string typeName, string product);
-        DataTable GetReport(string reportName, IEnumerable<int> objectsIds, string reportParams = null);
+
+        /// <summary>
+        /// Возвращает данные для формирования отчета.
+        /// </summary>
+        /// <param name="reportName">Название хранимой процедуры</param>
+        /// <param name="objectsIds">Список идентификаторов версий объектов</param>
+        /// <param name="reportParams">Параметры отчёта формата "параметр1=значение1;параметр2=значение2"</param>        
+        /// <remarks>
+        /// Примечание:
+        /// Если отчет не требует идентификаторов, то необходимо передать null. Параметры отчёта должны быть формата "параметр1=значение1;параметр2=значение2"
+        /// </remarks>
+        DataTable GetReport(string reportName, IEnumerable<int> objectsIds = null, string reportParams = null);
+
+        /// <summary>
+        /// Возвращает объекты с заполнеными свойствами.
+        /// </summary>
+        /// <param name="objectsIds">Список идентификаторов версий объектов</param>
         List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds);
 
         /// <summary>
         /// Проверка на существование бизнес объекта в базе Лоцман.
         /// </summary>
+        /// <param name="typeName">Название типа</param>
+        /// <param name="uniqueId">Ключевой атрибут формата ***BOSimple</param>
         /// <remarks>
         /// Примечание:
         /// Если объект не существует то свойство возвращаемого объекта ILoodsmanObject.Id будет равен 0.
@@ -62,8 +266,8 @@ namespace LoodsmanCommon
         /// <summary>
         /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.
         /// </summary>
-        /// <param name="id">Идентификатор версии объекта</param>
-        void KillVersion(int id);
+        /// <param name="objectId">Идентификатор версии объекта</param>
+        void KillVersion(int objectId);
 
         /// <summary>
         /// Помечает объекты, находящиеся на изменении, как подлежащий удалению при возврате в базу данных.
@@ -94,9 +298,9 @@ namespace LoodsmanCommon
         /// <para>** Для дальнейшей работы с объектом необходимо подключиться к чекауту методом ConnectToCheckOut.</para>
         /// </remarks>
         string CheckOut(string typeName = null, string product = null, string version = null, CheckOutMode mode = CheckOutMode.Default);
-        
+
         /// <summary>
-        /// Берет в работу текущий SelectedObject, если он не был в работе (Нет необходимости использовать метод ConnectToCheckOut).
+        /// Берет в работу текущий SelectedObject, если он уже находится в работе просто возращает PluginCall.CheckOut. Будет автоматически подключен к чекауту методом ConnectToCheckOut.
         /// </summary>
         /// <returns>Возвращает внутреннее название редактируемого объекта (название чекаута).</returns>
         string SelectedObjectCheckOut(CheckOutMode mode = CheckOutMode.Default);
@@ -111,7 +315,7 @@ namespace LoodsmanCommon
         /// При пустых значении: checkOutName - метод не отработает, dBName - используется PluginCall.DBName. 
         /// </remarks>
         void ConnectToCheckOut(string checkOutName = null, string dBName = null);
-        
+
         /// <summary>
         /// Делает объект доступным для изменения только в рамках текущего чекаута (блокирует его).
         /// </summary>
@@ -169,10 +373,11 @@ namespace LoodsmanCommon
         public virtual INetPluginCall INetPC
         {
             get => _iNetPC;
-            set
+            private set
             {
                 _iNetPC = value;
                 _uniqueNames.Clear();
+                _notUniqueNames.Clear();
             }
         }
         public ILoodsmanMeta Meta => _loodsmanMeta;
@@ -233,6 +438,11 @@ namespace LoodsmanCommon
             _loodsmanMeta = loodsmanMeta;
         }
 
+        public void InitNetPluginCall(INetPluginCall iNetPC)
+        {
+            INetPC = iNetPC;
+        }
+
         private IEnumerable<ILoodsmanObject> GetSelectedObjects()
         {
             var ids = _iNetPC.RunMethod("CGetTreeSelectedIDs").ToString().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
@@ -242,18 +452,20 @@ namespace LoodsmanCommon
         }
 
         #region NewObject
-        public int NewObject(ILoodsmanObject loodsmanObject, int isProject = 0)
-        {
-            loodsmanObject.State = StateIfNullGetDefault(loodsmanObject.Type, loodsmanObject.State);
-            loodsmanObject.Id = NewObject(loodsmanObject.Type, loodsmanObject.State, loodsmanObject.Product, isProject);
-            loodsmanObject.Version = _loodsmanMeta.Types.First(x => x.Name == loodsmanObject.Type).Versioned ? DEFAULT_NEW_VERSION : string.Empty;
-            return loodsmanObject.Id;
-            //Метод NewObject отрабатывает даже если объект с такими Type и Product уже есть в базе, просто вернёт Id, присвоение Version в таком случае ошибочно
-        }
 
-        public int NewObject(string typeName, string product, int isProject = 0, string stateName = null)
+        public ILoodsmanObject NewObject(string typeName, string product, int isProject = 0, string stateName = null)
         {
-            return NewObject(typeName, StateIfNullGetDefault(typeName, stateName), product, isProject);
+            var state = StateIfNullGetDefault(typeName, stateName);
+            var loodsmanObject = new LoodsmanObject()
+            {
+                Id = NewObject(typeName, state, product, isProject),
+                Type = typeName,
+                Product = product,
+                Version = DEFAULT_NEW_VERSION,
+                IsDocument = _loodsmanMeta.Types.First(x => x.Name == typeName).IsDocument,
+                State = state,
+            };
+            return loodsmanObject;
         }
 
         private int NewObject(string typeName, string stateName, string product, int isProject)
@@ -262,7 +474,7 @@ namespace LoodsmanCommon
                 throw new ArgumentException($"{nameof(stateName)} - состояние не может быть пустым", nameof(stateName));
 
             if (string.IsNullOrEmpty(product))
-                throw new ArgumentException($"{nameof(product)} - ключевой атрибут не может быть пустым", nameof(product)); 
+                throw new ArgumentException($"{nameof(product)} - ключевой атрибут не может быть пустым", nameof(product));
 
             return (int)_iNetPC.RunMethod("NewObject", typeName, stateName, product, isProject);
         }
@@ -305,7 +517,7 @@ namespace LoodsmanCommon
             return (int)_iNetPC.RunMethod("InsertObject", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, linkType, stateName, reuse);
         }
 
-        public int NewLink(ILoodsmanObject parent, ILoodsmanObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null)
+        public int NewLink(ILoodsmanObject parent, ILoodsmanObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
         {
             CheckLoodsmanObjectsForError(parent, child);
             if (parent.Id <= 0 && child.Id <= 0)
@@ -316,22 +528,22 @@ namespace LoodsmanCommon
             else
             {
                 if (parent.Id <= 0)
-                    NewObject(parent);
+                    NewObject(parent.Type, parent.Product);
 
                 if (child.Id <= 0)
-                    NewObject(child);
+                    NewObject(child.Type, child.Product);
             }
-            return NewLink(parent.Id, parent.Type, parent.Product, parent.Version, child.Id, child.Type, child.Product, child.Version, linkType, minQuantity, maxQuantity, idUnit);
+            return NewLink(parent.Id, parent.Type, parent.Product, parent.Version, child.Id, child.Type, child.Product, child.Version, linkType, minQuantity, maxQuantity, unitId);
         }
 
 
-        public int NewLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null)
+        public int NewLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
         {
             CheckKeyAttributesForErrors(parentTypeName, parentProduct, childTypeName, childProduct);
-            return NewLink(0, parentTypeName, parentProduct, parentVersion, 0, childTypeName, childProduct, childVersion, linkType, minQuantity, maxQuantity, idUnit);
+            return NewLink(0, parentTypeName, parentProduct, parentVersion, 0, childTypeName, childProduct, childVersion, linkType, minQuantity, maxQuantity, unitId);
         }
 
-        public int NewLink(int parentId, int childId, string linkType, double minQuantity = 0, double maxQuantity = 0, string idUnit = null)
+        public int NewLink(int parentId, int childId, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
         {
             if (parentId <= 0)
                 throw new ArgumentException($"{nameof(parentId)} - отсутствует или неверно задан идентификатор объекта", nameof(parentId));
@@ -339,12 +551,12 @@ namespace LoodsmanCommon
             if (childId <= 0)
                 throw new ArgumentException($"{nameof(childId)} - отсутствует или неверно задан идентификатор объекта", nameof(childId));
 
-            return NewLink(parentId, string.Empty, string.Empty, string.Empty, childId, string.Empty, string.Empty, string.Empty, linkType, minQuantity, maxQuantity, idUnit);
+            return NewLink(parentId, string.Empty, string.Empty, string.Empty, childId, string.Empty, string.Empty, string.Empty, linkType, minQuantity, maxQuantity, unitId);
         }
 
-        public void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string idUnit = null)
+        public void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
         {
-            UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, minQuantity, maxQuantity, idUnit, false, string.Empty);
+            UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, minQuantity, maxQuantity, unitId, false, string.Empty);
         }
 
         public void RemoveLink(int idLink)
@@ -352,7 +564,7 @@ namespace LoodsmanCommon
             UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, 0, 0, string.Empty, true, string.Empty);
         }
 
-        private int NewLink(int parentId, string parentTypeName, string parentProduct, string parentVersion, int childId, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity, double maxQuantity, string idUnit)
+        private int NewLink(int parentId, string parentTypeName, string parentProduct, string parentVersion, int childId, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity, double maxQuantity, string unitId)
         {
             //if (string.IsNullOrEmpty(linkType))
             //linkInfo = _loodsmanMeta.LinksInfoBetweenTypes.SingleOrDefault(x => (x.TypeName1 == parentTypeName && x.TypeName2 == childTypeName) || (x.TypeName1 == childTypeName && x.TypeName2 == parentTypeName));
@@ -369,12 +581,12 @@ namespace LoodsmanCommon
                 minQuantity = 1;
                 maxQuantity = 1;
             }
-            return (int)_iNetPC.RunMethod("NewLink", parentId, parentTypeName, parentProduct, parentVersion, childId, childTypeName, childProduct, childVersion, minQuantity, maxQuantity, idUnit, linkType);
+            return (int)_iNetPC.RunMethod("NewLink", parentId, parentTypeName, parentProduct, parentVersion, childId, childTypeName, childProduct, childVersion, minQuantity, maxQuantity, unitId, linkType);
         }
 
-        private int UpLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, int idLink, double minQuantity, double maxQuantity, string idUnit, bool toDel, string linkType)
+        private int UpLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, int idLink, double minQuantity, double maxQuantity, string unitId, bool toDel, string linkType)
         {
-            return (int)_iNetPC.RunMethod("UpLink", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, idLink, minQuantity, maxQuantity, idUnit, toDel, linkType);
+            return (int)_iNetPC.RunMethod("UpLink", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, idLink, minQuantity, maxQuantity, unitId, toDel, linkType);
         }
 
         private static void CheckKeyAttributesForErrors(string parentTypeName, string parentProduct, string childTypeName, string childProduct)
@@ -446,12 +658,17 @@ namespace LoodsmanCommon
             childVersion = linkInfo["_CHILD_VERSION"] as string;
         }
 
-        public void UpAttrValueById(int id, string attributeName, string attributeValue, object unit = null) //Переделать attributeValue в object default()
+        public void UpAttrValueById(int id, string attributeName, object attributeValue, string unitId = null) //Переделать attributeValue в object default()
         {
-            _iNetPC.RunMethod("UpAttrValueById", id, attributeName, attributeValue, unit, string.IsNullOrEmpty(attributeValue));
+            _iNetPC.RunMethod("UpAttrValueById", id, attributeName, attributeValue, unitId, IsNullOrDefault(attributeValue));
         }
 
-        public string RegistrationOfFile(int idDocumet, string filePath, string fileName)//, string workDirFilePath)
+        public static bool IsNullOrDefault<T>(T value)
+        {
+            return value == null || (value is string strValue && strValue == string.Empty);
+        }
+
+        public string RegistrationOfFile(int documentId, string fileName, string filePath)
         {
             try
             {
@@ -461,10 +678,7 @@ namespace LoodsmanCommon
                 //    Directory.CreateDirectory(workDirPath);
                 //var newPath = $"{workDirPath}\\{Product} - {Name} ({TypeName}){FileNode.Info.Extension}";
                 //Лоцман не чистит за собой папки, поэтому пока без структуры папок и ложим всё в корень W:\
-                var newPath = $"{UserFileDir}\\{fileName}";
-                File.Copy(filePath, newPath, true);
-                _iNetPC.RunMethod("RegistrationOfFile", string.Empty, string.Empty, string.Empty, idDocumet, fileName, string.Empty);
-                return newPath;
+                return RegistrationOfFile(string.Empty, string.Empty, string.Empty, documentId, fileName, filePath); ;
             }
             catch// (Exception ex)
             {
@@ -473,10 +687,54 @@ namespace LoodsmanCommon
                 //logger?
             }
         }
-
-        public void SaveSecondaryView(int docId, string pathToPdf)
+        public string RegistrationOfFile(string typeName, string product, string version, string fileName, string filePath)
         {
-            _iNetPC.RunMethod("SaveSecondaryView", docId, pathToPdf);
+            try
+            {
+                return RegistrationOfFile(typeName, product, version, 0, fileName, filePath);
+            }
+            catch
+            {
+                return string.Empty;
+                //logger?
+            }
+        }
+
+        private string RegistrationOfFile(string typeName, string product, string version, int documentId, string fileName, string filePath)
+        {
+            filePath = CopyIfNotOnWorkDir(filePath);
+            _iNetPC.RunMethod("RegistrationOfFile", typeName, product, version, documentId, fileName, filePath);
+            return filePath;
+        }
+
+        public void SaveSecondaryView(int docId, string filePath, bool removeAfterSave = true)
+        {
+            filePath = CopyIfNotOnWorkDir(filePath);
+            _iNetPC.RunMethod("SaveSecondaryView", docId, filePath);
+
+            if (removeAfterSave)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        private string CopyIfNotOnWorkDir(string filePath)
+        {
+            if (!filePath.Contains(UserFileDir))
+            {
+                var newPath = $@"{UserFileDir}\{Path.GetFileName(filePath)}";
+                File.Copy(filePath, newPath, true);
+                filePath = newPath;
+            }
+
+            return filePath;
         }
 
         public bool CheckUniqueName(string typeName, string product)
@@ -518,12 +776,14 @@ namespace LoodsmanCommon
             var xmlString = (string)_iNetPC.RunMethod("PreviewBoObject", typeName, uniqueId);
             var xDocument = XDocument.Parse(xmlString);
             var elements = xDocument.Descendants("PreviewBoObjectResult").Elements();
-            var loodsmanObject = new LoodsmanObject();
-            loodsmanObject.Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0;
-            loodsmanObject.Type = typeName; 
-            loodsmanObject.Product = elements.FirstOrDefault(x => x.Name == "Product").Value;
-            loodsmanObject.State = elements.FirstOrDefault(x => x.Name == "State")?.Value ?? StateIfNullGetDefault(typeName);
-            loodsmanObject.Version = elements.FirstOrDefault(x => x.Name == "Version")?.Value;
+            var loodsmanObject = new LoodsmanObject
+            {
+                Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0,
+                Type = typeName,
+                Product = elements.FirstOrDefault(x => x.Name == "Product").Value,
+                State = elements.FirstOrDefault(x => x.Name == "State")?.Value ?? StateIfNullGetDefault(typeName),
+                Version = elements.FirstOrDefault(x => x.Name == "Version")?.Value
+            };
             return loodsmanObject;
         }
 
@@ -608,4 +868,3 @@ namespace LoodsmanCommon
         #endregion
     }
 }
- 

@@ -52,6 +52,10 @@ namespace LoodsmanCommon
             // || (iNetPC.PluginCall.Selected.LockLevel == PDMObjects.PDMLockLevels.SelfLock && iNetPC.PluginCall.CheckOut != 0));
         }
 
+        /// <summary>
+        /// Инициализация свойств плагина, рекомендуется переопределить метод с вызовом base.
+        /// </summary>
+        /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
         protected virtual void PluginInit(INetPluginCall iNetPC)
         {
             _loodsmanApplication = GetLoodsmanApplication(iNetPC);
@@ -60,14 +64,22 @@ namespace LoodsmanCommon
             _loodsmanProxy = GetLoodsmanProxy(iNetPC);
         }
 
+        /// <summary>
+        /// Возвращает прокси объект, имеет смысл переопределять в случае собственной реализации интерфейса.
+        /// </summary>
+        /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
         protected virtual ILoodsmanProxy GetLoodsmanProxy(INetPluginCall iNetPC)
         {
-            return new LoodsmanProxy(iNetPC, _loodsmanMeta);
+            return _loodsmanProxy ?? new LoodsmanProxy(iNetPC, _loodsmanMeta);
         }
 
+        /// <summary>
+        /// Возвращает объект меты, имеет смысл переопределять в случае собственной реализации интерфейса.
+        /// </summary>
+        /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
         protected virtual ILoodsmanMeta GetLoodsmanMeta(INetPluginCall iNetPC)
         {
-            return new LoodsmanMeta(iNetPC);
+            return _loodsmanMeta ?? new LoodsmanMeta(iNetPC);
         }
 
         /// <summary>
