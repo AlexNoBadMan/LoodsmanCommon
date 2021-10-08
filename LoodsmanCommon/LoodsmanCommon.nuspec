@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>$version$</version>
+    <version>1.3.0</version>
     <title>LoodsmanCommon</title>
     <authors>Аскон-Казахстан</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/AlexNoBadMan/LoodsmanCommon</projectUrl>
     <description>Library for working with Loodsman API</description>
-    <releaseNotes>First release.</releaseNotes>
+    <releaseNotes>Added comments.</releaseNotes>
     <copyright>Copyright 2021</copyright>
     <tags>Ascon Loodsman</tags>
     <dependencies>
