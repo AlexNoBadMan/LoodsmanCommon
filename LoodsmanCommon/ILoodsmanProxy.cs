@@ -312,7 +312,7 @@ namespace LoodsmanCommon
         /// <param name="dBName">Название базы данных</param>
         /// <remarks>
         /// Примечание:
-        /// При пустых значении: checkOutName - метод не отработает, dBName - используется PluginCall.DBName. 
+        /// При пустых значении: checkOutName - используется ILoodsmanProxy.CheckOutName, dBName - используется PluginCall.DBName. 
         /// </remarks>
         void ConnectToCheckOut(string checkOutName = null, string dBName = null);
 
