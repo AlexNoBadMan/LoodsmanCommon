@@ -812,7 +812,7 @@ namespace LoodsmanCommon
         #region CheckOut
         public string CheckOut(string typeName, string product, string version, CheckOutMode mode = CheckOutMode.Default)
         {
-            return (string)_iNetPC.RunMethod("CheckOut", typeName, product, version, (int)mode);
+            return _checkOutName = (string)_iNetPC.RunMethod("CheckOut", typeName, product, version, (int)mode);
         }
 
         public string SelectedObjectCheckOut(CheckOutMode mode = CheckOutMode.Default)
@@ -828,11 +828,11 @@ namespace LoodsmanCommon
 
         public void ConnectToCheckOut(string checkOutName = null, string dBName = null)
         {
-            if (string.IsNullOrEmpty(checkOutName))
+            var localCheckOutName = checkOutName ?? _checkOutName;
+            if (string.IsNullOrEmpty(localCheckOutName))
                 return;
 
-            _checkOutName = checkOutName;
-            _iNetPC.RunMethod("ConnectToCheckOut", checkOutName, dBName ?? _iNetPC.PluginCall.DBName);
+            _iNetPC.RunMethod("ConnectToCheckOut", localCheckOutName, dBName ?? _iNetPC.PluginCall.DBName);
         }
 
         public void AddToCheckOut(int objectId, bool isRoot = false)
@@ -842,26 +842,26 @@ namespace LoodsmanCommon
 
         public void CheckIn(string checkOutName = null, string dBName = null)
         {
-            var checkOut = checkOutName ?? _checkOutName;
-            var databaseName = dBName ?? _iNetPC.PluginCall.DBName;
-            _iNetPC.RunMethod("DisconnectCheckOut", checkOut, databaseName);
-            _iNetPC.RunMethod("CheckIn", checkOut, databaseName);
+            var localCheckOutName = checkOutName ?? _checkOutName;
+            var localDBName = dBName ?? _iNetPC.PluginCall.DBName;
+            _iNetPC.RunMethod("DisconnectCheckOut", localCheckOutName, localDBName);
+            _iNetPC.RunMethod("CheckIn", localCheckOutName, localDBName);
             _checkOutName = string.Empty;
         }
 
         public void SaveChanges(string checkOutName = null, string dBName = null)
         {
-            var checkOut = checkOutName ?? _checkOutName;
-            var databaseName = dBName ?? _iNetPC.PluginCall.DBName;
-            _iNetPC.RunMethod("SaveChanges", checkOut, databaseName);
+            var localCheckOutName = checkOutName ?? _checkOutName;
+            var localDBName = dBName ?? _iNetPC.PluginCall.DBName;
+            _iNetPC.RunMethod("SaveChanges", localCheckOutName, localDBName);
         }
 
         public void CancelCheckOut(string checkOutName = null, string dBName = null)
         {
-            var checkOut = checkOutName ?? _checkOutName;
-            var databaseName = dBName ?? _iNetPC.PluginCall.DBName;
-            _iNetPC.RunMethod("DisconnectCheckOut", checkOut, databaseName);
-            _iNetPC.RunMethod("CancelCheckOut", checkOut, databaseName);
+            var localCheckOutName = checkOutName ?? _checkOutName;
+            var localDBName = dBName ?? _iNetPC.PluginCall.DBName;
+            _iNetPC.RunMethod("DisconnectCheckOut", localCheckOutName, localDBName);
+            _iNetPC.RunMethod("CancelCheckOut", localCheckOutName, localDBName);
             _checkOutName = string.Empty;
         }
 
