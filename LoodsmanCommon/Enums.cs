@@ -1,6 +1,26 @@
 ﻿namespace LoodsmanCommon
 {
     /// <summary>
+    /// Направление связи
+    /// </summary>
+    public enum LinkDirection
+    {
+        /// <summary>
+        /// Прямая связь
+        /// </summary>
+        Forward = 1,
+        /// <summary>
+        /// Обратная связь
+        /// </summary>
+        Backward = -1,
+        /// <summary>
+        /// Прямая и обратная связь
+        /// </summary>
+        ForwardAndBackward = 0
+    }
+
+
+    /// <summary>
     /// Режим чекаута
     /// </summary>
     public enum CheckOutMode
@@ -60,7 +80,7 @@
     /// <summary>
     /// Типы атрибутов
     /// </summary>
-    public enum AttributeType
+    public enum AttributeType : short
     {
         /// <summary>
         /// Строка
