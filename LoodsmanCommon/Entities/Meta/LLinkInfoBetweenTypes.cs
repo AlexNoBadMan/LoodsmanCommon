@@ -1,14 +1,7 @@
 ﻿using System.Data;
 
-namespace LoodsmanCommon.Entities
+namespace LoodsmanCommon.Entities.Meta
 {
-    public enum LinkDirection
-    {
-        Forward = 1,
-        Backward = -1,
-        ForwardAndBackward = 0
-    }
-
     public class LLinkInfoBetweenTypes
     {
         public int Id { get; }

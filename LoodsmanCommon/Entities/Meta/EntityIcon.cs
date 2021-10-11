@@ -8,16 +8,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 
-namespace LoodsmanCommon.Entities
+namespace LoodsmanCommon.Entities.Meta
 {
     public abstract class EntityIcon : Entity
     {
         public Image Icon { get; }
         public ImageSource BitmapSource { get; }
-        public EntityIcon(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
-        {
-            var iconField = dataRow["_ICON"];
 
+        public EntityIcon(int id, string name, object iconField) : base(id, name)
+        {
             if (!Convert.IsDBNull(iconField))
             {
                 using (var icon = new MemoryStream((byte[])iconField))
@@ -46,6 +45,9 @@ namespace LoodsmanCommon.Entities
                 }
             }
         }
+
+        internal EntityIcon(DataRow dataRow, string nameField = "_NAME") : this((int)dataRow["_ID"], dataRow[nameField] as string, dataRow["_ICON"])
+        { }
 
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]
         private static extern bool DeleteObject(IntPtr hObject);

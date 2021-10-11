@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 
-namespace LoodsmanCommon.Entities
+namespace LoodsmanCommon.Entities.Meta
 {
     public class LType : EntityIcon
     {

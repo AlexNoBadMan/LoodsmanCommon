@@ -1,7 +1,7 @@
 ﻿using System.Data;
 
 
-namespace LoodsmanCommon.Entities
+namespace LoodsmanCommon.Entities.Meta
 {
     public class LLink : EntityIcon
     {
