@@ -11,10 +11,10 @@ namespace LoodsmanCommon
 {
     public abstract class LoodsmanPluginBase
     {
-        protected ILoodsmanApplication _loodsmanApplication;
         protected IntPtr _appHandle;
-        protected ILoodsmanProxy _loodsmanProxy;
-        protected ILoodsmanMeta _loodsmanMeta;
+        protected ILoodsmanApplication _application;
+        protected ILoodsmanProxy _proxy;
+        protected ILoodsmanMeta _meta;
 
         protected static ILoodsmanApplication GetLoodsmanApplication(INetPluginCall iNetPC)
         {
@@ -30,7 +30,7 @@ namespace LoodsmanCommon
 
         public virtual void OnConnectToDb(INetPluginCall iNetPC)
         {
-            if (_loodsmanProxy is null && iNetPC != null)
+            if (_proxy is null && iNetPC != null)
                 PluginInit(iNetPC);
         }
 
@@ -58,10 +58,10 @@ namespace LoodsmanCommon
         /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
         protected virtual void PluginInit(INetPluginCall iNetPC)
         {
-            _loodsmanApplication = GetLoodsmanApplication(iNetPC);
-            _appHandle = new IntPtr(_loodsmanApplication.AppHandle);
-            _loodsmanMeta = GetLoodsmanMeta(iNetPC);
-            _loodsmanProxy = GetLoodsmanProxy(iNetPC);
+            _application = GetLoodsmanApplication(iNetPC);
+            _appHandle = new IntPtr(_application.AppHandle);
+            _meta = GetLoodsmanMeta(iNetPC);
+            _proxy = GetLoodsmanProxy(iNetPC);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace LoodsmanCommon
         /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
         protected virtual ILoodsmanProxy GetLoodsmanProxy(INetPluginCall iNetPC)
         {
-            return _loodsmanProxy ?? new LoodsmanProxy(iNetPC, _loodsmanMeta);
+            return _proxy ?? new LoodsmanProxy(iNetPC, _meta);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace LoodsmanCommon
         /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
         protected virtual ILoodsmanMeta GetLoodsmanMeta(INetPluginCall iNetPC)
         {
-            return _loodsmanMeta ?? new LoodsmanMeta(iNetPC);
+            return _meta ?? new LoodsmanMeta(iNetPC);
         }
 
         /// <summary>
