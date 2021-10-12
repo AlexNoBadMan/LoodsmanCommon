@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using LoodsmanCommon.Entities;
-
+using LoodsmanCommon.Entities.Meta;
+using LoodsmanCommon.Extensions;
 
 namespace LoodsmanCommon
 {
@@ -22,104 +22,27 @@ namespace LoodsmanCommon
 
     internal class LoodsmanMeta : ILoodsmanMeta
     {
-        private List<LType> _types;
-        private List<LLink> _links;
-        private List<LState> _states;
-        private List<LAttribute> _attributes;
-        private List<LProxyUseCase> _proxyUseCases;
-        private List<LLinkInfoBetweenTypes> _linksInfoBetweenTypes;
+        private LType[] _types;
+        private LLink[] _links;
+        private LState[] _states;
+        private LAttribute[] _attributes;
+        private LProxyUseCase[] _proxyUseCases;
+        private LLinkInfoBetweenTypes[] _linksInfoBetweenTypes;
         private readonly INetPluginCall _iNetPC;
 
-        public IEnumerable<LType> Types
-        {
-            get
-            {
-                if (_types is null)
-                {
-                    _types = new List<LType>();
-                    using (var dataTable = _iNetPC.GetDataTable("GetTypeListEx"))
-                        _types.AddRange(dataTable.Select().Select(x => new LType(x, Attributes, States)));
-                }
-                return _types;
-            }
-        }
-
-        public IEnumerable<LLink> Links
-        {
-            get
-            {
-                if (_links is null)
-                {
-                    _links = new List<LLink>();
-                    using (var dataTable = _iNetPC.GetDataTable("GetLinkList"))
-                        _links.AddRange(dataTable.Select().Select(x => new LLink(x)));
-                }
-                return _links;
-            }
-        }
-
-        public IEnumerable<LState> States
-        {
-            get
-            {
-                if (_states is null)
-                {
-                    _states = new List<LState>();
-                    using (var dataTable = _iNetPC.GetDataTable("GetStateList"))
-                        _states.AddRange(dataTable.Select().Select(x => new LState(x)));
-                }
-                return _states;
-            }
-        }
-
-        public IEnumerable<LAttribute> Attributes
-        {
-            get
-            {
-                if (_attributes is null)
-                {
-                    _attributes = new List<LAttribute>();
-                    using (var dataTable = _iNetPC.GetDataTable("GetAttributeList2", 0))
-                        _attributes.AddRange(dataTable.Select().Select(x => new LAttribute(x)));
-                }
-                return _attributes;
-            }
-        }
-
-        public IEnumerable<LProxyUseCase> ProxyUseCases
-        {
-            get
-            {
-                if (_proxyUseCases is null)
-                {
-                    _proxyUseCases = new List<LProxyUseCase>();
-                    using (var dataTable = _iNetPC.GetDataTable("GetProxyUseCases", 0, 0, 0))
-                        _proxyUseCases.AddRange(dataTable.Select().Select(x => new LProxyUseCase(x)));
-                }
-                return _proxyUseCases;
-            }
-        }
-        
-        public IEnumerable<LLinkInfoBetweenTypes> LinksInfoBetweenTypes 
-        { 
-            get 
-            {
-                if (_linksInfoBetweenTypes is null)
-                {
-                    _linksInfoBetweenTypes = new List<LLinkInfoBetweenTypes>();
-                    using (var dataTable = _iNetPC.GetDataTable("GetLinkListEx"))
-                        FillLinksInfoBetweenTypes(dataTable, _linksInfoBetweenTypes);
-                }
-                return _linksInfoBetweenTypes; 
-            } 
-        }
+        public IEnumerable<LType> Types => _types ??= _iNetPC.Native_GetTypeListEx().Select().Select(x => new LType(_iNetPC, x, Attributes, States)).ToArray();
+        public IEnumerable<LLink> Links => _links ??= _iNetPC.Native_GetLinkList().Select().Select(x => new LLink(x)).ToArray();
+        public IEnumerable<LState> States => _states ??= _iNetPC.Native_GetStateList().Select().Select(x => new LState(x)).ToArray();
+        public IEnumerable<LAttribute> Attributes => _attributes ??= _iNetPC.Native_GetAttributeList().Select().Select(x => new LAttribute(x)).ToArray();
+        public IEnumerable<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().Select().Select(x => new LProxyUseCase(x)).ToArray();
+        public IEnumerable<LLinkInfoBetweenTypes> LinksInfoBetweenTypes => _linksInfoBetweenTypes ??= GetLinksInfoBetweenTypes(_iNetPC.Native_GetLinkListEx()).ToArray();
 
         public LoodsmanMeta(INetPluginCall iNetPC)
         {
             _iNetPC = iNetPC;
         }
 
-        private static void FillLinksInfoBetweenTypes(DataTable dataTable, List<LLinkInfoBetweenTypes> linkInfos)
+        private static IEnumerable<LLinkInfoBetweenTypes> GetLinksInfoBetweenTypes(DataTable dataTable)
         {
             /* Метод GetLinkListEx возвращает данные в которых есть дубликаты
                Например Если связь горизонтальная
@@ -148,7 +71,7 @@ namespace LoodsmanCommon
                 else
                 {
                     previousLinkInfo = currentLinkInfo;
-                    linkInfos.Add(currentLinkInfo);
+                    yield return currentLinkInfo;
                 }
             }
         }

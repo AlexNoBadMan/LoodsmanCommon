@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>8.0</LangVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -25,6 +26,7 @@
     <WarningLevel>4</WarningLevel>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\Release\LoodsmanCommon.xml</DocumentationFile>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,6 +36,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ascon.Plm.Loodsman.PluginSDK">
@@ -51,22 +54,26 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataRowExtensions.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\EntityIcon.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Extensions\DataRowExtensions.cs" />
+    <Compile Include="Entities\LObjectAttribute.cs" />
+    <Compile Include="Entities\Meta\Entity.cs" />
+    <Compile Include="Entities\Meta\EntityIcon.cs" />
+    <Compile Include="Entities\Meta\LTypeAttribute.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="ILoodsmanMeta.cs" />
     <Compile Include="ILoodsmanObject.cs" />
     <Compile Include="ILoodsmanProxy.cs" />
-    <Compile Include="Entities\LAttribute.cs" />
-    <Compile Include="Entities\LLink.cs" />
-    <Compile Include="Entities\LLinkInfoBetweenTypes.cs" />
+    <Compile Include="Entities\Meta\LAttribute.cs" />
+    <Compile Include="Entities\Meta\LLink.cs" />
+    <Compile Include="Entities\Meta\LLinkInfoBetweenTypes.cs" />
     <Compile Include="LoodsmanPluginBase.cs" />
     <Compile Include="LoodsmanWPFPluginBase.cs" />
-    <Compile Include="Entities\LProxyUseCase.cs" />
-    <Compile Include="Entities\LState.cs" />
-    <Compile Include="Entities\LType.cs" />
+    <Compile Include="Entities\Meta\LProxyUseCase.cs" />
+    <Compile Include="Entities\Meta\LState.cs" />
+    <Compile Include="Entities\Meta\LType.cs" />
+    <Compile Include="Extensions\NetPluginCallExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,5 +96,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
