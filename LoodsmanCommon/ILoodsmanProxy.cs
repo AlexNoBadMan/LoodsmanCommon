@@ -1,5 +1,6 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
-using LoodsmanCommon.Entities;
+using LoodsmanCommon.Entities.Meta;
+using LoodsmanCommon.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -66,9 +67,9 @@ namespace LoodsmanCommon
         /// </summary>
         /// <param name="typeName">Название типа создаваемого объекта</param>
         /// <param name="product">Ключевой атрибут создаваемого объекта</param>
-        /// <param name="isProject">Признак того, что объект будет являться проектом</param>
         /// <param name="stateName">Состояние вновь создаваемого объекта (если создается объект)</param>
-        ILoodsmanObject NewObject(string typeName, string product, int isProject = 0, string stateName = null);
+        /// <param name="isProject">Признак того, что объект будет являться проектом</param>
+        ILoodsmanObject NewObject(string typeName, string product, string stateName = null, bool isProject = false);
 
         /// <summary>
         /// Вставляет новое или существующее изделие в редактируемый объект.
@@ -170,9 +171,6 @@ namespace LoodsmanCommon
         /// <param name="linkType">Название типа связи</param>
         /// <param name="inverse">Направление (true – обратное, false – прямое)</param>
         List<ILoodsmanObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
-        
-        [Obsolete]
-        void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion);
 
         /// <summary>
         /// Добавляет, удаляет, обновляет значение атрибута объекта.
@@ -359,9 +357,6 @@ namespace LoodsmanCommon
 
     internal class LoodsmanProxy : ILoodsmanProxy
     {
-        public const string DEFAULT_INSERT_NEW_VERSION = " ";
-        public const string DEFAULT_NEW_VERSION = "1.0";
-
         private string _checkOutName;
         private INetPluginCall _iNetPC;
         private readonly List<(string TypeName, string Product)> _uniqueNames = new List<(string typeName, string product)>();
@@ -381,7 +376,7 @@ namespace LoodsmanCommon
             }
         }
         public ILoodsmanMeta Meta => _loodsmanMeta;
-        public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall);
+        public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall, this);
         public IEnumerable<ILoodsmanObject> SelectedObjects => GetSelectedObjects();
         public string CheckOutName => _checkOutName;
         public bool IsAdmin { get; }
@@ -390,8 +385,8 @@ namespace LoodsmanCommon
         public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
         {
             _iNetPC = iNetPC;
-            IsAdmin = (int)iNetPC.RunMethod("IsAdmin") == 1;
-            var userInfo = iNetPC.GetDataTable("GetInfoAboutCurrentUser").Rows[0];
+            IsAdmin = _iNetPC.Native_IsAdmin();
+            var userInfo = _iNetPC.Native_GetInfoAboutCurrentUser().Rows[0];
             CurrentUser = userInfo["_FULLNAME"] as string;
             UserFileDir = userInfo["_FILEDIR"] as string;
 
@@ -445,7 +440,7 @@ namespace LoodsmanCommon
 
         private IEnumerable<ILoodsmanObject> GetSelectedObjects()
         {
-            var ids = _iNetPC.RunMethod("CGetTreeSelectedIDs").ToString().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+            var ids = _iNetPC.Native_CGetTreeSelectedIDs().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
             if (!_selectedObjects.Select(x => x.Id).OrderBy(x => x).SequenceEqual(ids.OrderBy(x => x)))
                 _selectedObjects = GetPropObjects(ids);
             return _selectedObjects;
@@ -453,30 +448,16 @@ namespace LoodsmanCommon
 
         #region NewObject
 
-        public ILoodsmanObject NewObject(string typeName, string product, int isProject = 0, string stateName = null)
+        public ILoodsmanObject NewObject(string typeName, string product, string stateName = null, bool isProject = false)
         {
-            var state = StateIfNullGetDefault(typeName, stateName);
-            var loodsmanObject = new LoodsmanObject()
+            var type = _loodsmanMeta.Types.First(x => x.Name == typeName);
+            var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _loodsmanMeta.States.First(x => x.Name == stateName);
+            var loodsmanObject = new LoodsmanObject(this, type, state)
             {
-                Id = NewObject(typeName, state, product, isProject),
-                Type = typeName,
+                Id = _iNetPC.Native_NewObject(type.Name, state.Name, product, isProject),
                 Product = product,
-                Version = DEFAULT_NEW_VERSION,
-                IsDocument = _loodsmanMeta.Types.First(x => x.Name == typeName).IsDocument,
-                State = state,
             };
             return loodsmanObject;
-        }
-
-        private int NewObject(string typeName, string stateName, string product, int isProject)
-        {
-            if (string.IsNullOrEmpty(stateName))
-                throw new ArgumentException($"{nameof(stateName)} - состояние не может быть пустым", nameof(stateName));
-
-            if (string.IsNullOrEmpty(product))
-                throw new ArgumentException($"{nameof(product)} - ключевой атрибут не может быть пустым", nameof(product));
-
-            return (int)_iNetPC.RunMethod("NewObject", typeName, stateName, product, isProject);
         }
 
         private string StateIfNullGetDefault(string typeName, string stateName = null)
@@ -496,16 +477,16 @@ namespace LoodsmanCommon
             CheckLoodsmanObjectsForError(parent, child);
             CheckInsertedObject(parent);
             CheckInsertedObject(child);
-            return InsertObject(parent.Type, parent.Product, parent.Version, linkType, child.Type, child.Product, child.Version, stateName, reuse);
+            return InsertObject(parent.Type.Name, parent.Product, parent.Version, linkType, child.Type.Name, child.Product, child.Version, stateName, reuse);
         }
 
         private void CheckInsertedObject(ILoodsmanObject loodsmanObject)
         {
             if (loodsmanObject.Id <= 0 && string.IsNullOrEmpty(loodsmanObject.Version))
-                loodsmanObject.Version = DEFAULT_INSERT_NEW_VERSION;
+                loodsmanObject.Version = Constants.DEFAULT_INSERT_NEW_VERSION;
         }
 
-        public int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string linkType, string childTypeName, string childProduct, string childVersion = DEFAULT_INSERT_NEW_VERSION, string stateName = null, bool reuse = false)
+        public int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string linkType, string childTypeName, string childProduct, string childVersion = Constants.DEFAULT_INSERT_NEW_VERSION, string stateName = null, bool reuse = false)
         {
             CheckKeyAttributesForErrors(parentTypeName, parentProduct, childTypeName, childProduct);
             var linkInfo = GetLinkInfo(parentTypeName, childTypeName, linkType);
@@ -513,8 +494,8 @@ namespace LoodsmanCommon
                 Swap(ref parentTypeName, ref parentProduct, ref parentVersion, ref childTypeName, ref childProduct, ref childVersion);
 
             if (string.IsNullOrEmpty(stateName))
-                stateName = StateIfNullGetDefault(parentVersion == DEFAULT_INSERT_NEW_VERSION ? parentTypeName : childTypeName);
-            return (int)_iNetPC.RunMethod("InsertObject", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, linkType, stateName, reuse);
+                stateName = StateIfNullGetDefault(parentVersion == Constants.DEFAULT_INSERT_NEW_VERSION ? parentTypeName : childTypeName);
+            return _iNetPC.Native_InsertObject(parentTypeName, parentProduct, parentVersion, linkType, childTypeName, childProduct, childVersion, stateName, reuse);
         }
 
         public int NewLink(ILoodsmanObject parent, ILoodsmanObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
@@ -522,18 +503,18 @@ namespace LoodsmanCommon
             CheckLoodsmanObjectsForError(parent, child);
             if (parent.Id <= 0 && child.Id <= 0)
             {
-                if (string.IsNullOrEmpty(parent.Product) && string.IsNullOrEmpty(parent.Type) && string.IsNullOrEmpty(child.Product) && string.IsNullOrEmpty(child.Type))
+                if (string.IsNullOrEmpty(parent.Product) && string.IsNullOrEmpty(parent.Type.Name) && string.IsNullOrEmpty(child.Product) && string.IsNullOrEmpty(child.Type.Name))
                     throw new InvalidOperationException("Не заданы ключевые атрибуты объектов для формирования связи");
             }
             else
             {
                 if (parent.Id <= 0)
-                    NewObject(parent.Type, parent.Product);
+                    NewObject(parent.Type.Name, parent.Product);
 
                 if (child.Id <= 0)
-                    NewObject(child.Type, child.Product);
+                    NewObject(child.Type.Name, child.Product);
             }
-            return NewLink(parent.Id, parent.Type, parent.Product, parent.Version, child.Id, child.Type, child.Product, child.Version, linkType, minQuantity, maxQuantity, unitId);
+            return NewLink(parent.Id, parent.Type.Name, parent.Product, parent.Version, child.Id, child.Type.Name, child.Product, child.Version, linkType, minQuantity, maxQuantity, unitId);
         }
 
 
@@ -556,12 +537,12 @@ namespace LoodsmanCommon
 
         public void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
         {
-            UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, minQuantity, maxQuantity, unitId, false, string.Empty);
+            _iNetPC.Native_UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, minQuantity, maxQuantity, unitId, false, string.Empty);
         }
 
         public void RemoveLink(int idLink)
         {
-            UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, 0, 0, string.Empty, true, string.Empty);
+            _iNetPC.Native_UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, 0, 0, string.Empty, true, string.Empty);
         }
 
         private int NewLink(int parentId, string parentTypeName, string parentProduct, string parentVersion, int childId, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity, double maxQuantity, string unitId)
@@ -581,12 +562,7 @@ namespace LoodsmanCommon
                 minQuantity = 1;
                 maxQuantity = 1;
             }
-            return (int)_iNetPC.RunMethod("NewLink", parentId, parentTypeName, parentProduct, parentVersion, childId, childTypeName, childProduct, childVersion, minQuantity, maxQuantity, unitId, linkType);
-        }
-
-        private int UpLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, int idLink, double minQuantity, double maxQuantity, string unitId, bool toDel, string linkType)
-        {
-            return (int)_iNetPC.RunMethod("UpLink", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, idLink, minQuantity, maxQuantity, unitId, toDel, linkType);
+            return _iNetPC.Native_NewLink(parentId, parentTypeName, parentProduct, parentVersion, childId, childTypeName, childProduct, childVersion, linkType, minQuantity, maxQuantity, unitId);
         }
 
         private static void CheckKeyAttributesForErrors(string parentTypeName, string parentProduct, string childTypeName, string childProduct)
@@ -617,7 +593,7 @@ namespace LoodsmanCommon
         {
             var linkInfo = _loodsmanMeta.LinksInfoBetweenTypes.FirstOrDefault(x => x.TypeName1 == parentTypeName && x.TypeName2 == childTypeName && x.Name == linkType);
             if (linkInfo is null)
-                throw new InvalidOperationException($"Не удалось найти информацию о связи типов {nameof(parentTypeName)} {parentTypeName} - {nameof(childTypeName)} {childTypeName}, по связи - {linkType}");
+                throw new InvalidOperationException($"Не удалось найти информацию о связи типов {nameof(parentTypeName)}: \"{parentTypeName}\" - {nameof(childTypeName)}: \"{childTypeName}\", по связи: \"{linkType}\"");
             return linkInfo;
         }
 
@@ -642,25 +618,29 @@ namespace LoodsmanCommon
             childVersion = tVersion;
         }
 
-        public List<ILoodsmanObject> GetLinkedFast(int id, string linkType, bool inverse = false)
+        public List<ILoodsmanObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
         {
-            return new List<ILoodsmanObject>(_iNetPC.GetDataTable("GetLinkedFast", id, linkType, inverse).Select().Select(x => new LoodsmanObject(x)));
+            return new List<ILoodsmanObject>(_iNetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select().Select(x => new LoodsmanObject(x, this)));
         }
         #endregion
 
-        public void FillInfoFromLink(int idLink, string parentProduct, string childProduct, out int parentId, out string parentVersion, out int childId, out string childVersion)
-        {
-            var linkInfo = _iNetPC.GetDataTable("GetInfoAboutLink", idLink, 2).Select()
-                                       .FirstOrDefault(x => x["_PARENT_PRODUCT"] as string == parentProduct && x["_CHILD_PRODUCT"] as string == childProduct);
-            parentId = (int)linkInfo["_ID_PARENT"];
-            parentVersion = linkInfo["_PARENT_VERSION"] as string;
-            childId = (int)linkInfo["_ID_CHILD"];
-            childVersion = linkInfo["_CHILD_VERSION"] as string;
-        }
+        //public IEnumerable<LObjectAttribute> GetAttributes(ILoodsmanObject loodsmanObject)
+        //{
+        //    var attrInfo = _loodsmanMeta.Types.First(x => x.Name == loodsmanObject.Type);
+        //    _proxy.INetPC.GetDataTable("GetInfoAboutVersion", string.Empty, string.Empty, string.Empty, _owner.Id, 3).Select()
+        //        .Select(x =>
+        //        {
+        //            var id = (int)x["_ID"];
+        //            var name = x["_Name"] as string;
+        //            var value = x["_VALUE"];
+        //            var attrInfo = _proxy.Meta.Attributes.First(a => a.Name == name);
+        //            return new LObjectAttribute(id, name, attrInfo.Type, attrInfo.DefaultValue, attrInfo.ListValue, attrInfo.OnlyIsItems, attrInfo.IsSystem, value);
+        //        })
+        //}
 
-        public void UpAttrValueById(int id, string attributeName, object attributeValue, string unitId = null) //Переделать attributeValue в object default()
+        public void UpAttrValueById(int id, string attributeName, object attributeValue, string unitId = null)
         {
-            _iNetPC.RunMethod("UpAttrValueById", id, attributeName, attributeValue, unitId, IsNullOrDefault(attributeValue));
+            _iNetPC.Native_UpAttrValueById(id, attributeName, attributeValue, unitId, IsNullOrDefault(attributeValue));
         }
 
         public static bool IsNullOrDefault<T>(T value)
@@ -703,26 +683,17 @@ namespace LoodsmanCommon
         private string RegistrationOfFile(string typeName, string product, string version, int documentId, string fileName, string filePath)
         {
             filePath = CopyIfNotOnWorkDir(filePath);
-            _iNetPC.RunMethod("RegistrationOfFile", typeName, product, version, documentId, fileName, filePath);
+            _iNetPC.Native_RegistrationOfFile(typeName, product, version, documentId, fileName, filePath);
             return filePath;
         }
 
         public void SaveSecondaryView(int docId, string filePath, bool removeAfterSave = true)
         {
             filePath = CopyIfNotOnWorkDir(filePath);
-            _iNetPC.RunMethod("SaveSecondaryView", docId, filePath);
+            _iNetPC.Native_SaveSecondaryView(docId, filePath);
 
             if (removeAfterSave)
-            {
-                try
-                {
-                    File.Delete(filePath);
-                }
-                catch
-                {
-
-                }
-            }
+                try { File.Delete(filePath); } catch { }
         }
 
         private string CopyIfNotOnWorkDir(string filePath)
@@ -739,8 +710,6 @@ namespace LoodsmanCommon
 
         public bool CheckUniqueName(string typeName, string product)
         {
-            //Этот вариант оказался медленнее
-            //    item.IsUniqueName = ((DataProvider.DataSet)_iNetPC.PluginCall.GetDataSet("CheckUniqueName", new object[] { item.TypeName, item.Product })).Eof;
             var isUnique = true;
             if (!_uniqueNames.Any(x => x.TypeName == typeName && x.Product.Equals(product, StringComparison.OrdinalIgnoreCase))) // белый список для объектов которых нет в Лоцман
             {
@@ -748,7 +717,7 @@ namespace LoodsmanCommon
                 {
                     isUnique = false;
                 }
-                else if (_iNetPC.GetDataTable("CheckUniqueName", typeName, product).Rows.Count != 0)
+                else if (_iNetPC.Native_CheckUniqueName(typeName, product).Rows.Count != 0)
                 {
                     _notUniqueNames.Add((typeName, product));
                     isUnique = false;
@@ -761,58 +730,60 @@ namespace LoodsmanCommon
             return isUnique;
         }
 
-        public DataTable GetReport(string reportName, IEnumerable<int> objectsIds, string reportParams = null)
+        public DataTable GetReport(string reportName, IEnumerable<int> objectsIds = null, string reportParams = null)
         {
-            return _iNetPC.GetDataTable("GetReport", reportName, objectsIds, reportParams);
+            return _iNetPC.Native_GetReport(reportName, objectsIds, reportParams);
         }
 
         public List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds)
         {
-            return new List<ILoodsmanObject>(_iNetPC.GetDataTable("GetPropObjects", string.Join(",", objectsIds), 0).Select().Select(x => new LoodsmanObject(x)));
+            return new List<ILoodsmanObject>(_iNetPC.Native_GetPropObjects(objectsIds).Select().Select(x => new LoodsmanObject(x, this)));
         }
 
         public ILoodsmanObject PreviewBoObject(string typeName, string uniqueId)
         {
-            var xmlString = (string)_iNetPC.RunMethod("PreviewBoObject", typeName, uniqueId);
+            var xmlString = _iNetPC.Native_PreviewBoObject(typeName, uniqueId);
             var xDocument = XDocument.Parse(xmlString);
             var elements = xDocument.Descendants("PreviewBoObjectResult").Elements();
-            var loodsmanObject = new LoodsmanObject
+            var type = _loodsmanMeta.Types.First(x => x.Name == typeName);
+            var stateName = elements.FirstOrDefault(x => x.Name == "State")?.Value;
+            var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _loodsmanMeta.States.First(x => x.Name == stateName);
+            var loodsmanObject = new LoodsmanObject(this, type, state)
             {
                 Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0,
-                Type = typeName,
                 Product = elements.FirstOrDefault(x => x.Name == "Product").Value,
-                State = elements.FirstOrDefault(x => x.Name == "State")?.Value ?? StateIfNullGetDefault(typeName),
-                Version = elements.FirstOrDefault(x => x.Name == "Version")?.Value
+                //Version = elements.FirstOrDefault(x => x.Name == "Version")?.Value
             };
             return loodsmanObject;
         }
 
         public List<int> GetLockedObjectsIds()
         {
-            return _iNetPC.GetDataTable("GetLockedObjects", 0).Select().Select(x => (int)x[0]).ToList();
+            return _iNetPC.Native_GetLockedObjects().Select().Select(x => (int)x[0]).ToList();
         }
+
 
         #region KillVersion
         public void KillVersion(int id)
         {
-            _iNetPC.RunMethod("KillVersionById", id);
+            _iNetPC.Native_KillVersion(id);
         }
 
         public void KillVersion(IEnumerable<int> objectsIds)
         {
-            _iNetPC.RunMethod("KillVersions", string.Join(",", objectsIds), 0);
+            _iNetPC.Native_KillVersions(objectsIds);
         }
 
         public void KillVersion(string typeName, string product, string version)
         {
-            _iNetPC.RunMethod("KillVersion", typeName, product, version);
+            _iNetPC.Native_KillVersion(typeName, product, version);
         }
         #endregion
 
         #region CheckOut
         public string CheckOut(string typeName, string product, string version, CheckOutMode mode = CheckOutMode.Default)
         {
-            return _checkOutName = (string)_iNetPC.RunMethod("CheckOut", typeName, product, version, (int)mode);
+            return _checkOutName = _iNetPC.Native_CheckOut(typeName, product, version, mode);
         }
 
         public string SelectedObjectCheckOut(CheckOutMode mode = CheckOutMode.Default)
@@ -832,20 +803,20 @@ namespace LoodsmanCommon
             if (string.IsNullOrEmpty(localCheckOutName))
                 return;
 
-            _iNetPC.RunMethod("ConnectToCheckOut", localCheckOutName, dBName ?? _iNetPC.PluginCall.DBName);
+            _iNetPC.Native_ConnectToCheckOut(localCheckOutName, dBName ?? _iNetPC.PluginCall.DBName);
         }
 
         public void AddToCheckOut(int objectId, bool isRoot = false)
         {
-            _iNetPC.RunMethod("AddToCheckOut", objectId, isRoot);
+            _iNetPC.Native_AddToCheckOut(objectId, isRoot);
         }
 
         public void CheckIn(string checkOutName = null, string dBName = null)
         {
             var localCheckOutName = checkOutName ?? _checkOutName;
             var localDBName = dBName ?? _iNetPC.PluginCall.DBName;
-            _iNetPC.RunMethod("DisconnectCheckOut", localCheckOutName, localDBName);
-            _iNetPC.RunMethod("CheckIn", localCheckOutName, localDBName);
+            _iNetPC.Native_DisconnectCheckOut(localCheckOutName, localDBName);
+            _iNetPC.Native_CheckIn(localCheckOutName, localDBName);
             _checkOutName = string.Empty;
         }
 
@@ -853,18 +824,20 @@ namespace LoodsmanCommon
         {
             var localCheckOutName = checkOutName ?? _checkOutName;
             var localDBName = dBName ?? _iNetPC.PluginCall.DBName;
-            _iNetPC.RunMethod("SaveChanges", localCheckOutName, localDBName);
+            _iNetPC.Native_SaveChanges(localCheckOutName, localDBName);
         }
 
         public void CancelCheckOut(string checkOutName = null, string dBName = null)
         {
             var localCheckOutName = checkOutName ?? _checkOutName;
+            if (string.IsNullOrEmpty(localCheckOutName))
+                return;
+
             var localDBName = dBName ?? _iNetPC.PluginCall.DBName;
-            _iNetPC.RunMethod("DisconnectCheckOut", localCheckOutName, localDBName);
-            _iNetPC.RunMethod("CancelCheckOut", localCheckOutName, localDBName);
+            _iNetPC.Native_DisconnectCheckOut(localCheckOutName, localDBName);
+            _iNetPC.Native_CancelCheckOut(localCheckOutName, localDBName);
             _checkOutName = string.Empty;
         }
-
         #endregion
     }
 }
