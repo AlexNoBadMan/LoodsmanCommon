@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace LoodsmanCommon
+namespace LoodsmanCommon.Extensions
 {
     public static class DataRowExtensions
     {
