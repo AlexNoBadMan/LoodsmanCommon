@@ -20,7 +20,7 @@ namespace LoodsmanCommon.Demo
 
         protected override bool CheckCommand(INetPluginCall iNetPC)
         {
-            if (_loodsmanProxy is null && iNetPC != null) //метод OnConnectToDb не срабатывает при первом добавлении команды на панель инструментов.
+            if (_proxy is null && iNetPC != null) //метод OnConnectToDb не срабатывает при первом добавлении команды на панель инструментов.
                 PluginInit(iNetPC);
 
             return base.CheckCommand(iNetPC);
@@ -30,14 +30,14 @@ namespace LoodsmanCommon.Demo
         {
             try
             {
-                _loodsmanProxy.InitNetPluginCall(iNetPC);
-                _loodsmanProxy.SelectedObjectCheckOut();
-                _loodsmanProxy.KillVersion(_loodsmanProxy.SelectedObject.Id);
-                _loodsmanProxy.CancelCheckOut();
+                _proxy.InitNetPluginCall(iNetPC);
+                _proxy.SelectedObjectCheckOut();
+                _proxy.KillVersion(_proxy.SelectedObject.Id);
+                _proxy.CancelCheckOut();
             }
             catch (Exception ex)
             {
-                _loodsmanProxy.CancelCheckOut();
+                _proxy.CancelCheckOut();
                 MessageBox.Show(ex.Message);
             }
         }
@@ -46,17 +46,17 @@ namespace LoodsmanCommon.Demo
         {
             try
             {
-                _loodsmanProxy.InitNetPluginCall(iNetPC);
-                _loodsmanProxy.CheckOut();
-                _loodsmanProxy.ConnectToCheckOut();
+                _proxy.InitNetPluginCall(iNetPC);
+                _proxy.CheckOut();
+                _proxy.ConnectToCheckOut();
                 var testObjectId = 1012;
-                _loodsmanProxy.AddToCheckOut(testObjectId);
-                _loodsmanProxy.KillVersion(testObjectId);
-                _loodsmanProxy.CancelCheckOut();
+                _proxy.AddToCheckOut(testObjectId);
+                _proxy.KillVersion(testObjectId);
+                _proxy.CancelCheckOut();
             }
             catch (Exception ex)
             {
-                _loodsmanProxy.CancelCheckOut();
+                _proxy.CancelCheckOut();
                 MessageBox.Show(ex.Message);
             }
         }
@@ -65,16 +65,16 @@ namespace LoodsmanCommon.Demo
         {
             try
             {
-                _loodsmanProxy.InitNetPluginCall(iNetPC);
-                _loodsmanProxy.CheckOut("Сборочная единица", "АГ52.289.047", "2");
-                _loodsmanProxy.ConnectToCheckOut();
+                _proxy.InitNetPluginCall(iNetPC);
+                _proxy.CheckOut("Сборочная единица", "АГ52.289.047", "2");
+                _proxy.ConnectToCheckOut();
                 var testObjectId = 1012;
-                _loodsmanProxy.KillVersion(testObjectId);
-                _loodsmanProxy.CancelCheckOut();
+                _proxy.KillVersion(testObjectId);
+                _proxy.CancelCheckOut();
             }
             catch (Exception ex)
             {
-                _loodsmanProxy.CancelCheckOut();
+                _proxy.CancelCheckOut();
                 MessageBox.Show(ex.Message);
             }
         }
