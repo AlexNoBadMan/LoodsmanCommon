@@ -1,6 +1,24 @@
 ﻿namespace LoodsmanCommon
 {
     /// <summary>
+    /// Режим возврата списока атрибутов 
+    /// </summary>
+    public enum GetAttributeListMode
+    {
+        /// <summary>
+        /// Возвращать все атрибуты (обычные и служебные).
+        /// </summary>
+        All = 0,
+        /// <summary>
+        /// Возвращать только обычные атрибуты.
+        /// </summary>
+        OnlyRegular = 1,
+        /// <summary>
+        /// Возвращать только служебные атрибуты.
+        /// </summary>
+        OnlyService = 2
+    }
+    /// <summary>
     /// Направление связи
     /// </summary>
     public enum LinkDirection
