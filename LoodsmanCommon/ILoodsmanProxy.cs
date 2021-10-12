@@ -620,7 +620,7 @@ namespace LoodsmanCommon
 
         public List<ILoodsmanObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
         {
-            return new List<ILoodsmanObject>(_iNetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select().Select(x => new LoodsmanObject(x, this)));
+            return new List<ILoodsmanObject>(_iNetPC.Native_GetLinkedFast(objectId, linkType, inverse).GetRows().Select(x => new LoodsmanObject(x, this)));
         }
         #endregion
 
@@ -737,7 +737,7 @@ namespace LoodsmanCommon
 
         public List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds)
         {
-            return new List<ILoodsmanObject>(_iNetPC.Native_GetPropObjects(objectsIds).Select().Select(x => new LoodsmanObject(x, this)));
+            return new List<ILoodsmanObject>(_iNetPC.Native_GetPropObjects(objectsIds).GetRows().Select(x => new LoodsmanObject(x, this)));
         }
 
         public ILoodsmanObject PreviewBoObject(string typeName, string uniqueId)
@@ -759,7 +759,7 @@ namespace LoodsmanCommon
 
         public List<int> GetLockedObjectsIds()
         {
-            return _iNetPC.Native_GetLockedObjects().Select().Select(x => (int)x[0]).ToList();
+            return _iNetPC.Native_GetLockedObjects().GetRows().Select(x => (int)x[0]).ToList();
         }
 
 

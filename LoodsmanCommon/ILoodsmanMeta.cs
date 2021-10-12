@@ -31,11 +31,11 @@ namespace LoodsmanCommon
         private LLinkInfoBetweenTypes[] _linksInfoBetweenTypes;
         private readonly INetPluginCall _iNetPC;
 
-        public IEnumerable<LType> Types => _types ??= _iNetPC.Native_GetTypeListEx().Select().Select(x => new LType(_iNetPC, x, Attributes, States)).ToArray();
-        public IEnumerable<LLink> Links => _links ??= _iNetPC.Native_GetLinkList().Select().Select(x => new LLink(x)).ToArray();
-        public IEnumerable<LState> States => _states ??= _iNetPC.Native_GetStateList().Select().Select(x => new LState(x)).ToArray();
-        public IEnumerable<LAttribute> Attributes => _attributes ??= _iNetPC.Native_GetAttributeList().Select().Select(x => new LAttribute(x)).ToArray();
-        public IEnumerable<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().Select().Select(x => new LProxyUseCase(x)).ToArray();
+        public IEnumerable<LType> Types => _types ??= _iNetPC.Native_GetTypeListEx().GetRows().Select(x => new LType(_iNetPC, x, Attributes, States)).ToArray();
+        public IEnumerable<LLink> Links => _links ??= _iNetPC.Native_GetLinkList().GetRows().Select(x => new LLink(x)).ToArray();
+        public IEnumerable<LState> States => _states ??= _iNetPC.Native_GetStateList().GetRows().Select(x => new LState(x)).ToArray();
+        public IEnumerable<LAttribute> Attributes => _attributes ??= _iNetPC.Native_GetAttributeList().GetRows().Select(x => new LAttribute(x)).ToArray();
+        public IEnumerable<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().GetRows().Select(x => new LProxyUseCase(x)).ToArray();
         public IEnumerable<LLinkInfoBetweenTypes> LinksInfoBetweenTypes => _linksInfoBetweenTypes ??= GetLinksInfoBetweenTypes(_iNetPC.Native_GetLinkListEx()).ToArray();
 
         public LoodsmanMeta(INetPluginCall iNetPC)

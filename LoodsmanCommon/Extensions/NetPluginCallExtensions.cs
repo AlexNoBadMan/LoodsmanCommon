@@ -42,6 +42,27 @@ namespace LoodsmanCommon.Extensions
             return pc.GetDataTable("GetStateList");
         }
 
+        /// <summary>
+        /// Возвращает полный список атрибутов базы данных.
+        /// </summary>
+        /// <param name="mode">Режим возврата списка атрибутов</param>
+        /// <returns>
+        /// Возвращает набор данных с полями:
+        /// <br/>[_ID] int – уникальный идентификатор атрибута;
+        /// <br/>[_NAME] string – название атрибута;
+        /// <br/>[_ATTRTYPE] int – тип атрибута:
+        /// <br/>0 – строка;
+        /// <br/>1 – целое число;
+        /// <br/>2 – действительное число;
+        /// <br/>3 – дата и время;
+        /// <br/>5 – текст;
+        /// <br/>6 – изображение;
+        /// <br/>[_DEFAULT] string – значение атрибута по умолчанию;
+        /// <br/>[_LIST] text – список возможных значений атрибута;
+        /// <br/>[_ACCESSLEVEL] int – уровень прав доступа (1 – Только чтение, 2 – Чтение/запись). Начиная с версии ЛОЦМАН:PLM 2017 поле устарело и его значение всегда равно 2;
+        /// <br/>[_ONLYLISTITEMS] int – атрибут может принимать значения только из списка (0 - Любое, 1 - Из списка);
+        /// <br/>[_SYSTEM] int – признак того, что атрибут является служебным (0 – Обычный, 1 – Служебный).
+        /// </returns>
         public static DataTable Native_GetAttributeList(this INetPluginCall pc, GetAttributeListMode mode = GetAttributeListMode.All)
         {
             return pc.GetDataTable("GetAttributeList2", mode);
@@ -66,11 +87,16 @@ namespace LoodsmanCommon.Extensions
         {
             return pc.GetDataTable("GetInfoAboutLink", idLink, mode);
         }
-        
 
-        public static DataTable Native_GetInfoAboutType(this INetPluginCall pc, string typeName, int mode)
+        /// <summary>
+        /// Возвращает информацию о типе.
+        /// </summary>
+        /// <param name="typeName">Название типа</param>
+        /// <param name="mode">Режим вывода. В зависимости от его значения выдается соответствующая информация</param>
+        /// <returns>Зависит от режима</returns>
+        public static DataTable Native_GetInfoAboutType(this INetPluginCall pc, string typeName, GetInfoAboutTypeMode mode)
         {
-            return pc.GetDataTable("GetInfoAboutType", typeName, mode);
+            return pc.GetDataTable("GetInfoAboutType", typeName, (int)mode);
         }
 
         public static DataTable Native_GetPropObjects(this INetPluginCall pc, IEnumerable<int> objectsIds)

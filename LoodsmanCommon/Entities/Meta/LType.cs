@@ -61,7 +61,7 @@ namespace LoodsmanCommon.Entities.Meta
 
         private IEnumerable<LTypeAttribute> GetTypeAttributes()
         {
-            return _iNetPC.Native_GetInfoAboutType(Name, 12).Select()
+            return _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).GetRows()
                    .Select(x =>
                    {
                        var attr = _lAttributes.First(a => a.Id == (int)x["_ID"]);
