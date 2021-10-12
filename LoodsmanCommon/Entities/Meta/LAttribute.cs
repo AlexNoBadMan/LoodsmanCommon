@@ -29,6 +29,7 @@ namespace LoodsmanCommon.Entities.Meta
             DefaultValue = dataRow["_DEFAULT"] as string;
             ListValue = dataRow["_LIST"].ToString().Split(new char[2] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             OnlyIsItems = (int)dataRow["_ONLYLISTITEMS"] == 1;
+            //Метод GetInfoAboutType возвращает поле _ONLYLISTITEMS как short и это вызывает исключение при приведении типов
             IsSystem = (short)dataRow["_SYSTEM"] == 1;
         }
     }
