@@ -5,17 +5,18 @@ using System.Data;
 using System.Linq;
 using LoodsmanCommon.Entities.Meta;
 using LoodsmanCommon.Extensions;
+using System.Collections.ObjectModel;
 
 namespace LoodsmanCommon
 {
     public interface ILoodsmanMeta
     {
-        IEnumerable<LType> Types { get; }
-        IEnumerable<LLink> Links { get; }
-        IEnumerable<LState> States { get; }
-        IEnumerable<LAttribute> Attributes { get; }
-        IEnumerable<LProxyUseCase> ProxyUseCases { get; }
-        IEnumerable<LLinkInfoBetweenTypes> LinksInfoBetweenTypes { get; }
+        IReadOnlyList<LType> Types { get; }
+        IReadOnlyList<LLink> Links { get; }
+        IReadOnlyList<LState> States { get; }
+        IReadOnlyList<LAttribute> Attributes { get; }
+        IReadOnlyList<LProxyUseCase> ProxyUseCases { get; }
+        IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes { get; }
         LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension);
         void Clear();
     }
@@ -23,20 +24,20 @@ namespace LoodsmanCommon
     internal class LoodsmanMeta : ILoodsmanMeta
     {
         //Используем массивы т.к. нужны простые списки и нет необходимости расширять данные
-        private LType[] _types;
-        private LLink[] _links;
-        private LState[] _states;
-        private LAttribute[] _attributes;
-        private LProxyUseCase[] _proxyUseCases;
-        private LLinkInfoBetweenTypes[] _linksInfoBetweenTypes;
+        private IReadOnlyList<LType> _types;
+        private IReadOnlyList<LLink> _links;
+        private IReadOnlyList<LState> _states;
+        private IReadOnlyList<LAttribute> _attributes;
+        private IReadOnlyList<LProxyUseCase> _proxyUseCases;
+        private IReadOnlyList<LLinkInfoBetweenTypes> _linksInfoBetweenTypes;
         private readonly INetPluginCall _iNetPC;
 
-        public IEnumerable<LType> Types => _types ??= _iNetPC.Native_GetTypeListEx().GetRows().Select(x => new LType(_iNetPC, x, Attributes, States)).ToArray();
-        public IEnumerable<LLink> Links => _links ??= _iNetPC.Native_GetLinkList().GetRows().Select(x => new LLink(x)).ToArray();
-        public IEnumerable<LState> States => _states ??= _iNetPC.Native_GetStateList().GetRows().Select(x => new LState(x)).ToArray();
-        public IEnumerable<LAttribute> Attributes => _attributes ??= _iNetPC.Native_GetAttributeList().GetRows().Select(x => new LAttribute(x)).ToArray();
-        public IEnumerable<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().GetRows().Select(x => new LProxyUseCase(x)).ToArray();
-        public IEnumerable<LLinkInfoBetweenTypes> LinksInfoBetweenTypes => _linksInfoBetweenTypes ??= GetLinksInfoBetweenTypes(_iNetPC.Native_GetLinkListEx()).ToArray();
+        public IReadOnlyList<LType> Types => _types ??= _iNetPC.Native_GetTypeListEx().GetRows().Select(x => new LType(_iNetPC, x, Attributes, States)).ToReadOnlyList();
+        public IReadOnlyList<LLink> Links => _links ??= _iNetPC.Native_GetLinkList().GetRows().Select(x => new LLink(x)).ToReadOnlyList();
+        public IReadOnlyList<LState> States => _states ??= _iNetPC.Native_GetStateList().GetRows().Select(x => new LState(x)).ToReadOnlyList();
+        public IReadOnlyList<LAttribute> Attributes => _attributes ??= _iNetPC.Native_GetAttributeList().GetRows().Select(x => new LAttribute(x)).ToReadOnlyList();
+        public IReadOnlyList<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().GetRows().Select(x => new LProxyUseCase(x)).ToReadOnlyList();
+        public IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes => _linksInfoBetweenTypes ??= GetLinksInfoBetweenTypes(_iNetPC.Native_GetLinkListEx()).ToReadOnlyList();
 
         public LoodsmanMeta(INetPluginCall iNetPC)
         {
