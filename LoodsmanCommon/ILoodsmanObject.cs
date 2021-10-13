@@ -19,12 +19,12 @@ namespace LoodsmanCommon
         bool IsDocument { get; }
         AccessLevel AccessLevel { get; set; }
         LockLevel LockLevel { get; set; }
-        List<LObjectAttribute> Attributes { get; }
+        LObjectAttributes Attributes { get; }
     }
 
     internal class LoodsmanObject : ILoodsmanObject
     {
-        private List<LObjectAttribute> _attributes;
+        private LObjectAttributes _attributes;
         private readonly ILoodsmanProxy _proxy;
 
         public ILoodsmanObject Parent { get; set; }
@@ -36,7 +36,7 @@ namespace LoodsmanCommon
         public bool IsDocument => Type.IsDocument;
         public AccessLevel AccessLevel { get; set; }
         public LockLevel LockLevel { get; set; }
-        public List<LObjectAttribute> Attributes => _attributes ??= new LObjectAttributes(this, _proxy);
+        public LObjectAttributes Attributes => _attributes ??= new LObjectAttributes(this, _proxy);
 
         public LoodsmanObject(ILoodsmanProxy proxy, LType type, LState state)
         {
