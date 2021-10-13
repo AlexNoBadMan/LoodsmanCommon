@@ -62,6 +62,7 @@
     <Compile Include="Entities\Meta\LTypeAttribute.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions\DataTableExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="ILoodsmanMeta.cs" />
     <Compile Include="ILoodsmanObject.cs" />

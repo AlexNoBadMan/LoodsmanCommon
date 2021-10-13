@@ -1,4 +1,5 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
+using LoodsmanCommon.Entities;
 using LoodsmanCommon.Entities.Meta;
 using LoodsmanCommon.Extensions;
 using System;
@@ -171,6 +172,13 @@ namespace LoodsmanCommon
         /// <param name="linkType">Название типа связи</param>
         /// <param name="inverse">Направление (true – обратное, false – прямое)</param>
         List<ILoodsmanObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
+
+        /// <summary>
+        /// Получение атрибутов объекта, включая служебные.
+        /// </summary>
+        /// <param name="loodsmanObject">Объект бд лоцман</param>
+        /// <returns>Возвращает атрибуты объекта, включая служебные.</returns>
+        IEnumerable<LObjectAttribute> GetAttributes(ILoodsmanObject loodsmanObject);
 
         /// <summary>
         /// Добавляет, удаляет, обновляет значение атрибута объекта.
@@ -624,23 +632,18 @@ namespace LoodsmanCommon
         }
         #endregion
 
-        //public IEnumerable<LObjectAttribute> GetAttributes(ILoodsmanObject loodsmanObject)
-        //{
-        //    var attrInfo = _loodsmanMeta.Types.First(x => x.Name == loodsmanObject.Type);
-        //    _proxy.INetPC.GetDataTable("GetInfoAboutVersion", string.Empty, string.Empty, string.Empty, _owner.Id, 3).Select()
-        //        .Select(x =>
-        //        {
-        //            var id = (int)x["_ID"];
-        //            var name = x["_Name"] as string;
-        //            var value = x["_VALUE"];
-        //            var attrInfo = _proxy.Meta.Attributes.First(a => a.Name == name);
-        //            return new LObjectAttribute(id, name, attrInfo.Type, attrInfo.DefaultValue, attrInfo.ListValue, attrInfo.OnlyIsItems, attrInfo.IsSystem, value);
-        //        })
-        //}
-
-        public void UpAttrValueById(int id, string attributeName, object attributeValue, string unitId = null)
+        public IEnumerable<LObjectAttribute> GetAttributes(ILoodsmanObject loodsmanObject)
         {
-            _iNetPC.Native_UpAttrValueById(id, attributeName, attributeValue, unitId, IsNullOrDefault(attributeValue));
+            var attributeInfo = _iNetPC.Native_GetInfoAboutVersion(loodsmanObject.Id, GetInfoAboutVersionMode.Mode3).GetRows();
+            foreach (var lTypeAttribute in loodsmanObject.Type.Attributes)
+            {
+                yield return new LObjectAttribute(loodsmanObject, lTypeAttribute, attributeInfo.FirstOrDefault(x => x["_NAME"] as string == lTypeAttribute.Name)?["_VALUE"]);
+            }
+        }
+
+        public void UpAttrValueById(int objectId, string attributeName, object attributeValue, string unitId = null)
+        {
+            _iNetPC.Native_UpAttrValueById(objectId, attributeName, attributeValue, unitId, IsNullOrDefault(attributeValue));
         }
 
         public static bool IsNullOrDefault<T>(T value)

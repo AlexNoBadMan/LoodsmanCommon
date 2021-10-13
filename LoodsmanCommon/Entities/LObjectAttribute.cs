@@ -2,6 +2,7 @@
 using LoodsmanCommon.Entities.Meta;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -9,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace LoodsmanCommon.Entities
 {
-    public class LObjectAttributes : List<LObjectAttribute>
+    public class LObjectAttributes : ReadOnlyCollection<LObjectAttribute>
     {
         private readonly ILoodsmanObject _owner;
         private readonly ILoodsmanProxy _proxy;
 
-        public LObjectAttributes(ILoodsmanObject owner, ILoodsmanProxy proxy)
+        public LObjectAttributes(ILoodsmanObject owner, ILoodsmanProxy proxy) : base(new List<LObjectAttribute>(owner.Type.Attributes.Count))
         {
             _owner = owner;
             _proxy = proxy;
@@ -23,25 +24,39 @@ namespace LoodsmanCommon.Entities
 
         private void Init()
         {
-            //AddRange();
+            foreach (var lObjectAttribute in _proxy.GetAttributes(_owner))
+                Items.Add(lObjectAttribute);
         }
 
         public void Refresh()
         {
-            Clear();
+            Items.Clear();
             Init();
         }
     }
 
-    public class LObjectAttribute : LAttribute
+    public class LObjectAttribute
     {
-        public object Value { get; set; }
-        //public LObjectAttribute(, string nameField = "_NAME") : base(dataRow, nameField)
-        //{
+        private readonly ILoodsmanObject _owner;
+        private readonly LTypeAttribute _lTypeAttribute;
 
-        //}
-        public LObjectAttribute(int id, string name, AttributeType type, string defaultValue, List<string> listValue, bool onlyIsItems, bool isSystem, object value) : base(id, name, type, defaultValue, listValue, onlyIsItems, isSystem)
+        /// <summary>
+        /// Уникальный идентификатор атрибута.
+        /// </summary>
+        public int Id => _lTypeAttribute.Id;
+        public string Name => _lTypeAttribute.Name;
+        public AttributeType Type => _lTypeAttribute.Type;
+        public string DefaultValue => _lTypeAttribute.DefaultValue;
+        public IReadOnlyList<string> ListValue => _lTypeAttribute.ListValue;
+        public bool OnlyIsItems => _lTypeAttribute.OnlyIsItems;
+        public bool IsSystem => _lTypeAttribute.IsSystem;
+        public bool IsObligatory => _lTypeAttribute.IsObligatory;
+        public object Value { get; set; }
+
+        public LObjectAttribute(ILoodsmanObject owner, LTypeAttribute lTypeAttribute, object value) 
         {
+            _owner = owner;
+            _lTypeAttribute = lTypeAttribute;
             Value = value;
         }
     }
