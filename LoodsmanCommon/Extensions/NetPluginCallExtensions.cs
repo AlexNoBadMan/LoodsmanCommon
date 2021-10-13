@@ -6,7 +6,11 @@ namespace LoodsmanCommon.Extensions
 {
     public static class NetPluginCallExtensions
     {
-      public static string Native_CGetTreeSelectedIDs(this INetPluginCall pc)
+        ///<summary>
+        /// Позволяет получить список объектов, выделенных в дереве «ЛОЦМАН Клиент».
+        /// </summary>
+        /// <returns>Список идентификаторов выделенных в дереве объектов с разделителем «,».</returns>
+        public static string Native_CGetTreeSelectedIDs(this INetPluginCall pc)
         {
             return pc.RunMethod("CGetTreeSelectedIDs") as string ?? string.Empty;
         }
@@ -67,22 +71,21 @@ namespace LoodsmanCommon.Extensions
             return pc.GetDataTable("GetTypeListEx");
         }
         
-        //TO CHECK !!!
         /// <summary>
-        /// Возвращает список возможных типов связей с указанием связываемых типов .
+        /// Возвращает список возможных типов связей с указанием связываемых типов.
         /// </summary>
         /// <returns>
         /// Возвращает набор данных с полями:      
-        /// <br/>[_TYPE_ID_1] int - ID первого типа
-        /// <br/>[_TYPE_NAME_1] string - название первого типа
-        /// <br/>[_TYPE_ID_2] int - ID второго типа
-        /// <br/>[_TYPE_NAME_2] string - название первого типа
-        /// <br/>[_ID_LINKTYPE] int - ID типа связи
+        /// <br/>[_TYPE_ID_1] int - ID первого типа;
+        /// <br/>[_TYPE_NAME_1] string - название первого типа;
+        /// <br/>[_TYPE_ID_2] int - ID второго типа;
+        /// <br/>[_TYPE_NAME_2] string - название первого типа;
+        /// <br/>[_ID_LINKTYPE] int - ID типа связи;
         /// <br/>[_LINKTYPE] string – название типа связи;
         /// <br/>[_INVERSENAME] string – название обратной связи;
-        /// <br/>[_LINKKIND short] - вид связи (1 – горизонтальная, 0 – вертикальная)
-        /// <br/>[_DIRECTION] int - ???
-        /// <br/>[_IS_QUANTITY] short - является ли связь количественной (1 - да, 0  - нет)
+        /// <br/>[_LINKKIND] short - вид связи (1 – горизонтальная, 0 – вертикальная);
+        /// <br/>[_DIRECTION] int - направление связи (1 - прямая, -1 - обратная);
+        /// <br/>[_IS_QUANTITY] short - является ли связь количественной (1 - да, 0 - нет).
         /// </returns>
         public static DataTable Native_GetLinkListEx(this INetPluginCall pc)
         {
@@ -111,8 +114,8 @@ namespace LoodsmanCommon.Extensions
         /// </summary>
         /// <returns>
         /// Возвращает набор данных с полями:
-        /// <br/>[_ID] int – уникальный идентификатор состояния
-        /// <br/>[_NAME] string – название состояния
+        /// <br/>[_ID] int – уникальный идентификатор состояния;
+        /// <br/>[_NAME] string – название состояния;
         /// <br/>[_ICON] image – значок состояния.
         /// </returns>
         public static DataTable Native_GetStateList(this INetPluginCall pc)
@@ -149,7 +152,6 @@ namespace LoodsmanCommon.Extensions
         /// <summary>
         /// Возвращает случаи использования прокси, типа объекта и типа документа.
         /// </summary>
-        /// <param name="pc"/>
         /// <param name="proxyId">Идентификатор прокси. Может быть передано значение 0, что означает «любое значение».</param>
         /// <param name="typeId">Идентификатор типа объекта. Может быть передано значение 0, что означает «любое значение».</param>
         /// <param name="documentId">Идентификатор типа документа. Может быть передано значение 0, что означает «любое значение».</param>
@@ -265,123 +267,20 @@ namespace LoodsmanCommon.Extensions
         /// </summary>
         /// <param name="typeName">Название типа</param>
         /// <param name="mode">Режим вывода. В зависимости от его значения выдается соответствующая информация</param>
-        /// <returns>Зависит от режима
-         /// <br/>inMode = 1
-         /// <br/>Возвращает список возможных атрибутов типа.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_ID] int – уникальный идентификатор значения атрибута;
-         /// <br/>[_NAME] string – название атрибута;
-         /// <br/>[_ATTRTYPE] int – тип атрибута;
-         /// <br/>[_DEFAULT] string – значение по умолчанию;
-         /// <br/>[_LIST] text – список возможных значений;
-         /// <br/>[_ACCESSLEVEL] int –  уровень прав доступа (1 – Только чтение, 2 – Чтение/запись). Начиная с версии ЛОЦМАН:PLM 2017 поле устарело и его значение всегда равно 2;
-         /// <br/>[_ONLYLISTITEMS] int – атрибут может принимать значения только из списка (0 - Любое, 1 - Из списка);
-         /// <br/>[_SYSTEM] int – признак того, что атрибут является служебным, всегда равен 0;
-         /// <br/>[_OBLIGATORY] int – признак «Обязательный» (0 – необязательный, 1 – обязательный).
-         /// <br/>
-         /// <br/>inMode = 2
-         /// <br/>Возвращает список возможных состояний типа без учета доступа к типу и состоянию.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_NAME] string – название состояния;
-         /// <br/>[_VERSIONING] int – зарезервировано.
-         /// <br/>
-         /// <br/>inMode = 3
-         /// <br/>Возвращает список возможных состояний типа с учетом доступа к типу и его состояниям.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_NAME] string – название состояния.
-         /// <br/>
-         /// <br/>inMode = 4
-         /// <br/>Возвращает все типы, с которыми может быть связан объект заданного типа любыми видами связей и в любом направлении.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_NAME] string – название типа;
-         /// <br/>[_ID_LINKTYPE] int – идентификатор типа связи;
-         /// <br/>[_LINKTYPE] string – тип связи;
-         /// <br/>[_INVERSENAME] string – обратное название типа связи;
-         /// <br/>[_LINKICON] image – картинка для типа связи;
-         /// <br/>[_LINKORDER] int – порядок следования;
-         /// <br/>[_LINKKIND] int – вид связи (1 – горизонтальная, 0 – вертикальная);
-         /// <br/>[_DIRECTION] int – направление, может быть связан c типом:
-         /// <br/>-1 – только в обратном направлении;
-         /// <br/>1 – только в прямом направлении;
-         /// <br/>0 – в прямом и обратном направлении;
-         /// <br/>[_CANCREATE] int – признак существования привилегии для создания объекта:
-         /// <br/>1 – создание объекта возможно;
-         /// <br/>0 – создание объекта запрещено;
-         /// <br/>[_IS_QUANTITY] int – признак количественной связи:
-         /// <br/>0 – в любом направлении связь неколичественная;
-         /// <br/>1 – если возвращенный тип выступает в роли вышестоящего для заданного типа;
-         /// <br/>2 – если возвращенный тип выступает в роли нижестоящего для заданного типа;
-         /// <br/>3 – в любом направлении связь количественная.
-         /// <br/>
-         /// <br/>inMode = 6
-         /// <br/>Возвращает название инструмента, в котором редактируется документ данного типа. Если инструмент не сопоставлен, то возвратится пустой набор данных.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_TOOLNAME] string – название инструмента;
-         /// <br/>[_EXTENSION] string – расширение файла, который редактируется в соответствующем инструменте.
-         /// <br/>
-         /// <br/>inMode = 7
-         /// <br/>Возвращает список карточек для типа в соответствии с привязкой карточки к ролям, назначенным данному пользователю.
-         /// <br/>Если на вход подано stTypeName – заведомо несуществующее, то на выходе придут все карточки для пользователя.
-         /// <br/>Если карточка не привязана ни к одной роли, то на выходе ее не будет.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_ID] int – идентификатор карточки;
-         /// <br/>[_NAME] string – название карточки;
-         /// <br/>[_TYPE] string – название типа, которому сопоставлена карточка.
-         /// <br/>
-         /// <br/> inMode = 8
-         /// <br/>Возвращает список типов, с которыми объект указанного типа может быть связан вертикальными связями.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_ID] int – уникальный идентификатор типа;
-         /// <br/>[_NAME] string – название типа;
-         /// <br/>[_ICON] image – значок типа;
-         /// <br/>[_ATTRNAME] string – название ключевого атрибута типа;
-         /// <br/>[_LINKTYPE] string – название типа связи.
-         /// <br/>
-         /// <br/>inMode = 9
-         /// <br/>Возвращает список используемых классов типа.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_NAME] string – класс справочника;
-         /// <br/>[_PRODUCTSOURCE] string – правило формирования ключевого атрибута для объектов класса;
-         /// <br/>[_STATESOURCE] string – условие назначения состояния для объектов класса;
-         /// <br/>[_CLASS_ID] int – идентификатор класса справочника;
-         /// <br/>[_CAPTION] string – название класса справочника;
-         /// <br/>[_NODE] string – идентификатор узла справочника класса.
-         /// <br/>
-         /// <br/>inMode = 10
-         /// <br/>Возвращает внешние атрибуты типа.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_NAME] string – название атрибута;
-         /// <br/>[_OBJECTATTRIBUTENAME] string – Начиная с версии ЛОЦМАН:PLM 2018.1 поле устарело и его значение всегда равно 'Deprecated'.
-         /// <br/>
-         /// <br/>inMode = 11
-         /// <br/>Возвращает список связей, в которых может состоять объект данного типа.
-         /// <br/>Если на вход подано stTypeName, заведомо несуществующее, на выходе будут данные для всех типов системы.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_TYPE] string – название типа (повторяет то, что пришло на входе);
-         /// <br/>[_NAME] string – название типа связи;
-         /// <br/>[_DIRECTION] int – направление, может быть связан c типом: (-1 – только в обратном направлении, 1 – только в прямом направлении, 0 – в прямом и обратном направлении);
-         /// <br/>[_ID_LINKTYPE] int – идентификатор типа связи;
-         /// <br/>[_INVERSENAME] string – обратное название типа связи;
-         /// <br/>[_LINKICON] image – значок типа связи;
-         /// <br/>[_LINKORDER] int – порядок следования;
-         /// <br/>[_LINKKIND] int – вид связи (1 – горизонтальная, 0 – вертикальная).
-         /// <br/>
-         /// <br/>inMode = 12 (поддерживается в версии ЛОЦМАН:PLM 2012 и более поздних)
-         /// <br/>Возвращает список возможных атрибутов типа, включая служебные.
-         /// <br/>Возвращает набор данных с полями:
-         /// <br/>[_ID] int – уникальный идентификатор значения атрибута;
-         /// <br/>[_NAME] string – название атрибута;
-         /// <br/>[_ATTRTYPE] int – тип атрибута;
-         /// <br/>[_DEFAULT] string – значение по умолчанию;
-         /// <br/>[_LIST] text – список возможных значений;
-         /// <br/>[_ACCESSLEVEL] int –  уровень прав доступа (1 – Только чтение, 2 – Чтение/запись). Начиная с версии ЛОЦМАН:PLM 2017 поле устарело и его значение всегда равно 2;
-         /// <br/>[_ONLYLISTITEMS] int – атрибут может принимать значения только из списка (0 - Любое, 1 - Из списка);
-         /// <br/>[_OBLIGATORY] int – признак «Обязательный» (0 – необязательный, 1 – обязательный);
-         /// <br/>[_SYSTEM] int – признак того, что атрибут является служебным (0 – Обычный, 1 – Служебный).
-        /// </returns>
+        /// <returns>Зависит от режима.</returns>
         public static DataTable Native_GetInfoAboutType(this INetPluginCall pc, string typeName, GetInfoAboutTypeMode mode)
         {
             return pc.GetDataTable("GetInfoAboutType", typeName, (int)mode);
+        }
+        
+        public static DataTable Native_GetInfoAboutVersion(this INetPluginCall pc, int objectId, GetInfoAboutVersionMode mode)
+        {
+            return pc.GetDataTable("GetInfoAboutVersion", string.Empty, string.Empty, string.Empty, objectId, (int)mode);
+        }
+
+        public static DataTable Native_GetInfoAboutVersion(this INetPluginCall pc, string typeName, string product, string version, GetInfoAboutVersionMode mode)
+        {
+            return pc.GetDataTable("GetInfoAboutVersion", typeName, product, version, 0, (int)mode);
         }
 
         /// <summary>
@@ -390,14 +289,14 @@ namespace LoodsmanCommon.Extensions
         /// <param name="objectsIds">Список идентификаторов объектов. Задается в виде: id1,id2,id3, ... ,idn</param>
         /// <returns>
         /// Возвращает набор данных с полями:
-         /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
-         /// <br/>[_TYPE] string – тип объекта; 
-         /// <br/>[_PRODUCT] string – ключевой атрибут объекта;
-         /// <br/>[_VERSION] string – номер версии объекта;
-         /// <br/>[_STATE] string – текущее состояние объекта;
-         /// <br/>[_DOCUMENT] int – является ли документом (1 – является, 0 – не является);
-         /// <br/>[_ACCESSLEVEL] int – уровень доступа к объекту (1 – Только чтение, 2 – Чтение/запись, 3 – Полный доступ);
-         /// <br/>[_LOCKED] int – уровень блокировки объекта (0 – не блокирован, 1 – блокирован текущим пользователем, 2 – блокирован другим пользователем).
+        /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
+        /// <br/>[_TYPE] string – тип объекта; 
+        /// <br/>[_PRODUCT] string – ключевой атрибут объекта;
+        /// <br/>[_VERSION] string – номер версии объекта;
+        /// <br/>[_STATE] string – текущее состояние объекта;
+        /// <br/>[_DOCUMENT] int – является ли документом (1 – является, 0 – не является);
+        /// <br/>[_ACCESSLEVEL] int – уровень доступа к объекту (1 – Только чтение, 2 – Чтение/запись, 3 – Полный доступ);
+        /// <br/>[_LOCKED] int – уровень блокировки объекта (0 – не блокирован, 1 – блокирован текущим пользователем, 2 – блокирован другим пользователем).
         /// </returns>
         public static DataTable Native_GetPropObjects(this INetPluginCall pc, IEnumerable<int> objectsIds)
         {
@@ -448,7 +347,7 @@ namespace LoodsmanCommon.Extensions
         /// <param name="parentVersion">Номер версии объекта-родителя.</param>
         /// <param name="childId">Идентификатор версии объекта-потомка.</param>
         /// <param name="childTypeName">Наименование типа объекта-потомка.</param>
-        /// <param name="childProduct">Значение ключевого атрибута объекта-потомка. </param>
+        /// <param name="childProduct">Значение ключевого атрибута объекта-потомка.</param>
         /// <param name="childVersion">Номер версии объекта-потомка.</param>
         /// <param name="linkType">Тип связи, которой нужно связать объекты.</param>
         /// <param name="minQuantity">Нижняя граница количества.</param>
@@ -479,14 +378,14 @@ namespace LoodsmanCommon.Extensions
         /// <param name="unitId">Уникальный идентификатор единицы измерения.</param>
         /// <param name="toDel">Признак удаления экземпляра связи (true – удалять, false – не удалять)</param>
         /// <param name="linkType">Тип связи, которой нужно перевязать объекты.</param>
-        /// <returns>
-        /// Возвращает идентификатор созданной связи.
-        /// <br/> 
+        /// <returns>Возвращает идентификатор созданной связи.</returns>
+        /// <remarks>
+        /// Примечание:
         /// <br/> Метод работает следующим образом: 
         /// <br/>-если boDel =true, то заданный экземпляр связи с идентификатором inIdLink удаляется;
         /// <br/>-если экземпляр связи с идентификатором inIdLink существует, то его свойства (количество, единицы измерения) будут изменены;
         /// <br/>-если inIdLink=0, то будет добавлена связь между объектами, указанными в качестве родителя и потомка.
-        /// </returns>
+        /// </remarks>
         public static int Native_UpLink(this INetPluginCall pc, string parentTypeName, string parentProduct, string parentVersion, 
             string childTypeName, string childProduct, string childVersion, 
             int idLink, double minQuantity, double maxQuantity, string unitId, bool toDel, string linkType)
@@ -701,12 +600,7 @@ namespace LoodsmanCommon.Extensions
 
         /// <summary>
         /// Сохраняет изменения в базе данных.
-        /// 
         /// </summary>
-        /// <remarks>
-        /// <br/> После выполнения этой операции все изменения, произведенные в чекауте, сохраняются в базе данных.
-        ///  Объект по-прежнему остается на изменении.
-        /// </remarks>
         /// <param name="checkOutName">Название чекаута.</param>
         /// <param name="dBName">Название базы данных, к которой нужно подключиться.</param>
         /// <returns>
@@ -720,6 +614,10 @@ namespace LoodsmanCommon.Extensions
         /// <br/>[_ERROR] string – сообщение об ошибке;
         /// <br/>[_ERRORCODE] int – код ошибки (поддерживается начиная с ЛОЦМАН:PLM 2014).
         /// </returns>
+        /// <remarks>
+        /// <br/> После выполнения этой операции все изменения, произведенные в чекауте, сохраняются в базе данных.
+        ///  Объект по-прежнему остается на изменении.
+        /// </remarks>
         public static DataTable Native_SaveChanges(this INetPluginCall pc, string checkOutName, string dBName)
         {
             return pc.GetDataTable("SaveChanges", checkOutName, dBName);
