@@ -1,7 +1,29 @@
 ﻿namespace LoodsmanCommon
 {
     /// <summary>
-    /// Режим возврата списка атрибутов 
+    /// Режим возврата информации о версии объекта 
+    /// </summary>
+    public enum GetInfoAboutVersionMode
+    {
+        Mode2 = 2,
+        Mode3 = 3,
+        Mode7 = 7,
+        Mode8 = 8,
+        Mode9 = 9,
+        Mode10 = 10,
+        Mode11 = 11,
+        Mode12 = 12,
+        Mode13 = 13,
+        Mode15 = 15,
+        Mode16 = 16,
+        Mode19 = 19,
+        Mode20 = 20,
+        Mode22 = 22,
+        Mode23 = 23,
+    }
+
+    /// <summary>
+    /// Режим возврата информации о типе 
     /// </summary>
     public enum GetInfoAboutTypeMode
     {

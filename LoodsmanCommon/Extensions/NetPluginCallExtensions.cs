@@ -37,6 +37,15 @@ namespace LoodsmanCommon.Extensions
             return pc.GetDataTable("GetLinkList");
         }
 
+        /// <summary>
+        /// Возвращает список возможных состояний.
+        /// </summary>
+        /// <returns>
+        /// Возвращает набор данных с полями:
+        /// <br/>[_ID] int – уникальный идентификатор состояния;
+        /// <br/>[_NAME] string – название состояния;
+        /// <br/>[_ICON] image – значок состояния.
+        /// </returns>
         public static DataTable Native_GetStateList(this INetPluginCall pc)
         {
             return pc.GetDataTable("GetStateList");
@@ -45,7 +54,7 @@ namespace LoodsmanCommon.Extensions
         /// <summary>
         /// Возвращает полный список атрибутов базы данных.
         /// </summary>
-        /// <param name="mode">Режим возврата списка атрибутов</param>
+        /// <param name="mode">Режим возврата списка атрибутов</param>g
         /// <returns>
         /// Возвращает набор данных с полями:
         /// <br/>[_ID] int – уникальный идентификатор атрибута;
@@ -97,6 +106,16 @@ namespace LoodsmanCommon.Extensions
         public static DataTable Native_GetInfoAboutType(this INetPluginCall pc, string typeName, GetInfoAboutTypeMode mode)
         {
             return pc.GetDataTable("GetInfoAboutType", typeName, (int)mode);
+        }
+
+        public static DataTable Native_GetInfoAboutVersion(this INetPluginCall pc, int objectId, GetInfoAboutVersionMode mode)
+        {
+            return pc.GetDataTable("GetInfoAboutVersion", string.Empty, string.Empty, string.Empty, objectId, (int)mode);
+        }
+
+        public static DataTable Native_GetInfoAboutVersion(this INetPluginCall pc, string typeName, string product, string version, GetInfoAboutVersionMode mode)
+        {
+            return pc.GetDataTable("GetInfoAboutVersion", typeName, product, version, 0, (int)mode);
         }
 
         public static DataTable Native_GetPropObjects(this INetPluginCall pc, IEnumerable<int> objectsIds)
