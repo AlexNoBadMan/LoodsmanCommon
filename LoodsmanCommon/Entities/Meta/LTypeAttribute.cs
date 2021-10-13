@@ -1,20 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace LoodsmanCommon.Entities.Meta
 {
-    public class LTypeAttribute : LAttribute
+    public class LTypeAttribute
     {
+        private readonly LAttribute _lAttribute;
+
+        public int Id => _lAttribute.Id;
+        public string Name => _lAttribute.Name;
+        public AttributeType Type => _lAttribute.Type;
+        public string DefaultValue => _lAttribute.DefaultValue;
+        public IReadOnlyList<string> ListValue => _lAttribute.ListValue;
+        public bool OnlyIsItems => _lAttribute.OnlyIsItems;
+        public bool IsSystem => _lAttribute.IsSystem;
         public bool IsObligatory { get; }
 
-        public LTypeAttribute(int id, string name, AttributeType type, string defaultValue, List<string> listValue, bool onlyIsItems, bool isSystem, bool isObligatory) 
-            : base(id, name, type, defaultValue, listValue, onlyIsItems, isSystem)
+        internal LTypeAttribute(LAttribute lAttribute, bool isObligatory)
         {
+            _lAttribute = lAttribute;
             IsObligatory = isObligatory;
         }
-            }
+    }
 }

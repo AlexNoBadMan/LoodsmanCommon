@@ -1,14 +1,16 @@
 ﻿using System.Data;
 
-
 namespace LoodsmanCommon.Entities.Meta
 {
     public abstract class Entity
     {
+        /// <summary>
+        /// Индентификатор
+        /// </summary>
         public int Id { get; }
         public string Name { get; }
 
-        public Entity(int id, string name)
+        internal Entity(int id, string name)
         {
             Id = id;
             Name = name;
@@ -16,6 +18,5 @@ namespace LoodsmanCommon.Entities.Meta
 
         internal Entity(DataRow dataRow, string nameField = "_NAME") : this((int)dataRow["_ID"], dataRow[nameField] as string)
         { }
-
     }
 }

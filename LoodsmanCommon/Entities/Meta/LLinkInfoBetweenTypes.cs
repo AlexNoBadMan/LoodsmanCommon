@@ -15,7 +15,7 @@ namespace LoodsmanCommon.Entities.Meta
         public LinkDirection Direction { get; internal set; }
         public bool IsQuantity { get; }
 
-        public LLinkInfoBetweenTypes(DataRow dataRow)
+        internal LLinkInfoBetweenTypes(DataRow dataRow)
         {
             Id = (int)dataRow["_ID_LINKTYPE"];
             Name = dataRow["_LINKTYPE"] as string;

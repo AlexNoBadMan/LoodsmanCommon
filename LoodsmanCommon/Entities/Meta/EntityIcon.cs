@@ -15,11 +15,11 @@ namespace LoodsmanCommon.Entities.Meta
         public Image Icon { get; }
         public ImageSource BitmapSource { get; }
 
-        public EntityIcon(int id, string name, byte[] iconField) : base(id, name)
+        internal EntityIcon(int id, string name, byte[] iconField) : base(id, name)
         {
-            using var icon = new MemoryStream(iconField);
             try
             {
+                using var icon = new MemoryStream(iconField);
                 var bitmap = new Bitmap(icon);
                 bitmap.MakeTransparent(bitmap.GetPixel(0, bitmap.Height - 1));
                 Icon = bitmap;

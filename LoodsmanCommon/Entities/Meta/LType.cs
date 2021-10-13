@@ -10,7 +10,7 @@ namespace LoodsmanCommon.Entities.Meta
     {
         private readonly INetPluginCall _iNetPC;
         private readonly IEnumerable<LAttribute> _lAttributes;
-        private IEnumerable<LTypeAttribute> _attributes;
+        private IReadOnlyCollection<LTypeAttribute> _attributes;
 
         /// <summary>
         /// Ключевой атрибут типа.
@@ -45,9 +45,11 @@ namespace LoodsmanCommon.Entities.Meta
         /// <summary>
         /// Список возможных атрибутов типа, включая служебные.
         /// </summary>
-        public IEnumerable<LTypeAttribute> Attributes => _attributes ??= GetTypeAttributes();
+        public IReadOnlyCollection<LTypeAttribute> Attributes => _attributes ??= _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).GetRows()
+                                                .Select(x => new LTypeAttribute(_lAttributes.First(a => a.Id == (int)x["_ID"]), (short)x["_OBLIGATORY"] == 1))
+                                                .ToReadOnlyList();
 
-        public LType(INetPluginCall iNetPC, DataRow dataRow, IEnumerable<LAttribute> lAttributes, IEnumerable<LState> states, string nameField = "_TYPENAME") : base(dataRow, nameField)
+        internal LType(INetPluginCall iNetPC, DataRow dataRow, IEnumerable<LAttribute> lAttributes, IEnumerable<LState> states, string nameField = "_TYPENAME") : base(dataRow, nameField)
         {
             _iNetPC = iNetPC;
             _lAttributes = lAttributes;
@@ -57,17 +59,6 @@ namespace LoodsmanCommon.Entities.Meta
             DefaultState = states.FirstOrDefault(a => a.Name == dataRow["_DEFAULTSTATE"] as string);
             CanBeProject = (int)dataRow["_CANBEPROJECT"] == 1;
             CanCreate = (int)dataRow["_CANCREATE"] == 1;
-        }
-
-        private IEnumerable<LTypeAttribute> GetTypeAttributes()
-        {
-            return _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).GetRows()
-                   .Select(x =>
-                   {
-                       var attr = _lAttributes.First(a => a.Id == (int)x["_ID"]);
-                       return new LTypeAttribute(attr.Id, attr.Name, attr.Type, attr.DefaultValue, attr.ListValue, attr.OnlyIsItems, attr.IsSystem, (short)x["_OBLIGATORY"] == 1);
-                   })
-                   .ToArray();
         }
     }
 }
