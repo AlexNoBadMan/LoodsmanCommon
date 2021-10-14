@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Entities\Meta\LMeasure.cs" />
+    <Compile Include="Entities\Meta\LMeasureUnit.cs" />
     <Compile Include="Extensions\DataRowExtensions.cs" />
     <Compile Include="Entities\LObjectAttribute.cs" />
     <Compile Include="Entities\Meta\Entity.cs" />

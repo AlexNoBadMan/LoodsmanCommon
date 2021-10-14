@@ -17,6 +17,7 @@ namespace LoodsmanCommon
         IReadOnlyList<LAttribute> Attributes { get; }
         IReadOnlyList<LProxyUseCase> ProxyUseCases { get; }
         IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes { get; }
+        IReadOnlyList<LMeasure> Measures { get; }
         LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension);
         void Clear();
     }
@@ -30,6 +31,7 @@ namespace LoodsmanCommon
         private IReadOnlyList<LAttribute> _attributes;
         private IReadOnlyList<LProxyUseCase> _proxyUseCases;
         private IReadOnlyList<LLinkInfoBetweenTypes> _linksInfoBetweenTypes;
+        private IReadOnlyList<LMeasure> _measures;
         private readonly INetPluginCall _iNetPC;
 
         public IReadOnlyList<LType> Types => _types ??= _iNetPC.Native_GetTypeListEx().GetRows().Select(x => new LType(_iNetPC, x, Attributes, States)).ToReadOnlyList();
@@ -38,7 +40,7 @@ namespace LoodsmanCommon
         public IReadOnlyList<LAttribute> Attributes => _attributes ??= _iNetPC.Native_GetAttributeList().GetRows().Select(x => new LAttribute(x)).ToReadOnlyList();
         public IReadOnlyList<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().GetRows().Select(x => new LProxyUseCase(x)).ToReadOnlyList();
         public IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes => _linksInfoBetweenTypes ??= GetLinksInfoBetweenTypes(_iNetPC.Native_GetLinkListEx()).ToReadOnlyList();
-
+        public IReadOnlyList<LMeasure> Measures => _measures ??= _iNetPC.Native_GetFromBO_Nature().GetRows().Select(x => new LMeasure(_iNetPC, x)).ToReadOnlyList();
         public LoodsmanMeta(INetPluginCall iNetPC)
         {
             _iNetPC = iNetPC;

@@ -28,9 +28,11 @@ namespace LoodsmanCommon.Demo
 
         private void Command1(INetPluginCall iNetPC)
         {
+                _proxy.InitNetPluginCall(iNetPC);
+            var attrs = _meta.Measures.Skip(2).First().Units;
+            var w = attrs;
             try
             {
-                _proxy.InitNetPluginCall(iNetPC);
                 _proxy.SelectedObjectCheckOut();
                 _proxy.KillVersion(_proxy.SelectedObject.Id);
                 _proxy.CancelCheckOut();

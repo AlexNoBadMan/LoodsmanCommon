@@ -1,4 +1,5 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
+using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -27,6 +28,38 @@ namespace LoodsmanCommon.Extensions
             return pc.RunMethod("IsAdmin") as int? == 1;
         }
 
+        [Obsolete("Недокументированный метод")]
+        /// <summary>
+        /// Возвращает измеряемые сущности. 
+        /// </summary>
+        /// <returns>
+        /// Возвращает набор данных с полями:
+        /// <br/>[_GUID] string -  уникальный идентификатор сущности;
+        /// <br/>[_DISPLAY] string - отображаемое имя сущности;
+        /// <br/>[_TAG] int - всегда равен -1.
+        /// </returns>
+        /// <remarks>
+        /// Примечание:
+        /// <br/>** Недокументированный метод.
+        /// </remarks>
+        public static DataTable Native_GetFromBO_Nature(this INetPluginCall pc)
+        {
+            return pc.GetDataTable("GetFromBO_Nature");
+        }
+
+        /// <summary>
+        /// Возвращает список возможных единиц измерения для измеряемой сущности. 
+        /// </summary>
+        /// <returns>
+        /// Возвращает набор данных с полями:
+        /// <br/>[_ID_UNIT] string – уникальный идентификатор единицы измерения;
+        /// <br/>[_NAME] string – название единицы измерения;
+        /// <br/>[_BASICUNIT] int – признак базовой единицы измерения (1 – является базовой, 0 – не является базовой).
+        /// </returns>
+        public static DataTable Native_GetMUnitList(this INetPluginCall pc, string measureGuid)
+        {
+            return pc.GetDataTable("GetMUnitList", measureGuid);
+        }
 
         /// <summary>
         /// Возвращает информацию о текущем пользователе.
