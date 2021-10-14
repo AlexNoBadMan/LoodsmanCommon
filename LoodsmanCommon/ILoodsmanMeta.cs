@@ -25,7 +25,6 @@ namespace LoodsmanCommon
 
     internal class LoodsmanMeta : ILoodsmanMeta
     {
-        //Используем массивы т.к. нужны простые списки и нет необходимости расширять данные
         private IReadOnlyList<LType> _types;
         private IReadOnlyList<LLink> _links;
         private IReadOnlyList<LState> _states;

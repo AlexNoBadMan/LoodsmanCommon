@@ -206,48 +206,6 @@
     }
 
     /// <summary>
-    /// Уровни доступа
-    /// </summary>
-    public enum AccessLevel
-    {
-        /// <summary>
-        /// Нет доступа
-        /// </summary>
-        No = 0,
-        /// <summary>
-        /// Чтение
-        /// </summary>
-        Read = 1,
-        /// <summary>
-        /// Чтение-запись
-        /// </summary>
-        Write = 2,
-        /// <summary>
-        /// Полный доступ
-        /// </summary>
-        Full = 3
-    }
-
-    /// <summary>
-    /// Уровни блокировки
-    /// </summary>
-    public enum LockLevel
-    {
-        /// <summary>
-        /// Не заблокирован
-        /// </summary>
-        No = 0,
-        /// <summary>
-        /// Заблокирован текущим пользователем
-        /// </summary>
-        Self = 1,
-        /// <summary>
-        /// Заблокирован другим пользователем
-        /// </summary>
-        Other = 2
-    }
-
-    /// <summary>
     /// Типы атрибутов
     /// </summary>
     public enum AttributeType : short

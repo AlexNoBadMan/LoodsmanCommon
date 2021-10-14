@@ -17,8 +17,8 @@ namespace LoodsmanCommon
         string Version { get; set; }
         LState State { get; set; }
         bool IsDocument { get; }
-        AccessLevel AccessLevel { get; set; }
-        LockLevel LockLevel { get; set; }
+        PDMAccessLevels AccessLevel { get; set; }
+        PDMLockLevels LockLevel { get; set; }
         LObjectAttributes Attributes { get; }
     }
 
@@ -34,8 +34,8 @@ namespace LoodsmanCommon
         public string Version { get; set; }
         public LState State { get; set; }
         public bool IsDocument => Type.IsDocument;
-        public AccessLevel AccessLevel { get; set; }
-        public LockLevel LockLevel { get; set; }
+        public PDMAccessLevels AccessLevel { get; set; }
+        public PDMLockLevels LockLevel { get; set; }
         public LObjectAttributes Attributes => _attributes ??= new LObjectAttributes(this, _proxy);
 
         public LoodsmanObject(ILoodsmanProxy proxy, LType type, LState state)
@@ -56,8 +56,8 @@ namespace LoodsmanCommon
             Product = dataRow["_PRODUCT"] as string;
             Version = dataRow["_VERSION"] as string;
             //IsDocument = (short)dataRow["_DOCUMENT"] == 1;
-            AccessLevel = (AccessLevel)dataRow["_ACCESSLEVEL"];
-            LockLevel = (LockLevel)dataRow["_LOCKED"];
+            AccessLevel = (PDMAccessLevels)dataRow["_ACCESSLEVEL"];
+            LockLevel = (PDMLockLevels)dataRow["_LOCKED"];
         }
 
         public LoodsmanObject(IPluginCall pc, ILoodsmanProxy proxy) : this(proxy, pc.stType, pc.Selected.StateName)
@@ -65,6 +65,8 @@ namespace LoodsmanCommon
             Id = pc.IdVersion;
             Product = pc.stProduct;
             Version = pc.stVersion;
+            AccessLevel = pc.Selected.AccessLevel;
+            LockLevel = pc.Selected.LockLevel;
             //IsDocument = pc.Selected.IsDocument;
             Parent = pc.ParentObject is IPDMObject ? new LoodsmanObject(pc.ParentObject, proxy) : null;
         }
@@ -74,6 +76,8 @@ namespace LoodsmanCommon
             Id = obj.ID;
             Product = obj.Name;
             Version = obj.Version;
+            AccessLevel = obj.AccessLevel;
+            LockLevel = obj.LockLevel;
             //IsDocument = obj.IsDocument;
             Parent = obj.Parent is IPDMLink link ? new LoodsmanObject(link.ParentObject, proxy) : null;
         }
