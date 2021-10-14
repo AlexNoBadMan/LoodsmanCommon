@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using LoodsmanCommon.Extensions;
 
 namespace LoodsmanCommon.Demo
 {
@@ -16,7 +17,9 @@ namespace LoodsmanCommon.Demo
             menu.AddMenuItem("Тест демо#В работу(SelectedObjectCheckOut), удалить, отказ", Command1, CheckCommand);
             menu.AddMenuItem("Тест демо#В работу(Empty CheckOut AddToCheckOut), удалить, отказ", Command2, CheckCommand);
             menu.AddMenuItem("Тест демо#В работу(No empty ChekOut), удалить, отказ", Command3, CheckCommand);
+            menu.AddMenuItem("Тест демо#Преобразование единиц измерения", Command4, CheckCommand);
         }
+
 
         protected override bool CheckCommand(INetPluginCall iNetPC)
         {
@@ -28,11 +31,9 @@ namespace LoodsmanCommon.Demo
 
         private void Command1(INetPluginCall iNetPC)
         {
-                _proxy.InitNetPluginCall(iNetPC);
-            var attrs = _meta.Measures.Skip(2).First().Units;
-            var w = attrs;
             try
             {
+                _proxy.InitNetPluginCall(iNetPC);
                 _proxy.SelectedObjectCheckOut();
                 _proxy.KillVersion(_proxy.SelectedObject.Id);
                 _proxy.CancelCheckOut();
@@ -79,6 +80,17 @@ namespace LoodsmanCommon.Demo
                 _proxy.CancelCheckOut();
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void Command4(INetPluginCall iNetPC)
+        {
+            _proxy.InitNetPluginCall(iNetPC);
+            var massa = _meta.Measures.FirstOrDefault(x => x.Name == "Масса");
+            var valueUnit = massa.Units.FirstOrDefault(x => x.IsBase);
+            var convertValueUnit = massa.Units.FirstOrDefault(x => x.Name == "г");
+            var value = 5; 
+            var convertValue = _proxy.ConverseValue(value, convertValueUnit, valueUnit);
+            MessageBox.Show($"Исходное значение: {value} {convertValueUnit.Name} \nПреобразованное значение: {convertValue} {valueUnit.Name}");
         }
     }
 }
