@@ -14,6 +14,7 @@ namespace LoodsmanCommon.Entities.Meta
         public bool OnlyIsItems => _lAttribute.OnlyIsItems;
         public bool IsSystem => _lAttribute.IsSystem;
         public bool IsObligatory { get; }
+        public bool IsMeasured => _lAttribute.IsMeasured;
 
         internal LTypeAttribute(LAttribute lAttribute, bool isObligatory)
         {

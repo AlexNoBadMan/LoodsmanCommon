@@ -181,13 +181,22 @@ namespace LoodsmanCommon
         IEnumerable<LObjectAttribute> GetAttributes(ILoodsmanObject loodsmanObject);
 
         /// <summary>
+        /// Приводит значение к заданной единице измерения.
+        /// </summary>
+        /// <param name="value">Значение</param>
+        /// <param name="sourceMeasureGuid">Исходная единица измерения</param>
+        /// <param name="destMeasureGuid">Требуемая единица измерения</param>
+        /// <returns>Возвращает преобразованное значение.</returns>
+        double ConverseValue(double value, LMeasureUnit sourceMeasureUnit, LMeasureUnit destMeasureUnit);
+
+        /// <summary>
         /// Добавляет, удаляет, обновляет значение атрибута объекта.
         /// </summary>
         /// <param name="objectId">Идентификатор версии объекта</param>
         /// <param name="attributeName">Название атрибута</param>
         /// <param name="attributeValue">Значение атрибута. Если null или string.Empty то атрибут будет помечен на удаление</param>
-        /// <param name="unitId">Уникальный идентификатор единицы измерения</param>
-        void UpAttrValueById(int objectId, string attributeName, object attributeValue, string unitId = null);
+        /// <param name="measureUnit">Единица измерения</param>
+        void UpAttrValueById(int objectId, string attributeName, object attributeValue, LMeasureUnit measureUnit = null);
 
         /// <summary>
         /// Регистрирует в базе данных файл, находящийся на рабочем диске пользователя.
@@ -369,7 +378,7 @@ namespace LoodsmanCommon
         private INetPluginCall _iNetPC;
         private readonly List<(string TypeName, string Product)> _uniqueNames = new List<(string typeName, string product)>();
         private readonly List<(string TypeName, string Product)> _notUniqueNames = new List<(string typeName, string product)>();
-        private readonly ILoodsmanMeta _loodsmanMeta;
+        private readonly ILoodsmanMeta _meta;
         private ILoodsmanObject _selectedObject;
         private List<ILoodsmanObject> _selectedObjects = new List<ILoodsmanObject>();
 
@@ -383,7 +392,7 @@ namespace LoodsmanCommon
                 _notUniqueNames.Clear();
             }
         }
-        public ILoodsmanMeta Meta => _loodsmanMeta;
+        public ILoodsmanMeta Meta => _meta;
         public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall, this);
         public IEnumerable<ILoodsmanObject> SelectedObjects => GetSelectedObjects();
         public string CheckOutName => _checkOutName;
@@ -438,7 +447,7 @@ namespace LoodsmanCommon
             thread.Abort();
             File.Copy(fRDesigner.FileName, $"{userFileDir}\\{reportName}", true);
              */
-            _loodsmanMeta = loodsmanMeta;
+            _meta = loodsmanMeta;
         }
 
         public void InitNetPluginCall(INetPluginCall iNetPC)
@@ -458,8 +467,8 @@ namespace LoodsmanCommon
 
         public ILoodsmanObject NewObject(string typeName, string product, string stateName = null, bool isProject = false)
         {
-            var type = _loodsmanMeta.Types.First(x => x.Name == typeName);
-            var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _loodsmanMeta.States.First(x => x.Name == stateName);
+            var type = _meta.Types.First(x => x.Name == typeName);
+            var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States.First(x => x.Name == stateName);
             var loodsmanObject = new LoodsmanObject(this, type, state)
             {
                 Id = _iNetPC.Native_NewObject(type.Name, state.Name, product, isProject),
@@ -474,7 +483,7 @@ namespace LoodsmanCommon
                 throw new ArgumentException($"{nameof(typeName)} - тип не может быть пустым", nameof(typeName));
 
             if (string.IsNullOrEmpty(stateName))
-                stateName = _loodsmanMeta.Types.First(x => x.Name == typeName).DefaultState.Name;
+                stateName = _meta.Types.First(x => x.Name == typeName).DefaultState.Name;
             return stateName;
         }
         #endregion
@@ -599,7 +608,7 @@ namespace LoodsmanCommon
 
         private LLinkInfoBetweenTypes GetLinkInfo(string parentTypeName, string childTypeName, string linkType)
         {
-            var linkInfo = _loodsmanMeta.LinksInfoBetweenTypes.FirstOrDefault(x => x.TypeName1 == parentTypeName && x.TypeName2 == childTypeName && x.Name == linkType);
+            var linkInfo = _meta.LinksInfoBetweenTypes.FirstOrDefault(x => x.TypeName1 == parentTypeName && x.TypeName2 == childTypeName && x.Name == linkType);
             if (linkInfo is null)
                 throw new InvalidOperationException($"Не удалось найти информацию о связи типов {nameof(parentTypeName)}: \"{parentTypeName}\" - {nameof(childTypeName)}: \"{childTypeName}\", по связи: \"{linkType}\"");
             return linkInfo;
@@ -634,16 +643,37 @@ namespace LoodsmanCommon
 
         public IEnumerable<LObjectAttribute> GetAttributes(ILoodsmanObject loodsmanObject)
         {
-            var attributeInfo = _iNetPC.Native_GetInfoAboutVersion(loodsmanObject.Id, GetInfoAboutVersionMode.Mode3).GetRows();
+            var attributesInfo = _iNetPC.Native_GetInfoAboutVersion(loodsmanObject.Id, GetInfoAboutVersionMode.Mode3).GetRows();
             foreach (var lTypeAttribute in loodsmanObject.Type.Attributes)
             {
-                yield return new LObjectAttribute(loodsmanObject, lTypeAttribute, attributeInfo.FirstOrDefault(x => x["_NAME"] as string == lTypeAttribute.Name)?["_VALUE"]);
+                var attribute = attributesInfo.FirstOrDefault(x => x["_NAME"] as string == lTypeAttribute.Name);
+                var measureId = string.Empty;
+                var unitId = string.Empty;
+                var value = attribute?["_VALUE"];
+                if (lTypeAttribute.IsMeasured && !(value is null)) 
+                {
+                    measureId = attribute["_ID_MEASURE"] as string;
+                    unitId = attribute["_ID_UNIT"] as string;
+                }
+
+                yield return new LObjectAttribute(this, loodsmanObject, lTypeAttribute, value, measureId, unitId);
             }
         }
 
-        public void UpAttrValueById(int objectId, string attributeName, object attributeValue, string unitId = null)
+        public double ConverseValue(double value, LMeasureUnit sourceMeasureUnit, LMeasureUnit destMeasureUnit)
         {
-            _iNetPC.Native_UpAttrValueById(objectId, attributeName, attributeValue, unitId, IsNullOrDefault(attributeValue));
+            if (sourceMeasureUnit is null || destMeasureUnit is null || sourceMeasureUnit == destMeasureUnit)
+                return value;
+
+            if (sourceMeasureUnit.ParentMeasure != destMeasureUnit.ParentMeasure)
+                throw new ArgumentException($"Невозможно преобразование единиц измерения из \"{sourceMeasureUnit.ParentMeasure.Name}\" в \"{destMeasureUnit.ParentMeasure.Name}\"");
+
+            return _iNetPC.Native_ConverseValue(value, sourceMeasureUnit.Guid, destMeasureUnit.Guid);
+        }
+
+        public void UpAttrValueById(int objectId, string attributeName, object attributeValue, LMeasureUnit measureUnit = null)
+        {
+            _iNetPC.Native_UpAttrValueById(objectId, attributeName, attributeValue, measureUnit?.Guid, IsNullOrDefault(attributeValue));
         }
 
         public static bool IsNullOrDefault<T>(T value)
@@ -748,9 +778,9 @@ namespace LoodsmanCommon
             var xmlString = _iNetPC.Native_PreviewBoObject(typeName, uniqueId);
             var xDocument = XDocument.Parse(xmlString);
             var elements = xDocument.Descendants("PreviewBoObjectResult").Elements();
-            var type = _loodsmanMeta.Types.First(x => x.Name == typeName);
+            var type = _meta.Types.First(x => x.Name == typeName);
             var stateName = elements.FirstOrDefault(x => x.Name == "State")?.Value;
-            var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _loodsmanMeta.States.First(x => x.Name == stateName);
+            var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States.First(x => x.Name == stateName);
             var loodsmanObject = new LoodsmanObject(this, type, state)
             {
                 Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0,

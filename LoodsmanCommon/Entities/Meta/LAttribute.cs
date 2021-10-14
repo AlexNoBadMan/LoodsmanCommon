@@ -12,6 +12,7 @@ namespace LoodsmanCommon.Entities.Meta
         public IReadOnlyList<string> ListValue { get; }
         public bool OnlyIsItems { get; }
         public bool IsSystem { get; }
+        public bool IsMeasured => Type == AttributeType.Int || Type == AttributeType.Double;
 
         internal LAttribute(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
         {

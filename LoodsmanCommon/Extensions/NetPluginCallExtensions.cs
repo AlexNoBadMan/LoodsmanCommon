@@ -51,6 +51,7 @@ namespace LoodsmanCommon.Extensions
         /// Возвращает список возможных единиц измерения для измеряемой сущности. 
         /// </summary>
         /// <returns>
+        /// <param name="measureGuid">Идентификатор измеряемой сущности</param>
         /// Возвращает набор данных с полями:
         /// <br/>[_ID_UNIT] string – уникальный идентификатор единицы измерения;
         /// <br/>[_NAME] string – название единицы измерения;
@@ -59,6 +60,30 @@ namespace LoodsmanCommon.Extensions
         public static DataTable Native_GetMUnitList(this INetPluginCall pc, string measureGuid)
         {
             return pc.GetDataTable("GetMUnitList", measureGuid);
+        }
+
+        ///// <summary>
+        ///// Приводит целочисленное значение к заданной единице измерения.
+        ///// </summary>
+        ///// <param name="value">Значение</param>
+        ///// <param name="measureGuid">Идентификатор исходной единицы измерения</param>
+        ///// <param name="destMeasureGuid">Идентификатор требуемой единицы измерения</param>
+        ///// <returns>Возвращает преобразованное значение.</returns>
+        //public static int Native_ConverseValue(this INetPluginCall pc, int value, string measureGuid, string destMeasureGuid)
+        //{
+        //    return (int)pc.RunMethod("ConverseValue", value, measureGuid, destMeasureGuid);
+        //}
+
+        /// <summary>
+        /// Приводит значение к заданной единице измерения.
+        /// </summary>
+        /// <param name="value">Значение</param>
+        /// <param name="sourceMeasureGuid">Идентификатор исходной единицы измерения</param>
+        /// <param name="destMeasureGuid">Идентификатор требуемой единицы измерения</param>
+        /// <returns>Возвращает преобразованное значение.</returns>
+        public static double Native_ConverseValue(this INetPluginCall pc, double value, string sourceMeasureGuid, string destMeasureGuid)
+        {
+            return (double)pc.RunMethod("ConverseValue", value, sourceMeasureGuid, destMeasureGuid);
         }
 
         /// <summary>

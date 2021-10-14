@@ -37,12 +37,14 @@ namespace LoodsmanCommon.Entities
 
     public class LObjectAttribute
     {
+        private readonly ILoodsmanProxy _proxy;
         private readonly ILoodsmanObject _owner;
         private readonly LTypeAttribute _lTypeAttribute;
+        private readonly string _measureId;
+        private readonly string _unitId;
+        private LMeasureUnit _measureUnit;
+        private object _value;
 
-        /// <summary>
-        /// Уникальный идентификатор атрибута.
-        /// </summary>
         public int Id => _lTypeAttribute.Id;
         public string Name => _lTypeAttribute.Name;
         public AttributeType Type => _lTypeAttribute.Type;
@@ -51,13 +53,58 @@ namespace LoodsmanCommon.Entities
         public bool OnlyIsItems => _lTypeAttribute.OnlyIsItems;
         public bool IsSystem => _lTypeAttribute.IsSystem;
         public bool IsObligatory => _lTypeAttribute.IsObligatory;
-        public object Value { get; set; }
+        public bool IsMeasured => _lTypeAttribute.IsMeasured;
 
-        public LObjectAttribute(ILoodsmanObject owner, LTypeAttribute lTypeAttribute, object value) 
+        public LMeasureUnit MeasureUnit
         {
+            get
+            {
+                if (!IsMeasured)
+                    return null;
+
+                if (_measureUnit is null && !string.IsNullOrEmpty(_measureId))
+                    _measureUnit = _proxy.Meta.Measures.First(x => x.Guid == _measureId).Units.First(x => x.Guid == _unitId);
+                return _measureUnit;
+            }
+            set
+            {
+                if (!IsMeasured || _measureUnit == value)
+                    return;
+
+                var isEmptyValue = _value is null;
+                var valueToConvert = isEmptyValue ? 0 : (double)_value;
+                var convertedValue = _proxy.ConverseValue(valueToConvert, _measureUnit, value);//Пробуем произвести конвертацию, для проверки корректности операции
+                _measureUnit = value;
+                if (!isEmptyValue)
+                {
+                    _value = Type == AttributeType.Int ? (int)convertedValue : (object)convertedValue;
+                    UpdateAttribute();
+                }
+            }
+        }
+
+        public object Value
+        {
+            get => _value;
+            set
+            {
+                _value = value;
+            }
+        }
+
+        internal LObjectAttribute(ILoodsmanProxy proxy, ILoodsmanObject owner, LTypeAttribute lTypeAttribute, object value, string measureId, string unitId)
+        {
+            _proxy = proxy;
             _owner = owner;
             _lTypeAttribute = lTypeAttribute;
-            Value = value;
+            _value = value;
+            _measureId = measureId;
+            _unitId = unitId;
+        }
+
+        private void UpdateAttribute()
+        {
+            _proxy.UpAttrValueById(_owner.Id, Name, Value, MeasureUnit);
         }
     }
 }
