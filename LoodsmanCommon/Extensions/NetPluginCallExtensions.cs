@@ -306,6 +306,82 @@ namespace LoodsmanCommon.Extensions
         }
 
         /// <summary>
+        /// Возвращает список связанных объектов для отображения в дереве.
+        /// </summary>
+        /// <param name="typeName">Название типа.</param>
+        /// <param name="product">Ключевой атрибут.</param>
+        /// <param name="version">Версия объекта.</param>
+        /// <param name="linkTypeNames">Список связей.</param>
+        /// <param name="withAttributes">Возвращать или не возвращать атрибуты.</param>
+        /// <returns>
+        /// Возвращает набор данных с полями:
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
+        /// <br/>[_ID_LINK] int – уникальный идентификатор экземпляра связи;
+        /// <br/>[_TYPE] string – тип объекта;
+        /// <br/>[_PRODUCT] string – ключевой атрибут объекта;
+        /// <br/>[_VERSION] string – номер версии объекта;
+        /// <br/>[_STATE] string – текущее состояние объекта;
+        /// <br/>[_LINKTYPE] string – тип связи, которым привязан объект;
+        /// <br/>[_DOCUMENT] int – является ли документом (1 – является, 0 – не является);
+        /// <br/>[_ACCESSLEVEL] int – уровень доступа к объекту (1 – Только чтение, 2 – Чтение/запись, 3 – Полный доступ);
+        /// <br/>[_LOCKED] int – уровень блокировки объекта (0 – не блокирован, 1 – блокирован текущим пользователем, 2 – блокирован другим пользователем).
+        /// </returns>
+        public static DataTable Native_GetTree(this INetPluginCall pc, string typeName, string product, string version, IEnumerable<string> linkTypeNames, bool withAttributes = false)
+        {
+            return pc.GetDataTable("GetTree", typeName, product, version, 0, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), withAttributes);
+        }
+
+        /// <summary>
+        /// Возвращает список связанных объектов для отображения в дереве.
+        /// </summary>
+        /// <param name="objectId">Идентификатор версии объекта.</param>
+        /// <param name="linkTypeNames">Список связей.</param>
+        /// <param name="withAttributes">Возвращать или не возвращать атрибуты.</param>
+        /// <returns>
+        /// Возвращает набор данных с полями:
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
+        /// <br/>[_ID_LINK] int – уникальный идентификатор экземпляра связи;
+        /// <br/>[_TYPE] string – тип объекта;
+        /// <br/>[_PRODUCT] string – ключевой атрибут объекта;
+        /// <br/>[_VERSION] string – номер версии объекта;
+        /// <br/>[_STATE] string – текущее состояние объекта;
+        /// <br/>[_LINKTYPE] string – тип связи, которым привязан объект;
+        /// <br/>[_DOCUMENT] int – является ли документом (1 – является, 0 – не является);
+        /// <br/>[_ACCESSLEVEL] int – уровень доступа к объекту (1 – Только чтение, 2 – Чтение/запись, 3 – Полный доступ);
+        /// <br/>[_LOCKED] int – уровень блокировки объекта (0 – не блокирован, 1 – блокирован текущим пользователем, 2 – блокирован другим пользователем).
+        /// </returns>
+        public static DataTable Native_GetTree(this INetPluginCall pc, int objectId, IEnumerable<string> linkTypeNames, bool withAttributes = false)
+        {
+            return pc.GetDataTable("GetTree", string.Empty, string.Empty, string.Empty, objectId, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), withAttributes);
+        }
+
+        /// <summary>
+        /// Возвращает список связанных объектов для отображения в дереве.
+        /// </summary>
+        /// <param name="objectId">Идентификатор версии объекта.</param>
+        /// <param name="linkTypeNames">Список связей.</param>
+        /// <param name="withAttributes">Возвращать или не возвращать атрибуты.</param>
+        /// <returns>
+        /// Возвращает набор данных с полями:
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
+        /// <br/>[_ID_LINK] int – уникальный идентификатор экземпляра связи;
+        /// <br/>[_ID_TYPE] int – идентификатор типа объекта;
+        /// <br/>[_PRODUCT] string – ключевой атрибут объекта;
+        /// <br/>[_VERSION] string – номер версии объекта;
+        /// <br/>[_ID_STATE] int – идентификатор текущего состояния объекта;
+        /// <br/>[_ID_LINKTYPE] int – идентификатор типа связи, которым привязан объект;
+        /// <br/>[_ID_LOCK] int – идентификатор чекаута, в котором блокирован объект (если объект не блокирован, то вернется null);
+        /// <br/>[_ACCESSLEVEL] int – уровень доступа к объекту (1 – Только чтение, 2 – Чтение/запись, 3 – Полный доступ).
+        /// </returns>
+        public static DataTable Native_GetTree2(this INetPluginCall pc, int objectId, IEnumerable<string> linkTypeNames, bool withAttributes = false)
+        {
+            return pc.GetDataTable("GetTree2", objectId, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), withAttributes ? 1 : 0);
+        }
+
+        /// <summary>
         /// Возвращает информацию об экземпляре связи.
         /// </summary>
         /// <param name="idLink">Идентификатор экземпляра связи. Может быть получен методом GetLinkedObjects.</param>
