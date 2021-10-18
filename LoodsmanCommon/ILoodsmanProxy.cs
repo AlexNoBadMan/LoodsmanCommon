@@ -176,7 +176,7 @@ namespace LoodsmanCommon
         /// <summary>
         /// Получение атрибутов объекта, включая служебные.
         /// </summary>
-        /// <param name="loodsmanObject">Объект бд лоцман</param>
+        /// <param name="loodsmanObject">Объект Лоцман</param>
         /// <returns>Возвращает атрибуты объекта, включая служебные.</returns>
         IEnumerable<LObjectAttribute> GetAttributes(ILoodsmanObject loodsmanObject);
 
@@ -184,10 +184,17 @@ namespace LoodsmanCommon
         /// Приводит значение к заданной единице измерения.
         /// </summary>
         /// <param name="value">Значение</param>
-        /// <param name="sourceMeasureGuid">Исходная единица измерения</param>
-        /// <param name="destMeasureGuid">Требуемая единица измерения</param>
+        /// <param name="sourceMeasureUnit">Исходная единица измерения</param>
+        /// <param name="destMeasureUnit">Требуемая единица измерения</param>
         /// <returns>Возвращает преобразованное значение.</returns>
         double ConverseValue(double value, LMeasureUnit sourceMeasureUnit, LMeasureUnit destMeasureUnit);
+
+        /// <summary>
+        /// Изменяет состояние объекта.
+        /// </summary>
+        ///  <param name="objectId">Идентификатор версии объекта</param>
+        /// <param name="state">Состояние</param>
+        void UpdateState(int objectId, LState state);
 
         /// <summary>
         /// Добавляет, удаляет, обновляет значение атрибута объекта.
@@ -669,6 +676,14 @@ namespace LoodsmanCommon
                 throw new ArgumentException($"Невозможно преобразование единиц измерения из \"{sourceMeasureUnit.ParentMeasure.Name}\" в \"{destMeasureUnit.ParentMeasure.Name}\"");
 
             return _iNetPC.Native_ConverseValue(value, sourceMeasureUnit.Guid, destMeasureUnit.Guid);
+        }
+
+        public void UpdateState(int objectId, LState state)
+        {
+            if (state is null)
+                throw new Exception("Состоянием не может быть пустым");
+
+            _iNetPC.Native_UpdateStateOnObject(objectId, state.Name);
         }
 
         public void UpAttrValueById(int objectId, string attributeName, object attributeValue, LMeasureUnit measureUnit = null)

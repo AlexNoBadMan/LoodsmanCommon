@@ -182,6 +182,28 @@ namespace LoodsmanCommon.Extensions
         }
 
         /// <summary>
+        /// Изменяет состояние объекта.
+        /// </summary>
+        /// <param name="objectId">Идентификатор версии</param>
+        /// <param name="stateName">Название состояния</param>
+        public static void Native_UpdateStateOnObject(this INetPluginCall pc, int objectId, string stateName)
+        {
+            pc.RunMethod("UpdateStateOnObjectById", objectId, stateName);
+        }
+
+        /// <summary>
+        /// Изменяет состояние объекта.
+        /// </summary>
+        /// <param name="typeName">Название типа</param>
+        /// <param name="product">Ключевой атрибут</param>
+        /// <param name="version">Версия объекта</param>
+        /// <param name="stateName">Название состояния</param>
+        public static void Native_UpdateStateOnObject(this INetPluginCall pc, string typeName, string product, string version, string stateName)
+        {
+            pc.RunMethod("UpdateStateOnObject", typeName, product, version, stateName);
+        }
+
+        /// <summary>
         /// Возвращает полный список атрибутов базы данных.
         /// </summary>
         /// <param name="mode">Режим возврата списка атрибутов</param>

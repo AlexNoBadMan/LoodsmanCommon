@@ -2,6 +2,7 @@
 using LoodsmanCommon.Entities;
 using LoodsmanCommon.Entities.Meta;
 using PDMObjects;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace LoodsmanCommon
     internal class LoodsmanObject : ILoodsmanObject
     {
         private LObjectAttributes _attributes;
+        private LState _state;
         private readonly ILoodsmanProxy _proxy;
 
         public ILoodsmanObject Parent { get; set; }
@@ -32,7 +34,20 @@ namespace LoodsmanCommon
         public LType Type { get; set; }
         public string Product { get; set; }
         public string Version { get; set; }
-        public LState State { get; set; }
+
+        public LState State
+        {
+            get => _state;
+            set
+            {
+                if (_state == value)
+                    return;
+
+                _proxy.UpdateState(Id, value);
+                _state = value;
+            }
+        }
+
         public bool IsDocument => Type.IsDocument;
         public PDMAccessLevels AccessLevel { get; set; }
         public PDMLockLevels LockLevel { get; set; }
@@ -46,8 +61,8 @@ namespace LoodsmanCommon
             State = state;
         }
 
-        private LoodsmanObject(ILoodsmanProxy proxy, string typeName, string stateName) : 
-            this(proxy, proxy.Meta.Types.First(x => x.Name == typeName) , proxy.Meta.States.First(x => x.Name == stateName))
+        private LoodsmanObject(ILoodsmanProxy proxy, string typeName, string stateName) :
+            this(proxy, proxy.Meta.Types.First(x => x.Name == typeName), proxy.Meta.States.First(x => x.Name == stateName))
         { }
 
         public LoodsmanObject(DataRow dataRow, ILoodsmanProxy proxy) : this(proxy, dataRow["_TYPE"] as string, dataRow["_STATE"] as string)
@@ -80,6 +95,12 @@ namespace LoodsmanCommon
             LockLevel = obj.LockLevel;
             //IsDocument = obj.IsDocument;
             Parent = obj.Parent is IPDMLink link ? new LoodsmanObject(link.ParentObject, proxy) : null;
+        }
+
+
+        internal void SetState(LState state)
+        {
+            _state = state;
         }
     }
 }
