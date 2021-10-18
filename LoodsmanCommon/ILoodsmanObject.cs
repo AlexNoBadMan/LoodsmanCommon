@@ -1,9 +1,8 @@
 ﻿using Loodsman;
 using LoodsmanCommon.Entities;
 using LoodsmanCommon.Entities.Meta;
+using LoodsmanCommon.Extensions;
 using PDMObjects;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
@@ -72,7 +71,7 @@ namespace LoodsmanCommon
             Version = dataRow["_VERSION"] as string;
             //IsDocument = (short)dataRow["_DOCUMENT"] == 1;
             AccessLevel = (PDMAccessLevels)dataRow["_ACCESSLEVEL"];
-            LockLevel = (PDMLockLevels)dataRow["_LOCKED"];
+            LockLevel = (PDMLockLevels)dataRow.GetValueOrDefault<int>("_LOCKED");
         }
 
         public LoodsmanObject(IPluginCall pc, ILoodsmanProxy proxy) : this(proxy, pc.stType, pc.Selected.StateName)
