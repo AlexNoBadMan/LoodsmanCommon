@@ -89,6 +89,7 @@ namespace LoodsmanCommon.Entities
             set
             {
                 _value = value;
+                UpdateAttribute();
             }
         }
 
