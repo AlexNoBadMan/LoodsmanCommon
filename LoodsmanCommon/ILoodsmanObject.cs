@@ -58,7 +58,7 @@ namespace LoodsmanCommon
             _proxy = proxy;
             Type = type;
             Version = Type.IsVersioned ? Constants.DEFAULT_NEW_VERSION : Constants.DEFAULT_NEW_NO_VERSION;
-            State = state;
+            _state = state;
         }
 
         private LoodsmanObject(ILoodsmanProxy proxy, string typeName, string stateName) :
