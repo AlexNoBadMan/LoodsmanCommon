@@ -7,6 +7,7 @@ namespace LoodsmanCommon.Extensions
 {
     public static class NetPluginCallExtensions
     {
+
         ///<summary>
         /// Позволяет получить список объектов, выделенных в дереве «ЛОЦМАН Клиент».
         /// </summary>
@@ -381,6 +382,35 @@ namespace LoodsmanCommon.Extensions
             return pc.GetDataTable("GetTree2", objectId, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), withAttributes ? 1 : 0);
         }
 
+
+        /// <summary>
+        /// Возвращает информацию о связанных объектах для группы объектов.
+        /// </summary>
+        /// <param name="objectIds">Идентификаторы версий объектов.</param>
+        /// <param name="linkTypeIds">Список идентификаторов связей.</param>
+        /// <param name="inverse">Направление (true – обратное, false – прямое).</param>
+        /// <returns>
+        /// Возвращает набор данных с полями:
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID_LINK] int – числовой идентификатор связи;
+        /// <br/>[_ID_PARENT] int – идентификатор исходного объекта связи (всегда соответствует указанному в #Ids);
+        /// <br/>[_ID_CHILD] int – идентификатор связанного объекта;
+        /// <br/>[_ID_LINK_TYPE] int – идентификатор типа связи;
+        /// <br/>[_LINK_TYPE_NAME] string – имя типа связи;
+        /// <br/>[_ID_TYPE] int – идентификатор типа связанного объекта;
+        /// <br/>[_PRODUCT] string – ключевой атрибут связанного объекта;
+        /// <br/>[_VERSION] string – версия связанного объекта;
+        /// <br/>[_ID_STATE] int – состояние связанного объекта;
+        /// <br/>[_MIN_QUANTITY] double – минимальное значение количества для данного типа связи;
+        /// <br/>[_MAX_QUANTITY] double – максимальное значение количества для данного типа связи;
+        /// <br/>[_ACCESSLEVEL] int – уровень доступа пользователя, подключившегося к связанному объекту;
+        /// <br/>[_ID_LOCK] int – идентификатор рабочей области, блокирующей связанный объект.
+        /// </returns>
+        public static DataTable Native_GetLinkedObjectsForObjects(this INetPluginCall pc, IEnumerable<int> objectIds, IEnumerable<int> linkTypeIds, bool inverse = false)
+        {
+            return pc.GetDataTable("GetLinkedObjectsForObjects", string.Join(Constants.ID_SEPARATOR, objectIds), string.Join(Constants.ID_SEPARATOR, linkTypeIds), inverse);
+        }
+
         /// <summary>
         /// Возвращает информацию об экземпляре связи.
         /// </summary>
@@ -388,30 +418,30 @@ namespace LoodsmanCommon.Extensions
         /// <param name="mode">Режим вывода. В зависимости от его значения выдается соответствующая информация.</param>
         /// <returns>
         /// Зависит от режима:
-         /// <br/>inMode = 1
-         /// <br/>    Возвращает общую информацию об экземпляре связи.
-         /// <br/>    Возвращает набор данных с полями:
-         /// <br/>    [_ID] int – уникальный идентификатор экземпляра связи;
-         /// <br/>    [_NAME] string – тип связи;
-         /// <br/>    [_MIN_QUANTITY] double – нижняя граница количества;
-         /// <br/>    [_MAX_QUANTITY] double – верхняя граница количества;
-         /// <br/>    [_ID_UNIT] string – идентификатор единицы измерения, в которой отображается значение количества;
-         /// <br/>    [_UNIT] string – название единицы измерения, в которой отображается значение количества;
-         /// <br/>    [_ID_MEASURE] string – идентификатор сущности, которая измерена количеством;
-         /// <br/>    [_MEASURE] string – название сущности, которая измерена количеством.
-         /// <br/> 
-         /// <br/>inMode = 2
-         /// <br/>    Возвращает объекты, которые связаны данным экземпляром связи.
-         /// <br/>    Возвращает набор данных с полями:
-         /// <br/>    [_NAME] string – тип связи;
-         /// <br/>    [_ID_PARENT] int – уникальный идентификатор объекта-родителя;
-         /// <br/>    [_PARENT_TYPE] string – название типа объекта-родителя;
-         /// <br/>    [_PARENT_PRODUCT] string – ключевой атрибут объекта-родителя;
-         /// <br/>    [_PARENT_VERSION] string – версия объекта объекта-родителя;
-         /// <br/>    [_ID_CHILD] int – уникальный идентификатор объекта-потомка;
-         /// <br/>    [_CHILD_TYPE] string – название типа объекта-потомка;
-         /// <br/>    [_CHILD_PRODUCT] string – ключевой атрибут объекта-потомка;
-         /// <br/>    [_CHILD_VERSION] string – версия объекта объекта-потомка.
+        /// <br/>inMode = 1
+        /// <br/>    Возвращает общую информацию об экземпляре связи.
+        /// <br/>    Возвращает набор данных с полями:
+        /// <br/>    [_ID] int – уникальный идентификатор экземпляра связи;
+        /// <br/>    [_NAME] string – тип связи;
+        /// <br/>    [_MIN_QUANTITY] double – нижняя граница количества;
+        /// <br/>    [_MAX_QUANTITY] double – верхняя граница количества;
+        /// <br/>    [_ID_UNIT] string – идентификатор единицы измерения, в которой отображается значение количества;
+        /// <br/>    [_UNIT] string – название единицы измерения, в которой отображается значение количества;
+        /// <br/>    [_ID_MEASURE] string – идентификатор сущности, которая измерена количеством;
+        /// <br/>    [_MEASURE] string – название сущности, которая измерена количеством.
+        /// <br/> 
+        /// <br/>inMode = 2
+        /// <br/>    Возвращает объекты, которые связаны данным экземпляром связи.
+        /// <br/>    Возвращает набор данных с полями:
+        /// <br/>    [_NAME] string – тип связи;
+        /// <br/>    [_ID_PARENT] int – уникальный идентификатор объекта-родителя;
+        /// <br/>    [_PARENT_TYPE] string – название типа объекта-родителя;
+        /// <br/>    [_PARENT_PRODUCT] string – ключевой атрибут объекта-родителя;
+        /// <br/>    [_PARENT_VERSION] string – версия объекта объекта-родителя;
+        /// <br/>    [_ID_CHILD] int – уникальный идентификатор объекта-потомка;
+        /// <br/>    [_CHILD_TYPE] string – название типа объекта-потомка;
+        /// <br/>    [_CHILD_PRODUCT] string – ключевой атрибут объекта-потомка;
+        /// <br/>    [_CHILD_VERSION] string – версия объекта объекта-потомка.
         /// </returns>
         public static DataTable Native_GetInfoAboutLink(this INetPluginCall pc, int idLink, int mode)
         {
@@ -456,7 +486,7 @@ namespace LoodsmanCommon.Extensions
         /// </returns>
         public static DataTable Native_GetPropObjects(this INetPluginCall pc, IEnumerable<int> objectsIds)
         {
-            return pc.GetDataTable("GetPropObjects", string.Join(",", objectsIds), 0);
+            return pc.GetDataTable("GetPropObjects", string.Join(Constants.ID_SEPARATOR, objectsIds), 0);
         }
 
         /// <summary>
@@ -685,7 +715,7 @@ namespace LoodsmanCommon.Extensions
         /// </returns>
         public static DataTable Native_KillVersions(this INetPluginCall pc, IEnumerable<int> objectsIds)
         {
-            return pc.GetDataTable("KillVersions", string.Join(",", objectsIds), 0);
+            return pc.GetDataTable("KillVersions", string.Join(Constants.ID_SEPARATOR, objectsIds), 0);
         }
 
         /// <summary>
