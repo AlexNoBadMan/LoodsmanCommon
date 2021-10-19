@@ -382,6 +382,28 @@ namespace LoodsmanCommon.Extensions
             return pc.GetDataTable("GetTree2", objectId, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), withAttributes ? 1 : 0);
         }
 
+        /// <summary>
+        /// Возвращает информацию о связанных объектах для группы объектов.
+        /// </summary>
+        /// <param name="objectId">Идентификатор версии объекта.</param>
+        /// <param name="inverse">Направление (true – обратное, false – прямое).</param>
+        /// <returns>
+        /// Возвращает набор данных с полями:
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
+        /// <br/>[_ID_LINK] int – уникальный идентификатор экземпляра связи;
+        /// <br/>[_ID_TYPE] int – идентификатор типа объекта;
+        /// <br/>[_PRODUCT] string – ключевой атрибут объекта;
+        /// <br/>[_VERSION] string – номер версии объекта;
+        /// <br/>[_ID_STATE] int – идентификатор текущего состояния объекта;
+        /// <br/>[_ID_LINKTYPE] int – идентификатор типа связи, которым привязан объект;
+        /// <br/>[_ID_LOCK] int – идентификатор чекаута, в котором блокирован объект(если объект не блокирован, то вернется null);
+        /// <br/>[_ACCESSLEVEL] int – уровень доступа к объекту (1 – Только чтение, 2 – Чтение/запись; 3 – Полный доступ).
+        /// </returns>
+        public static DataTable Native_GetLObjs(this INetPluginCall pc, int objectId, bool inverse = false)
+        {
+            return pc.GetDataTable("GetLObjs", objectId, inverse);
+        }
 
         /// <summary>
         /// Возвращает информацию о связанных объектах для группы объектов.
