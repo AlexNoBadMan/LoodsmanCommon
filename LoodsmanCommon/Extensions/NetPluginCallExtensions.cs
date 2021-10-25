@@ -316,7 +316,6 @@ namespace LoodsmanCommon.Extensions
         /// <param name="withAttributes">Возвращать или не возвращать атрибуты.</param>
         /// <returns>
         /// Возвращает набор данных с полями:
-        /// <br/>Возвращает набор данных с полями:
         /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
         /// <br/>[_ID_LINK] int – уникальный идентификатор экземпляра связи;
         /// <br/>[_TYPE] string – тип объекта;
@@ -341,7 +340,6 @@ namespace LoodsmanCommon.Extensions
         /// <param name="withAttributes">Возвращать или не возвращать атрибуты.</param>
         /// <returns>
         /// Возвращает набор данных с полями:
-        /// <br/>Возвращает набор данных с полями:
         /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
         /// <br/>[_ID_LINK] int – уникальный идентификатор экземпляра связи;
         /// <br/>[_TYPE] string – тип объекта;
@@ -366,7 +364,6 @@ namespace LoodsmanCommon.Extensions
         /// <param name="withAttributes">Возвращать или не возвращать атрибуты.</param>
         /// <returns>
         /// Возвращает набор данных с полями:
-        /// <br/>Возвращает набор данных с полями:
         /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
         /// <br/>[_ID_LINK] int – уникальный идентификатор экземпляра связи;
         /// <br/>[_ID_TYPE] int – идентификатор типа объекта;
@@ -389,7 +386,6 @@ namespace LoodsmanCommon.Extensions
         /// <param name="inverse">Направление (true – обратное, false – прямое).</param>
         /// <returns>
         /// Возвращает набор данных с полями:
-        /// <br/>Возвращает набор данных с полями:
         /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
         /// <br/>[_ID_LINK] int – уникальный идентификатор экземпляра связи;
         /// <br/>[_ID_TYPE] int – идентификатор типа объекта;
@@ -405,6 +401,38 @@ namespace LoodsmanCommon.Extensions
             return pc.GetDataTable("GetLObjs", objectId, inverse);
         }
 
+
+        /// <summary>
+        /// Возвращает информацию о связанных объектах для группы объектов.
+        /// </summary>
+        /// <param name="typeName">Название типа.</param>
+        /// <param name="product">Ключевой атрибут.</param>
+        /// <param name="version">Версия объекта.</param>
+        /// <param name="linkType">Тип связи.</param>
+        /// <param name="inverse">Направление (true – обратное, false – прямое).</param>
+        /// <param name="fullLink">Признак полной разузловки.</param>
+        /// <param name="groupByProduct">Признак группировки по изделиям (для случая полной разузловки).</param>
+        /// <param name="forTree">Признак вывода для дерева объектов.</param>
+        /// <returns>
+        /// Возвращает набор данных с полями:
+        /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
+        /// <br/>[_ID_LINK] int – уникальный идентификатор экземпляра связи;
+        /// <br/>[_ID_TYPE] int – идентификатор типа объекта;
+        /// <br/>[_PRODUCT] string – ключевой атрибут объекта;
+        /// <br/>[_VERSION] string – номер версии объекта;
+        /// <br/>[_ID_STATE] int – идентификатор текущего состояния объекта;
+        /// <br/>[_ID_LOCK] int – идентификатор чекаута, в котором блокирован объект (если объект не блокирован, то вернется null);
+        /// <br/>[_ACCESSLEVEL] int – уровень доступа к объекту (1 – Только чтение, 2 – Чтение/запись, 3 – Полный доступ);
+        /// <br/>[_MIN_QUANTITY] double – нижняя граница количества;
+        /// <br/>[_MAX_QUANTITY] double – верхняя граница количества;
+        /// <br/>[_ID_UNIT] string – идентификатор единицы измерения, в которой задано количество.
+        /// </returns>
+        public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, string typeName, string product, string version, string linkType, bool inverse, bool fullLink, bool groupByProduct, bool forTree)
+        {
+            return pc.GetDataTable("GetLinkedObjects", typeName, product, version, linkType, inverse, fullLink, groupByProduct, forTree);
+        }
+        
+
         /// <summary>
         /// Возвращает информацию о связанных объектах для группы объектов.
         /// </summary>
@@ -413,7 +441,6 @@ namespace LoodsmanCommon.Extensions
         /// <param name="inverse">Направление (true – обратное, false – прямое).</param>
         /// <returns>
         /// Возвращает набор данных с полями:
-        /// <br/>Возвращает набор данных с полями:
         /// <br/>[_ID_LINK] int – числовой идентификатор связи;
         /// <br/>[_ID_PARENT] int – идентификатор исходного объекта связи (всегда соответствует указанному в #Ids);
         /// <br/>[_ID_CHILD] int – идентификатор связанного объекта;
@@ -672,6 +699,43 @@ namespace LoodsmanCommon.Extensions
             pc.RunMethod("SaveSecondaryView", docId, filePath);
         }
 
+        /// <summary>
+        /// Проверка на существование бизнес объекта в базе Лоцман.
+        /// </summary>
+        /// <param name="typeName">Название типа</param>
+        /// <param name="uniqueId">Ключевой атрибут формата ***BOSimple</param>
+        /// <remarks>
+        /// Примечание:
+        /// <br/>** Для создания бизнес объекта необходимо чтобы product был в формате ***BOSimple
+        /// </remarks>
+        /// <returns>
+        /// <br/>В случае когда бизнес объект отсутствует в Лоцмане:
+        /// <br/>&lt;?xml version="1.0" encoding="utf-16"?&gt;
+        /// <br/>&lt;PreviewBoObjectResult&gt;
+        /// <br/>  &lt;Type&gt;Материал по КД&lt;/Type&gt;
+        /// <br/>  &lt;Product&gt;Сталь 12К&lt;/Product&gt;
+        /// <br/>  &lt;State&gt;Разрешено к применению&lt;/State&gt;
+        /// <br/>  &lt;Attributes&gt;
+        /// <br/>    &lt;Attribute Name="Марка материала" Type="0"&gt;Сталь 12К&lt;/Attribute&gt;
+        /// <br/>    &lt;Attribute Name="Плотность" Type="2"&gt;7800&lt;/Attribute&gt;
+        /// <br/>  &lt;/Attributes&gt;
+        /// <br/>&lt;/PreviewBoObjectResult&gt; 
+        /// <br/>
+        /// <br/>В случае когда бизнес объект существует в Лоцмане:
+        /// <br/>&lt;?xml version="1.0" encoding="utf-16"?&gt;
+        /// <br/>&lt;PreviewBoObjectResult&gt;
+        /// <br/>  &lt;VersionId&gt;179&lt;/VersionId&gt;
+        /// <br/>  &lt;Type&gt;Материал по КД&lt;/Type&gt;
+        /// <br/>  &lt;Product&gt;Сталь 10 ГОСТ 1050-2013&lt;/Product&gt;
+        /// <br/>  &lt;Version /&gt;
+        /// <br/>  &lt;State&gt;Разрешено к применению&lt;/State&gt;
+        /// <br/>  &lt;Attributes&gt;
+        /// <br/>    &lt;Attribute Name="Марка материала" Type="0"&gt;Сталь 10&lt;/Attribute&gt;
+        /// <br/>    &lt;Attribute Name="НТД на материал" Type="0"&gt;ГОСТ 1050-2013&lt;/Attribute&gt;
+        /// <br/>    &lt;Attribute Name="Плотность" Type="2" Unit="кг/м3"&gt;7856&lt;/Attribute&gt;
+        /// <br/>  &lt;/Attributes&gt;
+        /// <br/>&lt;/PreviewBoObjectResult&gt; 
+        /// </returns>
         public static string Native_PreviewBoObject(this INetPluginCall pc, string typeName, string uniqueId)
         {
             return (string)pc.RunMethod("PreviewBoObject", typeName, uniqueId);

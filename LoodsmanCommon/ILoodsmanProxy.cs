@@ -15,8 +15,6 @@ namespace LoodsmanCommon
 {
     public interface ILoodsmanProxy
     {
-        [Obsolete("Вместо свойства следует использовать имеющиеся методы/свойства, после того как будет закончена работа над ILoodsmanProxy данное свойство будет удалено. " +
-            "Для инициализации свойства необходимо использовать метод InitNetPluginCall, обычно используется при нажатии кнопки плагина.")]
         INetPluginCall INetPC { get; }
 
         /// <summary>
