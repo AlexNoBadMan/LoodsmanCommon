@@ -732,9 +732,9 @@ namespace LoodsmanCommon.Extensions
         /// <br/>
         /// </summary>
         /// <param name="documentsIds">Идентификаторы версий документов.</param>
-        public static void Native_GetInfoAboutSecondaryViews(this INetPluginCall pc, IEnumerable<int> documentsIds)
+        public static DataTable Native_GetInfoAboutSecondaryViews(this INetPluginCall pc, IEnumerable<int> documentsIds)
         {
-            pc.RunMethod("GetInfoAboutSecondaryViews", documentsIds);
+            return pc.GetDataTable("GetInfoAboutSecondaryViews", documentsIds);
         }
 
         /// <summary>

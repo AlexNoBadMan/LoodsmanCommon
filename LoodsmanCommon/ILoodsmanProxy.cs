@@ -704,7 +704,10 @@ namespace LoodsmanCommon
                 //    Directory.CreateDirectory(workDirPath);
                 //var newPath = $"{workDirPath}\\{Product} - {Name} ({TypeName}){FileNode.Info.Extension}";
                 //Лоцман не чистит за собой папки, поэтому пока без структуры папок и ложим всё в корень W:\
-                return RegistrationOfFile(string.Empty, string.Empty, string.Empty, documentId, fileName, filePath); ;
+
+                filePath = CopyIfNeddedOnWorkDir(filePath);
+                _iNetPC.Native_RegistrationOfFile(documentId, fileName, filePath);
+                return filePath;
             }
             catch// (Exception ex)
             {
@@ -717,7 +720,9 @@ namespace LoodsmanCommon
         {
             try
             {
-                return RegistrationOfFile(typeName, product, version, 0, fileName, filePath);
+                filePath = CopyIfNeddedOnWorkDir(filePath);
+                _iNetPC.Native_RegistrationOfFile(typeName, product, version, fileName, filePath);
+                return filePath;
             }
             catch
             {
@@ -726,23 +731,16 @@ namespace LoodsmanCommon
             }
         }
 
-        private string RegistrationOfFile(string typeName, string product, string version, int documentId, string fileName, string filePath)
-        {
-            filePath = CopyIfNotOnWorkDir(filePath);
-            _iNetPC.Native_RegistrationOfFile(typeName, product, version, documentId, fileName, filePath);
-            return filePath;
-        }
-
         public void SaveSecondaryView(int docId, string filePath, bool removeAfterSave = true)
         {
-            filePath = CopyIfNotOnWorkDir(filePath);
+            filePath = CopyIfNeddedOnWorkDir(filePath);
             _iNetPC.Native_SaveSecondaryView(docId, filePath);
 
             if (removeAfterSave)
                 try { File.Delete(filePath); } catch { }
         }
 
-        private string CopyIfNotOnWorkDir(string filePath)
+        private string CopyIfNeddedOnWorkDir(string filePath)
         {
             if (!filePath.Contains(UserFileDir))
             {
