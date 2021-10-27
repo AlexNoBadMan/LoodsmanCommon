@@ -95,11 +95,5 @@ namespace LoodsmanCommon
             //IsDocument = obj.IsDocument;
             Parent = obj.Parent is IPDMLink link ? new LoodsmanObject(link.ParentObject, proxy) : null;
         }
-
-
-        internal void SetState(LState state)
-        {
-            _state = state;
-        }
     }
 }

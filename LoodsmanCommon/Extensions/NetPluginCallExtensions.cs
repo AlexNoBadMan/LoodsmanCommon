@@ -675,30 +675,178 @@ namespace LoodsmanCommon.Extensions
         /// <param name="typeName">Название типа.</param>
         /// <param name="product">Ключевой атрибут.</param>
         /// <param name="version">Версия объекта.</param>
-        /// <param name="documentId">Идентификатор версии. 
-        /// <br/>Если documentId не равен 0, то информация извлекается по параметру documentId, значения параметров typeName, product, version не учитываются. 
-        /// <br/>Если documentId = 0, то информация извлекается по параметру typeName, product, version , значение параметра documentId не учитывается.
-        ///</param>
         /// <param name="fileName">Название файла.</param>
         /// <param name="filePath">Путь к файлу относительно диска из настройки «Буква рабочего диска».</param>
-        public static void Native_RegistrationOfFile(this INetPluginCall pc, string typeName, string product, string version, int documentId, string fileName, string filePath)
+        public static void Native_RegistrationOfFile(this INetPluginCall pc, string typeName, string product, string version, string fileName, string filePath)
         {
-            pc.RunMethod("RegistrationOfFile", typeName, product, version, documentId, fileName, filePath);
+            pc.RunMethod("RegistrationOfFile", typeName, product, version, 0, fileName, filePath);
+        }
+
+        /// <summary>
+        /// Регистрирует в базе данных файл, находящийся на рабочем диске пользователя.
+        /// </summary>
+        /// <param name="documentId">Идентификатор версии документа.</param>
+        /// <param name="fileName">Название файла.</param>
+        /// <param name="filePath">Путь к файлу относительно диска из настройки «Буква рабочего диска».</param>
+        public static void Native_RegistrationOfFile(this INetPluginCall pc, int documentId, string fileName, string filePath)
+        {
+            pc.RunMethod("RegistrationOfFile", string.Empty, string.Empty, string.Empty, documentId, fileName, filePath);
+        }
+
+        #region Вторичное представление
+
+        /// <summary>
+        /// Удаляет вторичное представление документа.
+        /// <br/>
+        /// <br/>Для ЛОЦМАН:PLM 2017 и более поздних версий системы этот метод устарел и оставлен только для совместимости с предыдущими версиями.
+        /// <br/>В ЛОЦМАН:PLM 2017 и более поздних версиях метод удаляет все ревизии вторичного представления указанного документа. Чтобы удалить конкретную ревизию вторичного представления, воспользуйтесь методом <see cref="Native_DelSecondaryViewRevision(INetPluginCall, int, int)"/>.
+        /// </summary>
+        /// <param name="documenId">Идентификатор версии документа.</param>
+        public static void Native_DelSecondaryView(this INetPluginCall pc, int documenId)
+        {
+            pc.RunMethod("DelSecondaryView", documenId);
+        }
+
+        /// <summary>
+        /// Удаляет аннотацию или ревизию вторичного представления документа.
+        /// <br/>
+        /// <br/>Удаление аннотации возможно только в режиме базы данных.
+        /// <br/>Удаление корневой ревизии вторичного представления возможно и в режиме базы данных, и в режиме изменения объектов.
+        /// <br/>
+        /// <br/>Идентификатор ревизии вторичного представления или аннотации. Может быть получен с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>
+        /// </summary>
+        /// <param name="documenId">Идентификатор версии документа.</param>
+        /// <param name="revisionId">Идентификатор ревизии вторичного представления или аннотации.</param>
+        public static void Native_DelSecondaryViewRevision(this INetPluginCall pc, int documenId, int revisionId)
+        {
+            pc.RunMethod("DelSecondaryViewRevision", documenId, revisionId);
+        }
+
+        /// <summary>
+        /// Возвращает информацию о последней корневой ревизии вторичного представления для группы документов.
+        /// <br/>
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_REVISION_ID] int – идентификатор последней корневой ревизии вторичного представления;
+        /// <br/>[_DOC_ID] int – идентификатор версии документа;
+        /// <br/>[_EXT] string – расширение файла последней корневой ревизии вторичного представления.
+        /// <br/>
+        /// </summary>
+        /// <param name="documentsIds">Идентификаторы версий документов.</param>
+        public static void Native_GetInfoAboutSecondaryViews(this INetPluginCall pc, IEnumerable<int> documentsIds)
+        {
+            pc.RunMethod("GetInfoAboutSecondaryViews", documentsIds);
+        }
+
+        /// <summary>
+        /// Выгружает файл ревизии вторичного представления и возвращает сетевой путь к нему.
+        /// </summary>
+        /// <param name="revisionId">Идентификатор ревизии вторичного представления.</param>
+        /// <returns>
+        /// Возвращает сетевой путь к файлу вторичного представления.
+        /// </returns>
+        public static string Native_GetSecondaryViewRevisionFile(this INetPluginCall pc, int revisionId)
+        {
+            return pc.RunMethod("GetSecondaryViewRevisionFile", revisionId) as string;
+        }
+
+        /// <summary>
+        /// Возвращает дерево ревизий вторичного представления.
+        /// <br/>
+        /// <br/>Метод позволяет получать корневые и некорневые ревизии вторичного представления.
+        /// <br/>Корневая ревизия создается при получении информации из программы-инструмента либо при вызове метода <see cref="Native_SaveSecondaryView(INetPluginCall, int, string)"/> и содержит только вторичное представление без аннотирования. 
+        /// <br/>Поле [_PARENT_ID] для корневой ревизии имеет значение NULL, а поле [_NUMBER] содержит одноразрядный номер ревизии, соответствующий порядку создания ревизий.
+        /// <br/>Некорневая ревизия содержит информацию об аннотировании корневой ревизии вторичного представления. 
+        /// <br/>Поле [_PARENT_ID] содержит идентификатор корневой ревизии, а поле [_NUMBER] содержит двухразрядный порядковый номер ревизии, где первый разряд соответствует номеру корневой ревизии, а второй разряд – номеру аннотации соответствующей корневой ревизии, например, «12.2»..
+        /// <br/>
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID] int – идентификатор ревизии вторичного представления;
+        /// <br/>[_PARENT_ID] int – идентификатор корневой ревизии вторичного представления;
+        /// <br/>[_NUMBER] string – номер ревизии вторичного представления;
+        /// <br/>[_USER_ID] int – идентификатор пользователя, являющегося автором ревизии вторичного представления;
+        /// <br/>[_USERNAME] string – имя пользователя, являющегося автором ревизии вторичного представления;
+        /// <br/>[_DATEOFCREATE] date – дата создания ревизии вторичного представления;
+        /// <br/>[_STATE] string – состояние объекта на момент создания ревизии вторичного представления;
+        /// <br/>[_USERS_ANNOTATED_BY] string – список имен пользователей, аннотирующих в данный момент ревизию вторичного представления. Разделитель – символ с кодом «1».
+        /// </summary>
+        /// <param name="documenId">Идентификатор версии документа.</param>
+        public static DataTable Native_GetSecondaryViewRevisions(this INetPluginCall pc, int documenId)
+        {
+            return pc.GetDataTable("GetSecondaryViewRevisions", documenId);
+        }
+
+        /// <summary>
+        /// Возвращает состояние «флага» аннотирования текущим пользователем.
+        /// <br/>
+        /// <br/>Начиная с версии ЛОЦМАН:PLM 2017 допускается аннотирование документа несколькими пользователями одновременно. 
+        /// <br/>Получить список пользователей, выполняющих в данный момент аннотирование документа, можно с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>.
+        /// </summary>
+        /// <param name="documenId">Идентификатор версии документа.</param>
+        public static bool Native_GetViewLock(this INetPluginCall pc, int documenId)
+        {
+            return pc.RunMethod("GetViewLock", documenId) as int? == 1;
+        }
+
+        /// <summary>
+        /// Сохраняет аннотацию документа.
+        /// <br/>
+        /// <br/>Метод работает только в режиме базы данных. 
+        /// <br/>Перед вызовом этого метода необходимо начать аннотирование вторичного представления с помощью метода <see cref="Native_SetViewLock(INetPluginCall, int, bool)"/>.
+        /// <br/>
+        /// <br/>Аннотация прикрепляется к корневой ревизии, последней на момент начала аннотирования.
+        /// </summary>
+        /// <param name="documenId">Идентификатор версии документа.</param>
+        /// <param name="annotationPath">Сетевой путь к файлу аннотации, доступный серверу приложений.</param>
+        public static void Native_SaveAnnotationFile(this INetPluginCall pc, int documenId, string annotationPath)
+        {
+            pc.RunMethod("SaveAnnotationFile", documenId, annotationPath);
         }
 
         /// <summary>
         /// Сохраняет вторичное представление документа.
+        /// <br/>
         /// <br/>Метод работает только в режиме изменения объектов. 
-        /// Начиная с версии ЛОЦМАН:PLM 2017 каждый следующий вызов метода создает новую корневую ревизию вторичного представления. 
-        /// Предыдущие ревизии остаются доступными для просмотра и аннотирования.
+        /// <br/>Список ревизий можно получить с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>.
+        /// <br/>
+        /// <br/>Начиная с версии ЛОЦМАН:PLM 2017 каждый следующий вызов метода создает новую корневую ревизию вторичного представления. Предыдущие ревизии остаются доступными для просмотра и аннотирования.
         /// </summary>
-        /// <param name="docId">Идентификатор документов.</param>
+        /// <param name="documenId">Идентификатор версии документа.</param>
         /// <param name="filePath">Сетевой путь к файлу вторичного представления, доступный серверу приложений.</param>
-        public static void Native_SaveSecondaryView(this INetPluginCall pc, int docId, string filePath)
+        public static void Native_SaveSecondaryView(this INetPluginCall pc, int documenId, string filePath)
         {
-            pc.RunMethod("SaveSecondaryView", docId, filePath);
+            pc.RunMethod("SaveSecondaryView", documenId, filePath);
         }
 
+        /// <summary>
+        /// Указывает, что текущий пользователь начал или окончил аннотирование последней доступной корневой ревизии вторичного представления.
+        /// <br/>
+        /// <br/>Начиная с версии ЛОЦМАН:PLM 2017 допускается аннотирование документа несколькими пользователями одновременно. 
+        /// <br/>Получить список пользователей, выполняющих в данный момент аннотирование документа, можно с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>.
+        /// </summary>
+        /// <param name="documenId">Идентификатор версии документа.</param>
+        /// <param name="isLock">Флаг аннотирования. Установите в true, чтобы указать, что текущий пользователь начал аннотирование; false – что текущий пользователь окончил аннотирование.</param>
+        public static void Native_SetViewLock(this INetPluginCall pc, int documenId, bool isLock)
+        {
+            pc.RunMethod("SetViewLock", documenId, isLock);
+        }
+
+        /// <summary>
+        /// Изменяет аннотацию документа.
+        /// <br/>
+        /// <br/>Метод работает только в режиме базы данных. 
+        /// <br/>Метод изменяет существующую ревизию вторичного представления. Список ревизий можно получить с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>.
+        /// <br/>
+        /// <br/>Изменять аннотацию может только тот пользователь, который ее создал.
+        /// <br/>Изменять можно только аннотации (корневые ревизии изменять запрещено).
+        /// </summary>
+        /// <param name="revisionId">Идентификатор ревизии вторичного представления (аннотации), содержимое которой требуется изменить.</param>
+        /// <param name="annotationPath">Сетевой путь к файлу аннотации, доступный серверу приложений.</param>
+        public static void Native_UpdateAnnotationFile(this INetPluginCall pc, int revisionId, string annotationPath)
+        {
+            pc.RunMethod("UpdateAnnotationFile", revisionId, annotationPath);
+        }
+        #endregion
+
+        [Obsolete("Недокументированный метод")]
         /// <summary>
         /// Проверка на существование бизнес объекта в базе Лоцман.
         /// </summary>
