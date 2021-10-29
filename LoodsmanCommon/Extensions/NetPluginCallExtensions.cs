@@ -770,6 +770,51 @@ namespace LoodsmanCommon.Extensions
             pc.GetDataTable("GetReport", reportName, objectsIds, reportParams);
 
         /// <summary>
+        /// Возвращает список отчетов и папок.
+        /// <br/>Параметры отчета можно получить с помощью метода <see cref="Native_GetParameterList(INetPluginCall, int)">GetParameterList</see>
+        /// <br/>
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID] int – идентификатор отчета или папки;
+        /// <br/>[_ID_PARENT] int – идентификатор родительской папки;
+        /// <br/>[_OBJECT_TYPE] int – тип записи:
+        /// <br/>0 – папка;
+        /// <br/>1 – отчет SQL;
+        /// <br/>2 – отчет FastReport;
+        /// <br/>[_USED] int – область применения отчета:
+        /// <br/>0 – объекты;
+        /// <br/>1 – бизнес-процессы;
+        /// <br/>2 – задания WorkFlow;
+        /// <br/>3 – не определено;
+        /// <br/>4 – задания СПиУПП;
+        /// <br/>[_OBJECT_NAME] string – название отчета или папки;
+        /// <br/>[_OBJECT_HINT] string – описание отчета;
+        /// <br/>[_PROC_NAME] string – название хранимой процедуры отчета;
+        /// <br/>[_FILE_NAME] string – относительный путь к файлу шаблона отчета;
+        /// <br/>[_IS_FAVORITE] int – признак, входит ли отчет в список избранных отчетов текущего пользователя:
+        /// <br/>0 – отчет не входит в список избранных отчетов текущего пользователя;
+        /// <br/>1 – отчет входит в список избранных отчетов текущего пользователя.
+        /// </summary>
+        /// <param name="folderId">Идентификатор папки. Если значение параметра равно -1, то возвращаются все отчеты и папки.</param>
+        public static DataTable Native_GetReportsAndFolders(this INetPluginCall pc, int folderId = -1) => 
+            pc.GetDataTable("GetReportsAndFolders", folderId);
+
+        /// <summary>
+        /// Возвращает список параметров отчета.
+        /// <br/>
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID_PARAM] int – идентификатор параметра;
+        /// <br/>[_PARAM_NAME] string – название параметра;
+        /// <br/>[_PARAM_HINT] string – описание параметра;
+        /// <br/>[_DEFAULT_VALUE] string – значение параметра по умолчанию;
+        /// <br/>[_MIN_VALUE] string – минимальное значение параметра;
+        /// <br/>[_MAX_VALUE] string – максимальное значение параметра;
+        /// <br/>[_VALUE_LIST] text – список возможных значений параметра.
+        /// </summary>
+        /// <param name="reportId">Идентификатор отчета.</param>
+        public static DataTable Native_GetParameterList(this INetPluginCall pc, int reportId) => 
+            pc.GetDataTable("GetParameterList", reportId);
+
+        /// <summary>
         /// Возвращает список объектов, заблокированных в текущем чекауте.
         /// <br/>
         /// <br/>Возвращает набор данных с полями:
