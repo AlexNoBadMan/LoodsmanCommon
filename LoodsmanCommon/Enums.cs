@@ -150,7 +150,7 @@
         Mode13 = 13,
         /// <summary>
         /// Возвращает информацию об объекте.
-        /// <br/>Смотрите также описание метода <seealso cref="LoodsmanCommon.Extensions.NetPluginCallExtensions.Native_GetPropObjects(Ascon.Plm.Loodsman.PluginSDK.INetPluginCall, System.Collections.Generic.IEnumerable{int})">GetPropObjects</seealso>.
+        /// <br/>Смотрите также описание метода <seealso cref="NetPluginCallExtensions.Native_GetPropObjects(Ascon.Plm.Loodsman.PluginSDK.INetPluginCall, System.Collections.Generic.IEnumerable{int})">GetPropObjects</seealso>.
         /// <br/>
         /// <br/>Возвращает набор данных с полями:
         /// <br/>[_ID_VERSION] int – уникальный идентификатор объекта;
@@ -468,7 +468,7 @@
     }
 
     /// <summary>
-    /// Отражение записи [_OBJECT_TYPE] метода <see cref="LoodsmanCommon.Extensions.NetPluginCallExtensions.Native_GetReportsAndFolders(Ascon.Plm.Loodsman.PluginSDK.INetPluginCall, int)">GetReportsAndFolders</see>.
+    /// Отражение записи [_OBJECT_TYPE] метода <see cref="NetPluginCallExtensions.Native_GetReportsAndFolders(Ascon.Plm.Loodsman.PluginSDK.INetPluginCall, int)">GetReportsAndFolders</see>.
     /// </summary>
     public enum ReportRecordType
     {

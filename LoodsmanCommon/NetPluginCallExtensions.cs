@@ -1,9 +1,8 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
-using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace LoodsmanCommon.Extensions
+namespace LoodsmanCommon
 {
     public static class NetPluginCallExtensions
     {

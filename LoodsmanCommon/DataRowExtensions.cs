@@ -2,7 +2,7 @@
 using System;
 using System.Data;
 
-namespace LoodsmanCommon.Extensions
+namespace LoodsmanCommon
 {
     public static class DataRowExtensions
     {

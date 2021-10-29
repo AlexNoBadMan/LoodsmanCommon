@@ -58,14 +58,14 @@
     <Compile Include="Entities\LObjectsLink.cs" />
     <Compile Include="Entities\Meta\LMeasure.cs" />
     <Compile Include="Entities\Meta\LMeasureUnit.cs" />
-    <Compile Include="Extensions\DataRowExtensions.cs" />
+    <Compile Include="DataRowExtensions.cs" />
     <Compile Include="Entities\LObjectAttribute.cs" />
     <Compile Include="Entities\Meta\Entity.cs" />
     <Compile Include="Entities\Meta\EntityIcon.cs" />
     <Compile Include="Entities\Meta\LTypeAttribute.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Extensions\DataTableExtensions.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="DataTableExtensions.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="ILoodsmanMeta.cs" />
     <Compile Include="ILoodsmanObject.cs" />
@@ -78,7 +78,7 @@
     <Compile Include="Entities\Meta\LProxyUseCase.cs" />
     <Compile Include="Entities\Meta\LState.cs" />
     <Compile Include="Entities\Meta\LType.cs" />
-    <Compile Include="Extensions\NetPluginCallExtensions.cs" />
+    <Compile Include="NetPluginCallExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

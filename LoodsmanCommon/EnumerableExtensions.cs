@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace LoodsmanCommon.Extensions
+namespace LoodsmanCommon
 {
     public static class EnumerableExtensions
     {
