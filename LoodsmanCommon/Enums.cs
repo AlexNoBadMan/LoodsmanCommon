@@ -449,6 +449,25 @@
     }
 
     /// <summary>
+    /// Тип субъекта.
+    /// </summary>
+    public enum SubjectType
+    {
+        /// <summary>
+        /// Пользователь.
+        /// </summary>
+        User = 0,
+        /// <summary>
+        /// Должность.
+        /// </summary>
+        Position = 1,
+        /// <summary>
+        /// Организационная единица.
+        /// </summary>
+        OrgUnit = 2,
+    }
+
+    /// <summary>
     /// Отражение записи [_OBJECT_TYPE] метода <see cref="LoodsmanCommon.Extensions.NetPluginCallExtensions.Native_GetReportsAndFolders(Ascon.Plm.Loodsman.PluginSDK.INetPluginCall, int)">GetReportsAndFolders</see>.
     /// </summary>
     public enum ReportRecordType
