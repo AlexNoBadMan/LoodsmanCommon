@@ -426,6 +426,29 @@
     }
 
     /// <summary>
+    /// Тип количественной связи по отношению к типу.
+    /// </summary>
+    public enum LinkQuantityType
+    {
+        /// <summary>
+        /// в любом направлении связь неколичественная.
+        /// </summary>
+        NonQuantitative = 0,
+        /// <summary>
+        /// Если возвращенный тип выступает в роли вышестоящего для заданного типа.
+        /// </summary>
+        OnlyAsParent = 1,
+        /// <summary>
+        /// Если возвращенный тип выступает в роли нижестоящего для заданного типа.
+        /// </summary>
+        OnlyAsChild = 2,
+        /// <summary>
+        /// В любом направлении связь количественная.
+        /// </summary>
+        Quantitative = 3,
+    }
+
+    /// <summary>
     /// Режим чекаута/
     /// </summary>
     public enum CheckOutMode
