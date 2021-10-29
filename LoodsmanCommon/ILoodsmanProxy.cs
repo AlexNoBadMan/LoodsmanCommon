@@ -161,7 +161,7 @@ namespace LoodsmanCommon
         /// Удаляет связь между объектами.
         /// </summary>
         /// <param name="idLink">Идентификатор связи</param>
-        void RemoveLink(int idLink);
+        void DeleteLink(int idLink);
 
         /// <summary>
         /// Возвращает список объектов, привязанных соответствующей связью.
@@ -562,7 +562,7 @@ namespace LoodsmanCommon
             _iNetPC.Native_UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, minQuantity, maxQuantity, unitId, false, string.Empty);
         }
 
-        public void RemoveLink(int idLink)
+        public void DeleteLink(int idLink)
         {
             _iNetPC.Native_UpLink(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, idLink, 0, 0, string.Empty, true, string.Empty);
         }
@@ -584,7 +584,7 @@ namespace LoodsmanCommon
                 minQuantity = 1;
                 maxQuantity = 1;
             }
-            return _iNetPC.Native_NewLink(parentId, parentTypeName, parentProduct, parentVersion, childId, childTypeName, childProduct, childVersion, linkType, minQuantity, maxQuantity, unitId);
+            return _iNetPC.Native_NewLink(parentId, parentTypeName, parentProduct, parentVersion, childId, childTypeName, childProduct, childVersion, minQuantity, maxQuantity, unitId, linkType);
         }
 
         private static void CheckKeyAttributesForErrors(string parentTypeName, string parentProduct, string childTypeName, string childProduct)
