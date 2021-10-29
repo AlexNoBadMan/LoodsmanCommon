@@ -42,6 +42,7 @@ namespace LoodsmanCommon
         public static double MAX_QUANTITY(this DataRow row) => row["_MAX_QUANTITY"] as double? ?? 0;
         public static string ID_UNIT(this DataRow row) => row["_ID_UNIT"] as string;
         public static string ID_MEASURE(this DataRow row) => row["_ID_MEASURE"] as string;
+        public static string DISPLAY(this DataRow row) => row["_DISPLAY"] as string;
         public static string NAME(this DataRow row) => row["_NAME"] as string;
         public static string LINKTYPE(this DataRow row) => row["_LINKTYPE"] as string;
         public static string LINK_TYPE_NAME(this DataRow row) => row["_LINK_TYPE_NAME"] as string;
