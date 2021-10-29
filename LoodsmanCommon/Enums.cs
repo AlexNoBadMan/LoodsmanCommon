@@ -373,7 +373,7 @@
         Mode12 = 12,
     }
     /// <summary>
-    /// Режим возврата списка атрибутов 
+    /// Режим возврата списка атрибутов.
     /// </summary>
     public enum GetAttributeListMode
     {
@@ -392,31 +392,46 @@
     }
 
     /// <summary>
-    /// Направление связи
+    /// Направление связи.
     /// </summary>
     public enum LinkDirection
     {
         /// <summary>
-        /// Прямая связь
+        /// Прямая связь.
         /// </summary>
         Forward = 1,
         /// <summary>
-        /// Обратная связь
+        /// Обратная связь.
         /// </summary>
         Backward = -1,
         /// <summary>
-        /// Прямая и обратная связь
+        /// Прямая и обратная связь.
         /// </summary>
         ForwardAndBackward = 0
     }
 
     /// <summary>
-    /// Режим чекаута
+    /// Вид связи.
+    /// </summary>
+    public enum LinkKind
+    {
+        /// <summary>
+        /// Вертикальная.
+        /// </summary>
+        Vertical = 0,
+        /// <summary>
+        /// Горизонтальная.
+        /// </summary>
+        Horizontal = 1,
+    }
+
+    /// <summary>
+    /// Режим чекаута/
     /// </summary>
     public enum CheckOutMode
     {
         /// <summary>
-        /// Блокировать головной объект. По умолчанию.
+        /// Блокировать головной объект.
         /// </summary>
         Default = 0,
         /// <summary>
@@ -426,32 +441,32 @@
     }
 
     /// <summary>
-    /// Типы атрибутов
+    /// Типы атрибутов.
     /// </summary>
     public enum AttributeType : short
     {
         /// <summary>
-        /// Строка
+        /// Строка.
         /// </summary>
         String = 0,
         /// <summary>
-        /// Целое
+        /// Целое.
         /// </summary>
         Int = 1,
         /// <summary>
-        /// Вещественное
+        /// Вещественное.
         /// </summary>
         Double = 2,
         /// <summary>
-        /// Дата
+        /// Дата.
         /// </summary>
         DateTime = 3,
         /// <summary>
-        /// Текст
+        /// Текст.
         /// </summary>
         Text = 5,
         /// <summary>
-        /// Изображение
+        /// Изображение.
         /// </summary>
         Image = 6
     }
