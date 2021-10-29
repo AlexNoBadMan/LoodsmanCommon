@@ -449,6 +449,33 @@
     }
 
     /// <summary>
+    /// Область применения отчета.
+    /// </summary>
+    public enum ReportTargetType
+    {
+        /// <summary>
+        /// Объекты.
+        /// </summary>
+        Objects = 0,
+        /// <summary>
+        /// Бизнес-процессы.
+        /// </summary>
+        BusinessProcesses = 1,
+        /// <summary>
+        /// Задания WorkFlow.
+        /// </summary>
+        TasksWorkFlow = 2,
+        /// <summary>
+        /// Не определено.
+        /// </summary>
+        Undefined = 3,
+        /// <summary>
+        /// Задания СПиУПП.
+        /// </summary>
+        TasksSPiUPP = 4,
+    }
+
+    /// <summary>
     /// Режим чекаута/
     /// </summary>
     public enum CheckOutMode
