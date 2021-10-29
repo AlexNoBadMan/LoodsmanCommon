@@ -449,6 +449,25 @@
     }
 
     /// <summary>
+    /// Отражение записи [_OBJECT_TYPE] метода <see cref="LoodsmanCommon.Extensions.NetPluginCallExtensions.Native_GetReportsAndFolders(Ascon.Plm.Loodsman.PluginSDK.INetPluginCall, int)">GetReportsAndFolders</see>.
+    /// </summary>
+    public enum ReportRecordType
+    {
+        /// <summary>
+        /// Папка.
+        /// </summary>
+        Folder = 0,
+        /// <summary>
+        /// Отчет SQL.
+        /// </summary>
+        SQL = 1,
+        /// <summary>
+        /// отчет FastReport.
+        /// </summary>
+        FastReport = 2,
+    }
+
+    /// <summary>
     /// Область применения отчета.
     /// </summary>
     public enum ReportTargetType
