@@ -35,17 +35,22 @@ namespace LoodsmanCommon.Entities.Meta
         /// Может ли быть проектом.
         /// </summary>
         public bool CanBeProject { get; }
-        
+
         /// <summary>
         /// Может ли текущий пользователь создавать объекты данного типа.
         /// </summary>
         public bool CanCreate { get; }
-        
+
         /// <summary>
         /// Список возможных атрибутов типа, включая служебные.
         /// </summary>
-        public IReadOnlyCollection<LTypeAttribute> Attributes => _attributes ??= _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).GetRows()
-                                                .Select(x => new LTypeAttribute(_lAttributes.First(a => a.Id == (int)x["_ID"]), (short)x["_OBLIGATORY"] == 1))
+        public IReadOnlyCollection<LTypeAttribute> Attributes => _attributes ??= _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12)
+                                                .GetRows()
+                                                .Select(x =>
+                                                {
+                                                    var id = (int)x["_ID"];
+                                                    return new LTypeAttribute(_lAttributes.First(a => a.Id == id), (short)x["_OBLIGATORY"] == 1);
+                                                })
                                                 .ToReadOnlyList();
 
         internal LType(INetPluginCall iNetPC, DataRow dataRow, IEnumerable<LAttribute> lAttributes, IEnumerable<LState> states, string nameField = "_TYPENAME") : base(dataRow, nameField)
