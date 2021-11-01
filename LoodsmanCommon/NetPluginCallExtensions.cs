@@ -316,7 +316,36 @@ namespace LoodsmanCommon
             pc.GetDataTable("GetLObjs", objectId, inverse);
 
         /// <summary>
-        /// Возвращает информацию о связанных объектах для группы объектов.
+        /// Возвращает список связанных объектов.
+        /// <br/>
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
+        /// <br/>[_ID_LINK] int – уникальный идентификатор экземпляра связи (см. примечание);
+        /// <br/>[_TYPE] string – тип объекта;
+        /// <br/>[_PRODUCT] string – ключевой атрибут объекта;
+        /// <br/>[_VERSION] string – номер версии объекта;
+        /// <br/>[_STATE] string – текущее состояние объекта;
+        /// <br/>[_MIN_QUANTITY] double – нижняя граница количества;
+        /// <br/>[_MAX_QUANTITY] double – верхняя граница количества;
+        /// <br/>[_DOCUMENT] int – является ли документом (1 – является, 0 – не является);
+        /// <br/>[_ACCESSLEVEL] int – уровень доступа к объекту (1 – Только чтение, 2 – Чтение/запись, 3 – Полный доступ);
+        /// <br/>[_LOCKED] int – уровень блокировки объекта (0 – не блокирован, 1 – блокирован текущим пользователем, 2 – блокирован другим пользователем);
+        /// <br/>[_ID_UNIT] string – идентификатор единицы измерения, в которой задавали количество.
+        /// </summary>
+        /// <inheritdoc cref="Native_KillVersion(INetPluginCall, string, string, string)"/>
+        /// <inheritdoc cref="Native_GetLObjs(INetPluginCall, int, bool)"/>
+        /// <param name="fullLink">Признак полной разузловки.</param>
+        /// <param name="groupByProduct">Признак группировки по изделиям (для случая полной разузловки), если true дополнительно возвращается поле [_ASSEMBLY] string.</param>
+        public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, string typeName, string product, string version, string linkType, bool inverse, bool fullLink, bool groupByProduct) => 
+            pc.GetDataTable("GetLinkedObjects", typeName, product, version, linkType, inverse, fullLink, groupByProduct, false);
+
+        /// <param name="linkTypeNames">Список связей.</param>
+        /// <inheritdoc cref="Native_GetLinkedObjects(INetPluginCall, string, string, string, string, bool, bool, bool)"/>        
+        public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, string typeName, string product, string version, IEnumerable<string> linkTypeNames) =>
+            pc.GetDataTable("GetLinkedObjects2", typeName, product, version, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), false, false, false, true);
+
+        /// <summary>
+        /// Возвращает список связанных объектов
         /// <br/>
         /// <br/>Возвращает набор данных с полями:
         /// <br/>[_ID_VERSION] int – уникальный идентификатор версии;
@@ -329,16 +358,16 @@ namespace LoodsmanCommon
         /// <br/>[_ACCESSLEVEL] int – уровень доступа к объекту (1 – Только чтение, 2 – Чтение/запись, 3 – Полный доступ);
         /// <br/>[_MIN_QUANTITY] double – нижняя граница количества;
         /// <br/>[_MAX_QUANTITY] double – верхняя граница количества;
-        /// <br/>[_ID_UNIT] string – идентификатор единицы измерения, в которой задано количество.
+        /// <br/>[_ID_UNIT] string – идентификатор единицы измерения, в которой задано количество. 
         /// </summary>
-        /// <inheritdoc cref="Native_KillVersion(INetPluginCall, string, string, string)"/>
-        /// <inheritdoc cref="Native_GetLObjs(INetPluginCall, int, bool)"/>
-        /// <param name="fullLink">Признак полной разузловки.</param>
-        /// <param name="groupByProduct">Признак группировки по изделиям (для случая полной разузловки).</param>
-        /// <param name="forTree">Признак вывода для дерева объектов.</param>
-        public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, string typeName, string product, string version, string linkType, bool inverse, bool fullLink, bool groupByProduct, bool forTree) => 
-            pc.GetDataTable("GetLinkedObjects", typeName, product, version, linkType, inverse, fullLink, groupByProduct, forTree);
+        /// <inheritdoc cref="Native_GetLinkedObjects(INetPluginCall, string, string, string, string, bool, bool, bool)"/>
+        public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, int objectId, string linkType, bool inverse, bool fullLink, bool groupByProduct) => 
+            pc.GetDataTable("GetLinkedObjects2", objectId, linkType, inverse, fullLink, groupByProduct, false);
 
+        /// <param name="linkTypeNames">Список связей.</param>
+        /// <inheritdoc cref="Native_GetLinkedObjects(INetPluginCall, int, string, bool, bool, bool)"/>        
+        public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, int objectId, IEnumerable<string> linkTypeNames) => 
+            pc.GetDataTable("GetLinkedObjects2", objectId, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), false, false, false, true);
 
         /// <summary>
         /// Возвращает информацию о связанных объектах для группы объектов.
@@ -491,6 +520,53 @@ namespace LoodsmanCommon
         public static DataTable Native_CheckUniqueName(this INetPluginCall pc, string typeName, string product) => 
             pc.GetDataTable("CheckUniqueName", typeName, product);
 
+        /// <summary>
+        /// **Недокументированный метод.
+        /// <br/>** Для создания бизнес объекта необходимо чтобы product был в формате (***BOSimple...).
+        /// <br/>Проверка на существование бизнес объекта в базе Лоцман.
+        /// <br/>
+        /// <br/>В случае когда бизнес объект отсутствует в Лоцмане:
+        /// <br/>&lt;?xml version="1.0" encoding="utf-16"?&gt;
+        /// <br/>&lt;PreviewBoObjectResult&gt;
+        /// <br/>  &lt;Type&gt;Материал по КД&lt;/Type&gt;
+        /// <br/>  &lt;Product&gt;Сталь 12К&lt;/Product&gt;
+        /// <br/>  &lt;State&gt;Разрешено к применению&lt;/State&gt;
+        /// <br/>  &lt;Attributes&gt;
+        /// <br/>    &lt;Attribute Name="Марка материала" Type="0"&gt;Сталь 12К&lt;/Attribute&gt;
+        /// <br/>    &lt;Attribute Name="Плотность" Type="2"&gt;7800&lt;/Attribute&gt;
+        /// <br/>  &lt;/Attributes&gt;
+        /// <br/>&lt;/PreviewBoObjectResult&gt; 
+        /// <br/>
+        /// <br/>В случае когда бизнес объект существует в Лоцмане:
+        /// <br/>&lt;?xml version="1.0" encoding="utf-16"?&gt;
+        /// <br/>&lt;PreviewBoObjectResult&gt;
+        /// <br/>  &lt;VersionId&gt;179&lt;/VersionId&gt;
+        /// <br/>  &lt;Type&gt;Материал по КД&lt;/Type&gt;
+        /// <br/>  &lt;Product&gt;Сталь 10 ГОСТ 1050-2013&lt;/Product&gt;
+        /// <br/>  &lt;Version /&gt;
+        /// <br/>  &lt;State&gt;Разрешено к применению&lt;/State&gt;
+        /// <br/>  &lt;Attributes&gt;
+        /// <br/>    &lt;Attribute Name="Марка материала" Type="0"&gt;Сталь 10&lt;/Attribute&gt;
+        /// <br/>    &lt;Attribute Name="НТД на материал" Type="0"&gt;ГОСТ 1050-2013&lt;/Attribute&gt;
+        /// <br/>    &lt;Attribute Name="Плотность" Type="2" Unit="кг/м3"&gt;7856&lt;/Attribute&gt;
+        /// <br/>  &lt;/Attributes&gt;
+        /// <br/>&lt;/PreviewBoObjectResult&gt; 
+        /// </summary>
+        /// <param name="typeName">Название типа.</param>
+        /// <param name="uniqueId">Ключевой атрибут формата (***BOSimple...).</param>
+        public static string Native_PreviewBoObject(this INetPluginCall pc, string typeName, string uniqueId) =>
+            (string)pc.RunMethod("PreviewBoObject", typeName, uniqueId);
+
+        /// <summary>
+        /// Возвращает список объектов, заблокированных в текущем чекауте.
+        /// <br/>
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID_VERSION] int – уникальный идентификатор версии.
+        /// </summary>
+        public static DataTable Native_GetLockedObjects(this INetPluginCall pc) =>
+            pc.GetDataTable("GetLockedObjects", 0);
+
+
         #region Связанные объекты
 
         /// <summary>
@@ -624,8 +700,8 @@ namespace LoodsmanCommon
         /// <br/>[_MODIFIED] datetime – дата последнего изменения файла (если метод вызывается в контексте рабочего проекта, в котором файл выгружался на рабочий диск, то возвращается дата последнего изменения файла на рабочем диске, в противном случае – дата последнего изменения файла на момент последнего сохранения в рабочем проекте).
         /// </summary>
         /// <param name="documentsIds">Список идентификаторов документов.</param>
-        public static void Native_GetInfoAboutVersionsFiles(this INetPluginCall pc, IEnumerable<int> documentsIds) => 
-            pc.RunMethod("GetInfoAboutVersionsFiles", string.Join(Constants.ID_SEPARATOR, documentsIds));
+        public static DataTable Native_GetInfoAboutVersionsFiles(this INetPluginCall pc, IEnumerable<int> documentsIds) => 
+            pc.GetDataTable("GetInfoAboutVersionsFiles", string.Join(Constants.ID_SEPARATOR, documentsIds));
 
         /// <summary>
         /// Возвращает список одноименных файлов, которые были выгружены на рабочий диск текущим пользователем.
@@ -719,43 +795,7 @@ namespace LoodsmanCommon
 
         #endregion
 
-        /// <summary>
-        /// **Недокументированный метод.
-        /// <br/>** Для создания бизнес объекта необходимо чтобы product был в формате (***BOSimple...).
-        /// <br/>Проверка на существование бизнес объекта в базе Лоцман.
-        /// <br/>
-        /// <br/>В случае когда бизнес объект отсутствует в Лоцмане:
-        /// <br/>&lt;?xml version="1.0" encoding="utf-16"?&gt;
-        /// <br/>&lt;PreviewBoObjectResult&gt;
-        /// <br/>  &lt;Type&gt;Материал по КД&lt;/Type&gt;
-        /// <br/>  &lt;Product&gt;Сталь 12К&lt;/Product&gt;
-        /// <br/>  &lt;State&gt;Разрешено к применению&lt;/State&gt;
-        /// <br/>  &lt;Attributes&gt;
-        /// <br/>    &lt;Attribute Name="Марка материала" Type="0"&gt;Сталь 12К&lt;/Attribute&gt;
-        /// <br/>    &lt;Attribute Name="Плотность" Type="2"&gt;7800&lt;/Attribute&gt;
-        /// <br/>  &lt;/Attributes&gt;
-        /// <br/>&lt;/PreviewBoObjectResult&gt; 
-        /// <br/>
-        /// <br/>В случае когда бизнес объект существует в Лоцмане:
-        /// <br/>&lt;?xml version="1.0" encoding="utf-16"?&gt;
-        /// <br/>&lt;PreviewBoObjectResult&gt;
-        /// <br/>  &lt;VersionId&gt;179&lt;/VersionId&gt;
-        /// <br/>  &lt;Type&gt;Материал по КД&lt;/Type&gt;
-        /// <br/>  &lt;Product&gt;Сталь 10 ГОСТ 1050-2013&lt;/Product&gt;
-        /// <br/>  &lt;Version /&gt;
-        /// <br/>  &lt;State&gt;Разрешено к применению&lt;/State&gt;
-        /// <br/>  &lt;Attributes&gt;
-        /// <br/>    &lt;Attribute Name="Марка материала" Type="0"&gt;Сталь 10&lt;/Attribute&gt;
-        /// <br/>    &lt;Attribute Name="НТД на материал" Type="0"&gt;ГОСТ 1050-2013&lt;/Attribute&gt;
-        /// <br/>    &lt;Attribute Name="Плотность" Type="2" Unit="кг/м3"&gt;7856&lt;/Attribute&gt;
-        /// <br/>  &lt;/Attributes&gt;
-        /// <br/>&lt;/PreviewBoObjectResult&gt; 
-        /// </summary>
-        /// <param name="typeName">Название типа.</param>
-        /// <param name="uniqueId">Ключевой атрибут формата (***BOSimple...).</param>
-        public static string Native_PreviewBoObject(this INetPluginCall pc, string typeName, string uniqueId) => 
-            (string)pc.RunMethod("PreviewBoObject", typeName, uniqueId);
-
+        #region Отчёты
         /// <summary>
         /// Возвращает данные для формирования отчета.
         /// </summary>
@@ -812,15 +852,8 @@ namespace LoodsmanCommon
         /// <param name="reportId">Идентификатор отчета.</param>
         public static DataTable Native_GetParameterList(this INetPluginCall pc, int reportId) => 
             pc.GetDataTable("GetParameterList", reportId);
-
-        /// <summary>
-        /// Возвращает список объектов, заблокированных в текущем чекауте.
-        /// <br/>
-        /// <br/>Возвращает набор данных с полями:
-        /// <br/>[_ID_VERSION] int – уникальный идентификатор версии.
-        /// </summary>
-        public static DataTable Native_GetLockedObjects(this INetPluginCall pc) => 
-            pc.GetDataTable("GetLockedObjects", 0);
+        
+        #endregion
 
         #region Редактирование объектов
 
