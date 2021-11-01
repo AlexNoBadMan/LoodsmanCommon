@@ -372,6 +372,7 @@
         /// </summary>
         Mode12 = 12,
     }
+    
     /// <summary>
     /// Режим возврата списка атрибутов.
     /// </summary>
@@ -514,7 +515,7 @@
     }
 
     /// <summary>
-    /// Режим чекаута/
+    /// Режим чекаута.
     /// </summary>
     public enum CheckOutMode
     {
