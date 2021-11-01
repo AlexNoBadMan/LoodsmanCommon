@@ -112,6 +112,9 @@ namespace LoodsmanCommon
         /// <summary>Возвращает результат DataRow["_MAX_QUANTITY"].</summary>
         public static double MAX_QUANTITY(this DataRow row) => row["_MAX_QUANTITY"] as double? ?? 0;
 
+        /// <summary>Возвращает результат DataRow["_GUID"].</summary>
+        public static string GUID(this DataRow row) => row["_GUID"] as string;
+
         /// <summary>Возвращает результат DataRow["_ID_UNIT"].</summary>
         public static string ID_UNIT(this DataRow row) => row["_ID_UNIT"] as string;
 
@@ -120,6 +123,9 @@ namespace LoodsmanCommon
 
         /// <summary>Возвращает результат DataRow["_DISPLAY"].</summary>
         public static string DISPLAY(this DataRow row) => row["_DISPLAY"] as string;
+
+        /// <summary>Возвращает результат DataRow["_DOCNAME"].</summary>
+        public static string DOCNAME(this DataRow row) => row["_DOCNAME"] as string;
 
         /// <summary>Возвращает результат DataRow["_NAME"].</summary>
         public static string NAME(this DataRow row) => row["_NAME"] as string;
@@ -141,6 +147,9 @@ namespace LoodsmanCommon
 
         /// <summary>Возвращает результат DataRow["_TYPENAME"].</summary>
         public static string TYPENAME(this DataRow row) => row["_TYPENAME"] as string;
+
+        /// <summary>Возвращает результат DataRow["_PARENTNAME"].</summary>
+        public static string PARENTNAME(this DataRow row) => row["_PARENTNAME"] as string;
 
         /// <summary>Возвращает результат DataRow["_PARENT_TYPE"].</summary>
         public static string PARENT_TYPE(this DataRow row) => row["_PARENT_TYPE"] as string;
@@ -212,10 +221,10 @@ namespace LoodsmanCommon
         public static string LOCALNAME(this DataRow row) => row["_LOCALNAME"] as string;
 
         /// <summary>Возвращает результат DataRow["_LIST"].</summary>
-        public static string LIST(this DataRow row) => row["_LIST"] as string;
+        public static string LIST(this DataRow row) => row["_LIST"] as string ?? string.Empty;
 
         /// <summary>Возвращает результат DataRow["_VALUE_LIST"].</summary>
-        public static string VALUE_LIST(this DataRow row) => row["_VALUE_LIST"] as string;
+        public static string VALUE_LIST(this DataRow row) => row["_VALUE_LIST"] as string ?? string.Empty;
 
         /// <summary>Возвращает результат DataRow["_OBJECT_HINT"].</summary>
         public static string OBJECT_HINT(this DataRow row) => row["_OBJECT_HINT"] as string;
@@ -346,6 +355,9 @@ namespace LoodsmanCommon
 
         /// <summary>Возвращает результат DataRow["_ATTRTYPE"].</summary>
         public static AttributeType ATTRTYPE(this DataRow row) => (AttributeType)GetIntValue(row["_ATTRTYPE"]);
+
+        /// <summary>Возвращает результат DataRow["_IS_QUANTITY"].</summary>
+        public static LinkQuantityType IS_QUANTITY(this DataRow row) => (LinkQuantityType)GetIntValue(row["_IS_QUANTITY"]);
 
         /// <summary>Возвращает результат DataRow["_OBJECT_TYPE"].</summary>
         public static ReportRecordType OBJECT_TYPE(this DataRow row) => (ReportRecordType)GetIntValue(row["_OBJECT_TYPE"]);
