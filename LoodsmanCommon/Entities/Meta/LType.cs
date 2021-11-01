@@ -52,10 +52,12 @@ namespace LoodsmanCommon.Entities.Meta
         {
             _iNetPC = iNetPC;
             _lAttributes = lAttributes;
-            KeyAttribute = _lAttributes.FirstOrDefault(a => a.Name == dataRow["_ATTRNAME"] as string);
+            var keyAttributeName = dataRow["_ATTRNAME"] as string;
+            KeyAttribute = _lAttributes.FirstOrDefault(a => a.Name == keyAttributeName);
             IsDocument = (int)dataRow["_DOCUMENT"] == 1;
             IsVersioned = (int)dataRow["_NOVERSIONS"] == 0;
-            DefaultState = states.FirstOrDefault(a => a.Name == dataRow["_DEFAULTSTATE"] as string);
+            var defaultStateName = dataRow["_DEFAULTSTATE"] as string;
+            DefaultState = states.FirstOrDefault(a => a.Name == defaultStateName);
             CanBeProject = (int)dataRow["_CANBEPROJECT"] == 1;
             CanCreate = (int)dataRow["_CANCREATE"] == 1;
         }
