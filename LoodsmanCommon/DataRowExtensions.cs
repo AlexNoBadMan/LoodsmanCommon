@@ -4,6 +4,9 @@ using System.Data;
 
 namespace LoodsmanCommon
 {
+    /// <summary>
+    /// Расширения для класса <see cref="DataRow"/>.
+    /// </summary>
     public static class DataRowExtensions
     {
         /// <summary>

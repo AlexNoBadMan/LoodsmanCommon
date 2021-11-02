@@ -4,6 +4,9 @@ using System.Data;
 
 namespace LoodsmanCommon
 {
+    /// <summary>
+    /// Расширения для интерфейса <see cref="INetPluginCall"/>.
+    /// </summary>
     public static class NetPluginCallExtensions
     {
 
