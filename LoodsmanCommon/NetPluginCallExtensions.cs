@@ -566,6 +566,22 @@ namespace LoodsmanCommon
         public static DataTable Native_GetLockedObjects(this INetPluginCall pc) =>
             pc.GetDataTable("GetLockedObjects", 0);
 
+        /// <summary>
+        /// Возвращает значения атрибутов для списка объектов.
+        /// <br/>
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID_VERSION] int – идентификатор объекта;
+        /// <br/>[_ID] int – идентификатор атрибута;
+        /// <br/>[_NAME] string – имя атрибута;
+        /// <br/>[_VALUE] string – значение атрибута;
+        /// <br/>[_ID_UINT] string – идентификатор единицы измерения в справочнике единиц измерения;
+        /// <br/>[_UINT] string – название единицы измерения.
+        /// </summary>
+        /// <param name="attributesIds">Список идентификаторов атрибутов.</param>
+        /// <inheritdoc cref="Native_KillVersions(INetPluginCall, IEnumerable{int})"/>
+        public static DataTable Native_GetAttributesValues(this INetPluginCall pc, IEnumerable<int> objectsIds, IEnumerable<int> attributesIds) =>
+            pc.GetDataTable("GetAttributesValues2", string.Join(Constants.ID_SEPARATOR, objectsIds), string.Join(Constants.ID_SEPARATOR, attributesIds));
+
 
         #region Связанные объекты
 
