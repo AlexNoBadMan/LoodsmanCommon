@@ -28,6 +28,9 @@ namespace LoodsmanCommon
         /// <summary>Возвращает результат DataRow["_ID"].</summary>
         public static int ID(this DataRow row) => GetIntValue(row["_ID"]);
 
+        /// <summary>Возвращает результат DataRow["_ID_DOCUMENT"].</summary>
+        public static int ID_DOCUMENT(this DataRow row) => GetIntValue(row["_ID_DOCUMENT"]);
+
         /// <summary>Возвращает результат DataRow["_ID_VERSION"].</summary>
         public static int ID_VERSION(this DataRow row) => GetIntValue(row["_ID_VERSION"]);
 
