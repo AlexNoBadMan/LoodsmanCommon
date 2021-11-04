@@ -45,7 +45,6 @@ namespace LoodsmanCommon.Entities.Meta
         /// Список возможных атрибутов типа, включая служебные.
         /// </summary>
         public IReadOnlyCollection<LTypeAttribute> Attributes => _attributes ??= _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12)
-                                                .GetRows()
                                                 .Select(x =>
                                                 {
                                                     var id = (int)x["_ID"];

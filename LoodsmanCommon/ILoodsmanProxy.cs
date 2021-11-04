@@ -396,6 +396,7 @@ namespace LoodsmanCommon
                 _notUniqueNames.Clear();
             }
         }
+
         public ILoodsmanMeta Meta => _meta;
         public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall, this);
         public IEnumerable<ILoodsmanObject> SelectedObjects => GetSelectedObjects();
@@ -461,7 +462,7 @@ namespace LoodsmanCommon
 
         private IEnumerable<ILoodsmanObject> GetSelectedObjects()
         {
-            var ids = _iNetPC.Native_CGetTreeSelectedIDs().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+            var ids = _iNetPC.Native_CGetTreeSelectedIDs().Split(new[] { Constants.ID_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
             if (!_selectedObjects.Select(x => x.Id).OrderBy(x => x).SequenceEqual(ids.OrderBy(x => x)))
                 _selectedObjects = GetPropObjects(ids);
             return _selectedObjects;

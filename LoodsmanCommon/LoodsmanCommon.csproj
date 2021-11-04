@@ -63,6 +63,7 @@
     <Compile Include="Entities\Meta\Entity.cs" />
     <Compile Include="Entities\Meta\EntityIcon.cs" />
     <Compile Include="Entities\Meta\LTypeAttribute.cs" />
+    <Compile Include="Entities\Meta\LUser.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="DataTableExtensions.cs" />
     <Compile Include="EnumerableExtensions.cs" />

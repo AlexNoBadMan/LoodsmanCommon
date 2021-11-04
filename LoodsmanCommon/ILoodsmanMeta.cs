@@ -33,13 +33,13 @@ namespace LoodsmanCommon
         //private IReadOnlyList<LMeasureUnit> _measuresUnits;
         private readonly INetPluginCall _iNetPC;
 
-        public IReadOnlyList<LType> Types => _types ??= _iNetPC.Native_GetTypeListEx().GetRows().Select(x => new LType(_iNetPC, x, Attributes, States)).ToReadOnlyList();
-        public IReadOnlyList<LLink> Links => _links ??= _iNetPC.Native_GetLinkList().GetRows().Select(x => new LLink(x)).ToReadOnlyList();
-        public IReadOnlyList<LState> States => _states ??= _iNetPC.Native_GetStateList().GetRows().Select(x => new LState(x)).ToReadOnlyList();
-        public IReadOnlyList<LAttribute> Attributes => _attributes ??= _iNetPC.Native_GetAttributeList().GetRows().Select(x => new LAttribute(x)).ToReadOnlyList();
-        public IReadOnlyList<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().GetRows().Select(x => new LProxyUseCase(x)).ToReadOnlyList();
+        public IReadOnlyList<LType> Types => _types ??= _iNetPC.Native_GetTypeListEx().Select(x => new LType(_iNetPC, x, Attributes, States)).ToReadOnlyList();
+        public IReadOnlyList<LLink> Links => _links ??= _iNetPC.Native_GetLinkList().Select(x => new LLink(x)).ToReadOnlyList();
+        public IReadOnlyList<LState> States => _states ??= _iNetPC.Native_GetStateList().Select(x => new LState(x)).ToReadOnlyList();
+        public IReadOnlyList<LAttribute> Attributes => _attributes ??= _iNetPC.Native_GetAttributeList().Select(x => new LAttribute(x)).ToReadOnlyList();
+        public IReadOnlyList<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().Select(x => new LProxyUseCase(x)).ToReadOnlyList();
         public IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes => _linksInfoBetweenTypes ??= GetLinksInfoBetweenTypes(_iNetPC.Native_GetLinkListEx()).ToReadOnlyList();
-        public IReadOnlyList<LMeasure> Measures => _measures ??= _iNetPC.Native_GetFromBO_Nature().GetRows().Select(x => new LMeasure(_iNetPC, x)).ToReadOnlyList();
+        public IReadOnlyList<LMeasure> Measures => _measures ??= _iNetPC.Native_GetFromBO_Nature().Select(x => new LMeasure(_iNetPC, x)).ToReadOnlyList();
         //public IReadOnlyList<LMeasureUnit> MeasuresUnits => _measuresUnits ??= Measures.SelectMany(x => x.Units).ToReadOnlyList();
         
         public LoodsmanMeta(INetPluginCall iNetPC)
