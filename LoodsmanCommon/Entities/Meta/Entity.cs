@@ -2,7 +2,7 @@
 
 namespace LoodsmanCommon.Entities.Meta
 {
-    public abstract class Entity
+    public abstract class Entity : INamedEntity
     {
         /// <summary>
         /// Индентификатор

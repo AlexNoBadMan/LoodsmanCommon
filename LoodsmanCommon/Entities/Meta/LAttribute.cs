@@ -1,10 +1,27 @@
-﻿using System;
+﻿using Ascon.Plm.Loodsman.PluginSDK;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 
 namespace LoodsmanCommon.Entities.Meta
 {
+
+    //internal sealed class LAttributeCollection : NamedMetaItemCollection<LAttribute>
+    //{
+    //    private readonly INetPluginCall _iNetPC;
+
+    //    internal LAttributeCollection(INetPluginCall iNetPC)
+    //    {
+    //        _iNetPC = iNetPC;
+    //        Init();
+    //    }
+
+    //    protected override LAttribute CreateEntity(DataRow dataRow) => new LAttribute(dataRow);
+    //    protected override DataRowCollection GetMetadata() => _iNetPC.Native_GetAttributeList().Rows;
+    //}
+
     public class LAttribute : Entity
     {
         public AttributeType Type { get; }

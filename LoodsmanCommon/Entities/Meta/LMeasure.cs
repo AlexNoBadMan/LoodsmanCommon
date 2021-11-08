@@ -5,14 +5,14 @@ using System.Linq;
 
 namespace LoodsmanCommon.Entities.Meta
 {
-    public class LMeasure
+    public class LMeasure : INamedEntity
     {
-        private IReadOnlyList<LMeasureUnit> _units;
+        private NamedCollection<LMeasureUnit> _units;
         private readonly INetPluginCall _iNetPC;
 
         public string Guid { get; }
         public string Name { get; }
-        public IReadOnlyList<LMeasureUnit> Units => _units ??= _iNetPC.Native_GetMUnitList(Guid).Select(x => new LMeasureUnit(this, x)).ToReadOnlyList();
+        public NamedCollection<LMeasureUnit> Units => _units ??= new NamedCollection<LMeasureUnit>(() => _iNetPC.Native_GetMUnitList(Guid).Rows, x => new LMeasureUnit(this, x));
 
         internal LMeasure(INetPluginCall iNetPC, DataRow dataRow)
         {

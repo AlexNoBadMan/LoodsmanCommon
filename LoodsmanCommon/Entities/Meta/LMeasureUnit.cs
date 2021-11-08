@@ -2,7 +2,7 @@
 
 namespace LoodsmanCommon.Entities.Meta
 {
-    public class LMeasureUnit
+    public class LMeasureUnit : INamedEntity
     {
         public LMeasure ParentMeasure { get; }
         public string Guid { get; }

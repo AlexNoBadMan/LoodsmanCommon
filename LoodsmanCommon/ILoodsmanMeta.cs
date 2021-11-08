@@ -10,46 +10,47 @@ namespace LoodsmanCommon
 {
     public interface ILoodsmanMeta
     {
-        IReadOnlyList<LType> Types { get; }
-        IReadOnlyList<LLink> Links { get; }
-        IReadOnlyList<LState> States { get; }
-        IReadOnlyList<LAttribute> Attributes { get; }
+        NamedCollection<LType> Types { get; }
+        NamedCollection<LLink> Links { get; }
+        NamedCollection<LState> States { get; }
+        NamedCollection<LAttribute> Attributes { get; }
         IReadOnlyList<LProxyUseCase> ProxyUseCases { get; }
         IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes { get; }
-        IReadOnlyList<LMeasure> Measures { get; }
+        NamedCollection<LMeasure> Measures { get; }
         //IReadOnlyList<LMeasureUnit> MeasuresUnits { get; }
-        IReadOnlyList<LUser> Users { get; }
+        NamedCollection<LUser> Users { get; }
         LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension);
         void Clear();
     }
 
     internal class LoodsmanMeta : ILoodsmanMeta
     {
-        private IReadOnlyList<LType> _types;
-        private IReadOnlyList<LLink> _links;
-        private IReadOnlyList<LState> _states;
-        private IReadOnlyList<LAttribute> _attributes;
+        private NamedCollection<LType> _types;
+        private NamedCollection<LLink>  _links;
+        private NamedCollection<LState> _states;
+        private NamedCollection<LAttribute> _attributes;
         private IReadOnlyList<LProxyUseCase> _proxyUseCases;
         private IReadOnlyList<LLinkInfoBetweenTypes> _linksInfoBetweenTypes;
-        private IReadOnlyList<LMeasure> _measures;
+        private NamedCollection<LMeasure> _measures;
         //private IReadOnlyList<LMeasureUnit> _measuresUnits;
-        private IReadOnlyList<LUser> _users;
+        private NamedCollection<LUser> _users;
         private readonly INetPluginCall _iNetPC;
 
-        public IReadOnlyList<LType> Types => _types ??= _iNetPC.Native_GetTypeListEx().Select(x => new LType(_iNetPC, x, Attributes, States)).ToReadOnlyList();
-        public IReadOnlyList<LLink> Links => _links ??= _iNetPC.Native_GetLinkList().Select(x => new LLink(x)).ToReadOnlyList();
-        public IReadOnlyList<LState> States => _states ??= _iNetPC.Native_GetStateList().Select(x => new LState(x)).ToReadOnlyList();
-        public IReadOnlyList<LAttribute> Attributes => _attributes ??= _iNetPC.Native_GetAttributeList().Select(x => new LAttribute(x)).ToReadOnlyList();
+        public NamedCollection<LType> Types => _types ??= new NamedCollection<LType>(() => _iNetPC.Native_GetTypeListEx().Rows, x => new LType(_iNetPC, x, Attributes, States));
+        public NamedCollection<LLink> Links => _links ??= new NamedCollection<LLink>(() => _iNetPC.Native_GetLinkList().Rows, x => new LLink(x));
+        public NamedCollection<LState> States => _states ??= new NamedCollection<LState>(() => _iNetPC.Native_GetStateList().Rows, x => new LState(x));
+        public NamedCollection<LAttribute> Attributes => _attributes ??= new NamedCollection<LAttribute>(() => _iNetPC.Native_GetAttributeList().Rows, (x) => new LAttribute(x));
         public IReadOnlyList<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().Select(x => new LProxyUseCase(x)).ToReadOnlyList();
         public IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes => _linksInfoBetweenTypes ??= GetLinksInfoBetweenTypes(_iNetPC.Native_GetLinkListEx()).ToReadOnlyList();
-        public IReadOnlyList<LMeasure> Measures => _measures ??= _iNetPC.Native_GetFromBO_Nature().Select(x => new LMeasure(_iNetPC, x)).ToReadOnlyList();
+        public NamedCollection<LMeasure> Measures => _measures ??= new NamedCollection<LMeasure>(() => _iNetPC.Native_GetFromBO_Nature().Rows, x => new LMeasure(_iNetPC, x));
         //public IReadOnlyList<LMeasureUnit> MeasuresUnits => _measuresUnits ??= Measures.SelectMany(x => x.Units).ToReadOnlyList();
-        public IReadOnlyList<LUser> Users => _users ??= _iNetPC.Native_GetUserList().Select(x => new LUser(x)).ToReadOnlyList();
+        public NamedCollection<LUser> Users => _users ??= new NamedCollection<LUser>(() => _iNetPC.Native_GetUserList().Rows, x => new LUser(x));
         public IReadOnlyList<LRootDepartment> RootDepartments { get; }
 
         public LoodsmanMeta(INetPluginCall iNetPC)
         {
             _iNetPC = iNetPC;
+            
             //var treeObjects = iNetPC.Native_WFGetAddressBookTree(-1, 5, -1).Select(x => GetOrganisationUnit(x)).ToList();
             //treeObjects.ForEach(x => x.Children = treeObjects.Where(o => x.Id == o.ParentId));
             //var root = treeObjects.FirstOrDefault(x => x.ParentId == 0);

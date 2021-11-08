@@ -5,10 +5,29 @@ using Ascon.Plm.Loodsman.PluginSDK;
 
 namespace LoodsmanCommon.Entities.Meta
 {
+
+    //internal sealed class LTypeCollection : NamedMetaItemCollection<LType>
+    //{
+    //    private readonly INetPluginCall _iNetPC;
+    //    private readonly NamedMetaItemCollection<LAttribute> _lAttributes;
+    //    private readonly NamedMetaItemCollection<LState> _lStates;
+
+    //    internal LTypeCollection(INetPluginCall iNetPC, NamedMetaItemCollection<LAttribute> lAttributes, NamedMetaItemCollection<LState> lStates)
+    //    {
+    //        _iNetPC = iNetPC;
+    //        _lAttributes = lAttributes;
+    //        _lStates = lStates;
+    //        Init();
+    //    }
+
+    //    protected override LType CreateEntity(DataRow dataRow) => new LType(_iNetPC, dataRow, _lAttributes, _lStates);
+    //    protected override DataRowCollection GetMetadata() => _iNetPC.Native_GetTypeListEx().Rows;
+    //}
+    
     public class LType : EntityIcon
     {
         private readonly INetPluginCall _iNetPC;
-        private readonly IEnumerable<LAttribute> _lAttributes;
+        private readonly NamedCollection<LAttribute> _lAttributes;
         private IReadOnlyCollection<LTypeAttribute> _attributes;
 
         /// <summary>
@@ -52,16 +71,14 @@ namespace LoodsmanCommon.Entities.Meta
                                                 })
                                                 .ToReadOnlyList();
 
-        internal LType(INetPluginCall iNetPC, DataRow dataRow, IEnumerable<LAttribute> lAttributes, IEnumerable<LState> states, string nameField = "_TYPENAME") : base(dataRow, nameField)
+        internal LType(INetPluginCall iNetPC, DataRow dataRow, NamedCollection<LAttribute> lAttributes, NamedCollection<LState> lStates, string nameField = "_TYPENAME") : base(dataRow, nameField)
         {
             _iNetPC = iNetPC;
             _lAttributes = lAttributes;
-            var keyAttributeName = dataRow["_ATTRNAME"] as string;
-            KeyAttribute = _lAttributes.FirstOrDefault(a => a.Name == keyAttributeName);
+            KeyAttribute = _lAttributes[dataRow["_ATTRNAME"] as string];
             IsDocument = (int)dataRow["_DOCUMENT"] == 1;
             IsVersioned = (int)dataRow["_NOVERSIONS"] == 0;
-            var defaultStateName = dataRow["_DEFAULTSTATE"] as string;
-            DefaultState = states.FirstOrDefault(a => a.Name == defaultStateName);
+            DefaultState = lStates[dataRow["_DEFAULTSTATE"] as string];
             CanBeProject = (int)dataRow["_CANBEPROJECT"] == 1;
             CanCreate = (int)dataRow["_CANCREATE"] == 1;
         }

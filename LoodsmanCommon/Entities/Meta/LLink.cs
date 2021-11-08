@@ -1,8 +1,23 @@
-﻿using System.Data;
+﻿using Ascon.Plm.Loodsman.PluginSDK;
+using System.Data;
 
 
 namespace LoodsmanCommon.Entities.Meta
 {
+    //internal sealed class LLinkCollection : NamedMetaItemCollection<LLink>
+    //{
+    //    private readonly INetPluginCall _iNetPC;
+
+    //    internal LLinkCollection(INetPluginCall iNetPC)
+    //    {
+    //        _iNetPC = iNetPC;
+    //        Init();
+    //    }
+
+    //    protected override LLink CreateEntity(DataRow dataRow) => new LLink(dataRow);
+    //    protected override DataRowCollection GetMetadata() => _iNetPC.Native_GetLinkList().Rows;
+    //}
+
     public class LLink : EntityIcon
     {
         public string InverseName { get; }
