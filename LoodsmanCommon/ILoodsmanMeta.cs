@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using LoodsmanCommon.Entities.Meta;
+using LoodsmanCommon.Entities.Meta.OrganisationUnit;
 
 namespace LoodsmanCommon
 {
@@ -17,6 +18,7 @@ namespace LoodsmanCommon
         IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes { get; }
         IReadOnlyList<LMeasure> Measures { get; }
         //IReadOnlyList<LMeasureUnit> MeasuresUnits { get; }
+        IReadOnlyList<LUser> Users { get; }
         LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension);
         void Clear();
     }
@@ -31,6 +33,7 @@ namespace LoodsmanCommon
         private IReadOnlyList<LLinkInfoBetweenTypes> _linksInfoBetweenTypes;
         private IReadOnlyList<LMeasure> _measures;
         //private IReadOnlyList<LMeasureUnit> _measuresUnits;
+        private IReadOnlyList<LUser> _users;
         private readonly INetPluginCall _iNetPC;
 
         public IReadOnlyList<LType> Types => _types ??= _iNetPC.Native_GetTypeListEx().Select(x => new LType(_iNetPC, x, Attributes, States)).ToReadOnlyList();
@@ -41,11 +44,42 @@ namespace LoodsmanCommon
         public IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes => _linksInfoBetweenTypes ??= GetLinksInfoBetweenTypes(_iNetPC.Native_GetLinkListEx()).ToReadOnlyList();
         public IReadOnlyList<LMeasure> Measures => _measures ??= _iNetPC.Native_GetFromBO_Nature().Select(x => new LMeasure(_iNetPC, x)).ToReadOnlyList();
         //public IReadOnlyList<LMeasureUnit> MeasuresUnits => _measuresUnits ??= Measures.SelectMany(x => x.Units).ToReadOnlyList();
-        
+        public IReadOnlyList<LUser> Users => _users ??= _iNetPC.Native_GetUserList().Select(x => new LUser(x)).ToReadOnlyList();
+        public IReadOnlyList<LRootDepartment> RootDepartments { get; }
+
         public LoodsmanMeta(INetPluginCall iNetPC)
         {
             _iNetPC = iNetPC;
+            //var treeObjects = iNetPC.Native_WFGetAddressBookTree(-1, 5, -1).Select(x => GetOrganisationUnit(x)).ToList();
+            //treeObjects.ForEach(x => x.Children = treeObjects.Where(o => x.Id == o.ParentId));
+            //var root = treeObjects.FirstOrDefault(x => x.ParentId == 0);
+            //var treeObjectsList = new List<LOrganisationUnit>();
+            //foreach (DataRow dataRow in iNetPC.Native_WFGetRoleTree(GetRoleTreeMode.Mode1).Rows)
+            //{
+            //    var treeObject = GetOrganisationUnit(dataRow);
+            //    var parentId = dataRow["_PARENT"] as int? ?? 0;
+            //    if (treeObjectsList.Find(x => x.Id == parentId) is LOrganisationUnit parent)
+            //    {
+            //        treeObject.Parent = parent;
+            //        parent.Children = parent.Children.Append(treeObject);
+            //    }
+            //    treeObjectsList.Add(treeObject);
+            //}
+            //var rootList = treeObjectsList.LastOrDefault(x => x.ParentId == 0);
         }
+
+        //private LOrganisationUnit GetOrganisationUnit(DataRow dataRow)
+        //{
+        //    var unitKind = (OrganisationUnitKind)dataRow["_TYPE"];
+        //    if (unitKind == OrganisationUnitKind.Department)
+        //        return new LDepartment(dataRow);
+        //    else if (unitKind == OrganisationUnitKind.Position)
+        //        return new LPosition(dataRow);
+        //    else if (unitKind == OrganisationUnitKind.RootDepartment)
+        //        return new LRootDepartment(dataRow);
+        //    else 
+        //        return new LPosition(dataRow);
+        //}
 
         private static IEnumerable<LLinkInfoBetweenTypes> GetLinksInfoBetweenTypes(DataTable dataTable)
         {
@@ -96,6 +130,8 @@ namespace LoodsmanCommon
             _links = null;
             _proxyUseCases = null;
             _linksInfoBetweenTypes = null;
+            _measures = null;
+            _users = null;
         }
     }
 }

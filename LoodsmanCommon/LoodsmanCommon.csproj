@@ -56,14 +56,19 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Entities\LObjectsLink.cs" />
+    <Compile Include="Entities\Meta\MetaItemCollection.cs" />
+    <Compile Include="Entities\Meta\OrganisationUnit\LDepartment.cs" />
     <Compile Include="Entities\Meta\LMeasure.cs" />
     <Compile Include="Entities\Meta\LMeasureUnit.cs" />
     <Compile Include="DataRowExtensions.cs" />
     <Compile Include="Entities\LObjectAttribute.cs" />
     <Compile Include="Entities\Meta\Entity.cs" />
     <Compile Include="Entities\Meta\EntityIcon.cs" />
+    <Compile Include="Entities\Meta\OrganisationUnit\LRootDepartment.cs" />
+    <Compile Include="Entities\Meta\OrganisationUnit\LOrganisationUnit.cs" />
+    <Compile Include="Entities\Meta\OrganisationUnit\LPosition.cs" />
     <Compile Include="Entities\Meta\LTypeAttribute.cs" />
-    <Compile Include="Entities\Meta\LUser.cs" />
+    <Compile Include="Entities\Meta\OrganisationUnit\LUser.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="DataTableExtensions.cs" />
     <Compile Include="EnumerableExtensions.cs" />
@@ -102,6 +107,5 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -12,7 +12,7 @@ namespace LoodsmanCommon.Entities.Meta
 
         public string Guid { get; }
         public string Name { get; }
-        public IReadOnlyList<LMeasureUnit> Units => _units ??= _iNetPC.Native_GetMUnitList(Guid).GetRows().Select(x => new LMeasureUnit(this, x)).ToReadOnlyList();
+        public IReadOnlyList<LMeasureUnit> Units => _units ??= _iNetPC.Native_GetMUnitList(Guid).Select(x => new LMeasureUnit(this, x)).ToReadOnlyList();
 
         internal LMeasure(INetPluginCall iNetPC, DataRow dataRow)
         {

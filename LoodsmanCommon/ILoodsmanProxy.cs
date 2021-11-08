@@ -1,6 +1,7 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
 using LoodsmanCommon.Entities;
 using LoodsmanCommon.Entities.Meta;
+using LoodsmanCommon.Entities.Meta.OrganisationUnit;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -37,19 +38,9 @@ namespace LoodsmanCommon
         string CheckOutName { get; }
 
         /// <summary>
-        /// Возвращает признак того, является ли пользователь, подключенный к текущей базе данных, администратором этой базы.
+        /// Информация о текущем пользователе.
         /// </summary>
-        bool IsAdmin { get; }
-
-        /// <summary>
-        /// Показывает имя пользователя, который подключился к базе данных.
-        /// </summary>
-        string CurrentUser { get; }
-
-        /// <summary>
-        /// Папка для хранения файлов пользователя.
-        /// </summary>
-        string UserFileDir { get; }
+        public LUser CurrentUser { get; }
 
         /// <summary>
         /// Инициализирует свойство INetPC.
@@ -80,8 +71,8 @@ namespace LoodsmanCommon
         /// <remarks>
         /// Примечание:
         /// <para>** reuse:
-        /// Если значение – true, то независимо от существования в базе данных такой пары связанных объектов будет создаваться еще один экземпляр связи.
-        /// Если значение – false, то при существовании в базе данных такой пары связанных объектов новый экземпляр связи создаваться не будет, при этом будет вызвано исключение.</para>
+        /// Если значение - true, то независимо от существования в базе данных такой пары связанных объектов будет создаваться еще один экземпляр связи.
+        /// Если значение - false, то при существовании в базе данных такой пары связанных объектов новый экземпляр связи создаваться не будет, при этом будет вызвано исключение.</para>
         /// </remarks>
         /// <returns>Возвращает идентификатор созданной связи.</returns>
         int InsertObject(ILoodsmanObject parent, ILoodsmanObject child, string linkType, string stateName = null, bool reuse = false);
@@ -101,8 +92,8 @@ namespace LoodsmanCommon
         /// <remarks>
         /// Примечание:
         /// <para>** reuse:
-        /// Если значение – true, то независимо от существования в базе данных такой пары связанных объектов будет создаваться еще один экземпляр связи.
-        /// Если значение – false, то при существовании в базе данных такой пары связанных объектов новый экземпляр связи создаваться не будет, при этом будет вызвано исключение.</para>
+        /// Если значение - true, то независимо от существования в базе данных такой пары связанных объектов будет создаваться еще один экземпляр связи.
+        /// Если значение - false, то при существовании в базе данных такой пары связанных объектов новый экземпляр связи создаваться не будет, при этом будет вызвано исключение.</para>
         /// </remarks>
         /// <returns>Возвращает идентификатор созданной связи.</returns>
         int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string linkType, string childTypeName, string childProduct, string childVersion = " ", string stateName = null, bool reuse = false);
@@ -167,7 +158,7 @@ namespace LoodsmanCommon
         /// </summary>
         /// <param name="objectId">Идентификатор версии объекта</param>
         /// <param name="linkType">Название типа связи</param>
-        /// <param name="inverse">Направление (true – обратное, false – прямое)</param>
+        /// <param name="inverse">Направление (true - обратное, false - прямое)</param>
         List<ILoodsmanObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
 
         /// <summary>
@@ -385,6 +376,7 @@ namespace LoodsmanCommon
         private readonly ILoodsmanMeta _meta;
         private ILoodsmanObject _selectedObject;
         private List<ILoodsmanObject> _selectedObjects = new List<ILoodsmanObject>();
+        private LUser _currentUser;
 
         public virtual INetPluginCall INetPC
         {
@@ -401,16 +393,11 @@ namespace LoodsmanCommon
         public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall, this);
         public IEnumerable<ILoodsmanObject> SelectedObjects => GetSelectedObjects();
         public string CheckOutName => _checkOutName;
-        public bool IsAdmin { get; }
-        public string CurrentUser { get; }
-        public string UserFileDir { get; }
+        public LUser CurrentUser => _currentUser ??= InitCurrentUser();
+
         public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
         {
             _iNetPC = iNetPC;
-            IsAdmin = _iNetPC.Native_IsAdmin();
-            var userInfo = _iNetPC.Native_GetInfoAboutCurrentUser().Rows[0];
-            CurrentUser = userInfo["_FULLNAME"] as string;
-            UserFileDir = userInfo["_FILEDIR"] as string;
 
             var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
             culture.NumberFormat.NumberDecimalSeparator = ".";
@@ -458,6 +445,17 @@ namespace LoodsmanCommon
         public void InitNetPluginCall(INetPluginCall iNetPC)
         {
             INetPC = iNetPC;
+        }
+
+        private LUser InitCurrentUser()
+        {
+            var userInfo = _iNetPC.Native_GetInfoAboutCurrentUser().Rows[0];
+            var user = new LUser(_iNetPC.Native_WFGetUserProperties((int)userInfo["_ID"]).Rows[0])
+            {
+                WorkDir = userInfo["_USERDIR"] as string,
+                FileDir = userInfo["_FILEDIR"] as string,
+            };
+            return user;
         }
 
         private IEnumerable<ILoodsmanObject> GetSelectedObjects()
@@ -655,7 +653,7 @@ namespace LoodsmanCommon
                 var measureId = string.Empty;
                 var unitId = string.Empty;
                 var value = attribute?["_VALUE"];
-                if (lTypeAttribute.IsMeasured && !(value is null)) 
+                if (lTypeAttribute.IsMeasured && !(value is null))
                 {
                     measureId = attribute["_ID_MEASURE"] as string;
                     unitId = attribute["_ID_UNIT"] as string;
@@ -742,9 +740,9 @@ namespace LoodsmanCommon
 
         private string CopyIfNeddedOnWorkDir(string filePath)
         {
-            if (!filePath.Contains(UserFileDir))
+            if (!filePath.Contains(CurrentUser.FileDir))
             {
-                var newPath = $@"{UserFileDir}\{Path.GetFileName(filePath)}";
+                var newPath = $@"{CurrentUser.FileDir}\{Path.GetFileName(filePath)}";
                 File.Copy(filePath, newPath, true);
                 filePath = newPath;
             }
