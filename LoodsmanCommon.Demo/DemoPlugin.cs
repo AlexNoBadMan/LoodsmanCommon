@@ -5,7 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using LoodsmanCommon.Extensions;
+using LoodsmanCommon;
+using System.Data;
+using System.Diagnostics;
+using LoodsmanCommon.Entities.Meta.OrganisationUnit;
 
 namespace LoodsmanCommon.Demo
 {
@@ -18,6 +21,7 @@ namespace LoodsmanCommon.Demo
             menu.AddMenuItem("Тест демо#В работу(Empty CheckOut AddToCheckOut), удалить, отказ", Command2, CheckCommand);
             menu.AddMenuItem("Тест демо#В работу(No empty ChekOut), удалить, отказ", Command3, CheckCommand);
             menu.AddMenuItem("Тест демо#Преобразование единиц измерения", Command4, CheckCommand);
+            menu.AddMenuItem("Тест демо#Получение информации об организационной структуре", Command5, FreeCheckCommand);
         }
 
 
@@ -91,6 +95,29 @@ namespace LoodsmanCommon.Demo
             var value = 5; 
             var convertValue = _proxy.ConverseValue(value, convertValueUnit, valueUnit);
             MessageBox.Show($"Исходное значение: {value} {convertValueUnit.Name} \nПреобразованное значение: {convertValue} {valueUnit.Name}");
+        }
+
+        private void Command5(INetPluginCall iNetPC)
+        {
+            _proxy.InitNetPluginCall(iNetPC);
+            var mainDepartaments = _meta.OrganisationUnits.Where(x => x.Kind == OrganisationUnitKind.MainDepartment).Cast<LMainDepartment>().OrderBy(x => x.Id).ToArray();
+            var orgInfo = $"Головных орг. единиц: {mainDepartaments.Length}\n\n";
+            for (var i = 0; i < mainDepartaments.Length; i++)
+            {
+                var mainDepartament = mainDepartaments[i];
+                var departamentsCount = mainDepartament.Descendants().Count(x => x.Kind == OrganisationUnitKind.Department);
+                var positionsCount = mainDepartament.Descendants().Count(x => x.Kind == OrganisationUnitKind.Position);
+                orgInfo = $"{orgInfo}Наименование: {mainDepartament.Name}\nПодразделений: {departamentsCount}\nДолжностей: {positionsCount}\n\n";
+            }
+            MessageBox.Show(orgInfo, "Информация об организационной структуре");
+        }
+
+        private bool FreeCheckCommand(INetPluginCall iNetPC)
+        {
+            if (_proxy is null && iNetPC != null) //метод OnConnectToDb не срабатывает при первом добавлении команды на панель инструментов.
+                PluginInit(iNetPC);
+            
+            return iNetPC != null;
         }
     }
 }

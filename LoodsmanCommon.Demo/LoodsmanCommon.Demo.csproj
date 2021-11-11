@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\..\ProgramData\ASCON\LOODSMAN\PluginStore\DemoPlugin\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\..\..\ProgramData\ASCON\LOODSMAN\PluginStore\DemoPlugin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,7 +32,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ascon.Plm.Loodsman.PluginSDK">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\ASCON\Loodsman\Client\Ascon.Plm.Loodsman.PluginSDK.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\ASCON\Loodsman\Client\Ascon.Plm.Loodsman.PluginSDK.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
