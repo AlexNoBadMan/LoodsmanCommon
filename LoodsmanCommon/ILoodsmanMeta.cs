@@ -9,15 +9,49 @@ using LoodsmanCommon.Entities.Meta.Collections;
 
 namespace LoodsmanCommon
 {
+    /// <summary>
+    /// Метаданные базы ЛОЦМАН:PLM.
+    /// </summary>
     public interface ILoodsmanMeta
     {
+        /// <summary>
+        /// Список типов.
+        /// </summary>
         NamedEntityCollection<LType> Types { get; }
+
+        /// <summary>
+        /// Список связей.
+        /// </summary>
         NamedEntityCollection<LLink> Links { get; }
+
+        /// <summary>
+        /// Список состояний.
+        /// </summary>
         NamedEntityCollection<LState> States { get; }
+
+        /// <summary>
+        /// Список атрибутов.
+        /// </summary>
         NamedEntityCollection<LAttribute> Attributes { get; }
+
+        /// <summary>
+        /// Список содержащий случаи использования прокси, типа объекта и типа документа.
+        /// </summary>
         IReadOnlyList<LProxyUseCase> ProxyUseCases { get; }
+
+        /// <summary>
+        /// Список содержащий информацию о связях между типами.
+        /// </summary>
         IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes { get; }
+
+        /// <summary>
+        /// Список единиц измерения.
+        /// </summary>
         NamedEntityCollection<LMeasure> Measures { get; }
+
+        /// <summary>
+        /// Список пользователей.
+        /// </summary>
         NamedEntityCollection<LUser> Users { get; }
         
         /// <summary>
@@ -38,7 +72,18 @@ namespace LoodsmanCommon
         /// </remarks>
         LMainDepartment CurrentMainDepartment { get; }
 
+        /// <summary>
+        /// Получить случай использования прокси.
+        /// </summary>
+        /// <param name="parentType"></param>
+        /// <param name="childDocumentType"></param>
+        /// <param name="extension">Расширение файла (наличие точки не обязательно).</param>
+        /// <returns>Возвращает случай использования прокси</returns>
         LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension);
+
+        /// <summary>
+        /// Очистить загруженные данные.
+        /// </summary>
         void Clear();
     }
 
@@ -182,6 +227,9 @@ namespace LoodsmanCommon
             _linksInfoBetweenTypes = null;
             _measures = null;
             _users = null;
+            _currentUser = null;
+            _organisationUnits = null;
+            _currentMainDepartment = null;
         }
     }
 }
