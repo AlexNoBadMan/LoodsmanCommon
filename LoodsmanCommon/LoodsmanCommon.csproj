@@ -56,9 +56,11 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Entities\LObjectsLink.cs" />
+    <Compile Include="Entities\Meta\Collections\EntityCollection.cs" />
+    <Compile Include="Entities\Meta\IEntity.cs" />
     <Compile Include="Entities\Meta\INamedEntity.cs" />
-    <Compile Include="Entities\Meta\NamedCollection.cs" />
-    <Compile Include="Entities\Meta\MetaItemCollection.cs" />
+    <Compile Include="Entities\Meta\Collections\NamedEntityCollection.cs" />
+    <Compile Include="Entities\Meta\Collections\MetaItemCollection.cs" />
     <Compile Include="Entities\Meta\OrganisationUnit\LDepartment.cs" />
     <Compile Include="Entities\Meta\LMeasure.cs" />
     <Compile Include="Entities\Meta\LMeasureUnit.cs" />
@@ -66,7 +68,7 @@
     <Compile Include="Entities\LObjectAttribute.cs" />
     <Compile Include="Entities\Meta\Entity.cs" />
     <Compile Include="Entities\Meta\EntityIcon.cs" />
-    <Compile Include="Entities\Meta\OrganisationUnit\LRootDepartment.cs" />
+    <Compile Include="Entities\Meta\OrganisationUnit\LMainDepartment.cs" />
     <Compile Include="Entities\Meta\OrganisationUnit\LOrganisationUnit.cs" />
     <Compile Include="Entities\Meta\OrganisationUnit\LPosition.cs" />
     <Compile Include="Entities\Meta\LTypeAttribute.cs" />

@@ -2,7 +2,7 @@
 
 namespace LoodsmanCommon.Entities.Meta
 {
-    public abstract class Entity : INamedEntity
+    public abstract class Entity : IEntity, INamedEntity
     {
         /// <summary>
         /// Индентификатор
@@ -16,7 +16,6 @@ namespace LoodsmanCommon.Entities.Meta
             Name = name;
         }
 
-        internal Entity(DataRow dataRow, string nameField = "_NAME") : this((int)dataRow["_ID"], dataRow[nameField] as string)
-        { }
+        internal Entity(DataRow dataRow, string nameField = "_NAME") : this((int)dataRow["_ID"], dataRow[nameField] as string) { }
     }
 }

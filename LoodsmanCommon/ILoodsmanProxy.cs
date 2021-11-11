@@ -38,11 +38,6 @@ namespace LoodsmanCommon
         string CheckOutName { get; }
 
         /// <summary>
-        /// Информация о текущем пользователе.
-        /// </summary>
-        public LUser CurrentUser { get; }
-
-        /// <summary>
         /// Инициализирует свойство INetPC.
         /// </summary>
         /// <remarks>
@@ -376,7 +371,6 @@ namespace LoodsmanCommon
         private readonly ILoodsmanMeta _meta;
         private ILoodsmanObject _selectedObject;
         private List<ILoodsmanObject> _selectedObjects = new List<ILoodsmanObject>();
-        private LUser _currentUser;
 
         public virtual INetPluginCall INetPC
         {
@@ -393,7 +387,6 @@ namespace LoodsmanCommon
         public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall, this);
         public IEnumerable<ILoodsmanObject> SelectedObjects => GetSelectedObjects();
         public string CheckOutName => _checkOutName;
-        public LUser CurrentUser => _currentUser ??= InitCurrentUser();
 
         public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
         {
@@ -445,17 +438,6 @@ namespace LoodsmanCommon
         public void InitNetPluginCall(INetPluginCall iNetPC)
         {
             INetPC = iNetPC;
-        }
-
-        private LUser InitCurrentUser()
-        {
-            var userInfo = _iNetPC.Native_GetInfoAboutCurrentUser().Rows[0];
-            var user = new LUser(_iNetPC.Native_WFGetUserProperties((int)userInfo["_ID"]).Rows[0])
-            {
-                WorkDir = userInfo["_USERDIR"] as string,
-                FileDir = userInfo["_FILEDIR"] as string,
-            };
-            return user;
         }
 
         private IEnumerable<ILoodsmanObject> GetSelectedObjects()
@@ -740,9 +722,9 @@ namespace LoodsmanCommon
 
         private string CopyIfNeddedOnWorkDir(string filePath)
         {
-            if (!filePath.Contains(CurrentUser.FileDir))
+            if (!filePath.Contains(_meta.CurrentUser.FileDir))
             {
-                var newPath = $@"{CurrentUser.FileDir}\{Path.GetFileName(filePath)}";
+                var newPath = $@"{_meta.CurrentUser.FileDir}\{Path.GetFileName(filePath)}";
                 File.Copy(filePath, newPath, true);
                 filePath = newPath;
             }

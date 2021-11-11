@@ -2,32 +2,14 @@
 using System.Linq;
 using System.Collections.Generic;
 using Ascon.Plm.Loodsman.PluginSDK;
+using LoodsmanCommon.Entities.Meta.Collections;
 
 namespace LoodsmanCommon.Entities.Meta
 {
-
-    //internal sealed class LTypeCollection : NamedMetaItemCollection<LType>
-    //{
-    //    private readonly INetPluginCall _iNetPC;
-    //    private readonly NamedMetaItemCollection<LAttribute> _lAttributes;
-    //    private readonly NamedMetaItemCollection<LState> _lStates;
-
-    //    internal LTypeCollection(INetPluginCall iNetPC, NamedMetaItemCollection<LAttribute> lAttributes, NamedMetaItemCollection<LState> lStates)
-    //    {
-    //        _iNetPC = iNetPC;
-    //        _lAttributes = lAttributes;
-    //        _lStates = lStates;
-    //        Init();
-    //    }
-
-    //    protected override LType CreateEntity(DataRow dataRow) => new LType(_iNetPC, dataRow, _lAttributes, _lStates);
-    //    protected override DataRowCollection GetMetadata() => _iNetPC.Native_GetTypeListEx().Rows;
-    //}
-    
     public class LType : EntityIcon
     {
         private readonly INetPluginCall _iNetPC;
-        private readonly NamedCollection<LAttribute> _lAttributes;
+        private readonly NamedEntityCollection<LAttribute> _lAttributes;
         private IReadOnlyCollection<LTypeAttribute> _attributes;
 
         /// <summary>
@@ -71,7 +53,7 @@ namespace LoodsmanCommon.Entities.Meta
                                                 })
                                                 .ToReadOnlyList();
 
-        internal LType(INetPluginCall iNetPC, DataRow dataRow, NamedCollection<LAttribute> lAttributes, NamedCollection<LState> lStates, string nameField = "_TYPENAME") : base(dataRow, nameField)
+        internal LType(INetPluginCall iNetPC, DataRow dataRow, NamedEntityCollection<LAttribute> lAttributes, NamedEntityCollection<LState> lStates, string nameField = "_TYPENAME") : base(dataRow, nameField)
         {
             _iNetPC = iNetPC;
             _lAttributes = lAttributes;

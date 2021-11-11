@@ -610,7 +610,7 @@
         /// <summary>
         /// Головное подразделение организационной структуры.
         /// </summary>
-        RootDepartment = 3
+        MainDepartment = 3
     }
 
 }

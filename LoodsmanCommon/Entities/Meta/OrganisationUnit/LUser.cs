@@ -7,8 +7,20 @@ namespace LoodsmanCommon.Entities.Meta.OrganisationUnit
 {
     public class LUser : LOrganisationUnit
     {
-        private int? _mainpositionId;
-        public LPosition MainPosition { get; }
+        private int _mainpositionId;
+        private LOrganisationUnit _parent;
+        private readonly ILoodsmanMeta _meta;
+
+        /// <summary>
+        /// Возвращает основную должность пользователя.
+        /// </summary>
+        public override LOrganisationUnit Parent
+        {
+            get => _parent == null && _mainpositionId > 0 ? (_parent = _meta.OrganisationUnits[_mainpositionId]) : _parent;
+
+            internal set => _parent = value;
+        }
+
         public bool IsAdmin { get; }
         public bool IsWinUser { get; }
         public string FullName { get; }
@@ -23,10 +35,11 @@ namespace LoodsmanCommon.Entities.Meta.OrganisationUnit
         public string FileDir { get; internal set; }
         public override OrganisationUnitKind Kind => OrganisationUnitKind.User;
 
-        internal LUser(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
+        internal LUser(ILoodsmanMeta meta, DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
         {
+            _meta = meta;
             IsAdmin = (int)dataRow["_IS_ADMIN"] == 1;
-            IsWinUser = (short)dataRow["_WINUSER"] == 1; 
+            IsWinUser = (short)dataRow["_WINUSER"] == 1;
             FullName = dataRow["_FULLNAME"] as string;
             Mail = dataRow["_MAIL"] as string;
             Phone = dataRow["_PHONE"] as string;
@@ -41,7 +54,7 @@ namespace LoodsmanCommon.Entities.Meta.OrganisationUnit
             //_IS_MISSING_USER 
             //_PATH  
             //_PROFILE   
-            _mainpositionId = dataRow["_MAINPOSITION_ID"] as int?;
+            _mainpositionId = dataRow["_MAINPOSITION_ID"] as int? ?? 0;
         }
     }
 }

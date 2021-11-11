@@ -8,10 +8,23 @@ namespace LoodsmanCommon.Entities.Meta.OrganisationUnit
     {
         public virtual LOrganisationUnit Parent { get; internal set; }
         public abstract OrganisationUnitKind Kind { get; }
-        public virtual IEnumerable<LOrganisationUnit> Children { get; internal set; }
+        public virtual IEnumerable<LOrganisationUnit> Children { get; internal set; } = Enumerable.Empty<LOrganisationUnit>();
 
         internal LOrganisationUnit(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
         {
+        }
+
+
+        public IEnumerable<LOrganisationUnit> Ancestors()
+        {
+            for (var n = Parent; n != null; n = n.Parent)
+                yield return n;
+        }
+
+        public IEnumerable<LOrganisationUnit> AncestorsAndSelf()
+        {
+            for (var n = this; n != null; n = n.Parent)
+                yield return n;
         }
 
         public IEnumerable<LOrganisationUnit> DescendantsAndSelf()
