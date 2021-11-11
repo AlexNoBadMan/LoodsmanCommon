@@ -4,19 +4,30 @@ using System.Data;
 
 namespace LoodsmanCommon
 {
+    /// <summary>
+    /// Расширения DataTable для удобного использования. 
+    /// </summary>
     public static class DataTableExtensions
     {
-        public static IEnumerable<DataRow> GetRows(this DataTable dataTable)
-        {
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-                yield return dataTable.Rows[i];
-        }
-
+        /// <summary>
+        /// Проецирует каждый элемент последовательности в новую форму.
+        /// </summary>
+        /// <typeparam name="T">Тип значения, возвращаемый <paramref name="selector"/>.</typeparam>
+        /// <param name="dataTable">Таблица данных.</param>
+        /// <param name="selector">Функция преобразования, применяемая к каждому элементу.</param>
+        /// <returns><see cref="IEnumerable{T}"/> Элементы которой получены в результате вызова функции преобразования к каждому элементу source.</returns>
         public static IEnumerable<T> Select<T>(this DataTable dataTable, Func<DataRow, T> selector)
         {
             for (int i = 0; i < dataTable.Rows.Count; i++)
                 yield return selector(dataTable.Rows[i]);
         }
+
+        /// <summary>
+        /// Выполняет фильтрацию последовательности значений на основе заданного предиката.
+        /// </summary>
+        /// <param name="dataTable">Таблица данных.</param>
+        /// <param name="predicate">Функция для проверки каждого элемента исходной последовательности условие.</param>
+        /// <returns><see cref="IEnumerable{T}"/> Содержащий элементы из входной последовательности, которые удовлетворяют условию.</returns>
         public static IEnumerable<DataRow> Where(this DataTable dataTable, Func<DataRow, bool> predicate)
         {
             for (int i = 0; i < dataTable.Rows.Count; i++)

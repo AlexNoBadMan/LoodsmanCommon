@@ -18,7 +18,7 @@ namespace LoodsmanCommon
         public static T GetValueOrDefault<T>(this DataRow row, string key) => row.GetValueOrDefault(key, default(T));
 
         /// <inheritdoc cref="GetValueOrDefault{T}(DataRow, string)"/>
-        /// <param name="defaultValue"></param>
+        /// <param name="defaultValue">Значение по умолчанию.</param>
         public static T GetValueOrDefault<T>(this DataRow row, string key, T defaultValue) => row.IsNull(key) ? defaultValue : (T)row[key];
 
         /// <summary>

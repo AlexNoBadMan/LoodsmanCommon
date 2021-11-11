@@ -464,7 +464,7 @@ namespace LoodsmanCommon
         /// <br/>[_ID_UNIT] string - идентификатор единицы измерения, в которой задавали количество.
         /// </summary>
         /// <inheritdoc cref="Native_KillVersion(INetPluginCall, string, string, string)"/>
-        /// <inheritdoc cref="Native_GetLObjs(INetPluginCall, int, bool)"/>
+        /// <inheritdoc cref="Native_GetLObjs(INetPluginCall, int, bool)" path="param"/>
         /// <param name="fullLink">Признак полной разузловки.</param>
         /// <param name="groupByProduct">Признак группировки по изделиям (для случая полной разузловки), если true дополнительно возвращается поле [_ASSEMBLY] string.</param>
         public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, string typeName, string product, string version, string linkType, bool inverse, bool fullLink, bool groupByProduct) => 
@@ -518,16 +518,16 @@ namespace LoodsmanCommon
         /// <br/>[_ACCESSLEVEL] int - уровень доступа пользователя, подключившегося к связанному объекту;
         /// <br/>[_ID_LOCK] int - идентификатор рабочей области, блокирующей связанный объект.
         /// </summary>
-        /// <inheritdoc cref="Native_KillVersions(INetPluginCall, IEnumerable{int})"/>
         /// <param name="linkTypeIds">Список идентификаторов связей.</param>
         /// <param name="inverse">Направление (true - обратное, false - прямое).</param>
+        /// <inheritdoc cref="Native_KillVersions(INetPluginCall, IEnumerable{int})"/>
         public static DataTable Native_GetLinkedObjectsForObjects(this INetPluginCall pc, IEnumerable<int> objectsIds, IEnumerable<int> linkTypeIds, bool inverse = false) => 
             pc.GetDataTable("GetLinkedObjectsForObjects", string.Join(Constants.ID_SEPARATOR, objectsIds), string.Join(Constants.ID_SEPARATOR, linkTypeIds), inverse);
 
         /// <summary>
         /// Возвращает информацию об экземпляре связи.
         /// </summary>
-        /// <param name="idLink">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, string, string, string, string, bool, bool, bool, bool)">GetLinkedObjects</see>.</param>
+        /// <param name="idLink">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
         /// <param name="mode">Режим вывода. В зависимости от его значения выдается соответствующая информация.</param>
         /// <returns>Зависит от режима <see cref="GetInfoAboutLinkMode"/></returns>
         public static DataTable Native_GetInfoAboutLink(this INetPluginCall pc, int idLink, GetInfoAboutLinkMode mode) => 
@@ -719,12 +719,12 @@ namespace LoodsmanCommon
         /// <br/>[_USERNAME] string - имя пользователя;
         /// <br/>[_FULLNAME] string - полное имя пользователя.
         /// </summary>
-        /// <param name="fileName">Название файла. Может быть получено методами <see cref="Native_GetInfoAboutVersion">GetInfoAboutVersion</see> (режим <see cref="GetInfoAboutVersionMode.Mode7">режим 7</see>), <see cref="Native_GetLinkedObjectsAndFiles">GetLinkedObjectsAndFiles</see>.</param>
-        /// <param name="filePath">Путь к файлу относительно диска из настройки «Буква рабочего диска». Может быть получено методами <see cref="Native_GetInfoAboutVersion">GetInfoAboutVersion</see> (режим <see cref="GetInfoAboutVersionMode.Mode7">режим 7</see>), <see cref="Native_GetLinkedObjectsAndFiles">GetLinkedObjectsAndFiles</see>.</param>
+        /// <param name="fileName">Название файла. Может быть получено методами <see cref="Native_GetInfoAboutVersion(INetPluginCall, int, GetInfoAboutVersionMode)">GetInfoAboutVersion</see> (режим <see cref="GetInfoAboutVersionMode.Mode7">режим 7</see>), <see cref="Native_GetLinkedObjectsAndFiles(INetPluginCall, string, string, string, string, bool)">GetLinkedObjectsAndFiles</see>.</param>
+        /// <param name="filePath">Путь к файлу относительно диска из настройки «Буква рабочего диска». Может быть получено методами <see cref="Native_GetInfoAboutVersion(INetPluginCall, int, GetInfoAboutVersionMode)">GetInfoAboutVersion</see> (режим <see cref="GetInfoAboutVersionMode.Mode7">режим 7</see>), <see cref="Native_GetLinkedObjectsAndFiles(INetPluginCall, string, string, string, string, bool)">GetLinkedObjectsAndFiles</see>.</param>
         /// <remarks>
         /// <br/>
         /// <br/>Название и путь файла, могут быть получены методами:
-        /// <br/><see cref="Native_GetInfoAboutVersion">GetInfoAboutVersion</see> (режим <see cref="GetInfoAboutVersionMode.Mode7">режим 7</see>), <see cref="Native_GetLinkedObjectsAndFiles">GetLinkedObjectsAndFiles</see>.
+        /// <br/><see cref="Native_GetInfoAboutVersion(INetPluginCall, int, GetInfoAboutVersionMode)">GetInfoAboutVersion</see> (режим <see cref="GetInfoAboutVersionMode.Mode7">режим 7</see>), <see cref="Native_GetLinkedObjectsAndFiles(INetPluginCall, string, string, string, string, bool)">GetLinkedObjectsAndFiles</see>.
         /// </remarks>
         public static DataTable Native_CheckFileNameEx(this INetPluginCall pc, string fileName, string filePath) => 
             pc.GetDataTable("CheckFileNameEx", fileName, filePath);

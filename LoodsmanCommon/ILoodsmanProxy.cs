@@ -1,7 +1,6 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
 using LoodsmanCommon.Entities;
 using LoodsmanCommon.Entities.Meta;
-using LoodsmanCommon.Entities.Meta.OrganisationUnit;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,8 +12,14 @@ using System.Xml.Linq;
 
 namespace LoodsmanCommon
 {
+    /// <summary>
+    /// Прокси объект для удобного взаимодействия с ЛОЦМАН:PLM.
+    /// </summary>
     public interface ILoodsmanProxy
     {
+        /// <summary>
+        /// Интерфейс, передаваемый в подключаемые модули ЛОЦМАН:PLM.
+        /// </summary>
         INetPluginCall INetPC { get; }
 
         /// <summary>
@@ -622,13 +627,13 @@ namespace LoodsmanCommon
 
         public List<ILoodsmanObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
         {
-            return new List<ILoodsmanObject>(_iNetPC.Native_GetLinkedFast(objectId, linkType, inverse).GetRows().Select(x => new LoodsmanObject(x, this)));
+            return new List<ILoodsmanObject>(_iNetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LoodsmanObject(x, this)));
         }
         #endregion
 
         public IEnumerable<LObjectAttribute> GetAttributes(ILoodsmanObject loodsmanObject)
         {
-            var attributesInfo = _iNetPC.Native_GetInfoAboutVersion(loodsmanObject.Id, GetInfoAboutVersionMode.Mode3).GetRows();
+            var attributesInfo = _iNetPC.Native_GetInfoAboutVersion(loodsmanObject.Id, GetInfoAboutVersionMode.Mode3).Select(x => x);
             foreach (var lTypeAttribute in loodsmanObject.Type.Attributes)
             {
                 var attribute = attributesInfo.FirstOrDefault(x => x["_NAME"] as string == lTypeAttribute.Name);
@@ -761,7 +766,7 @@ namespace LoodsmanCommon
 
         public List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds)
         {
-            return new List<ILoodsmanObject>(_iNetPC.Native_GetPropObjects(objectsIds).GetRows().Select(x => new LoodsmanObject(x, this)));
+            return new List<ILoodsmanObject>(_iNetPC.Native_GetPropObjects(objectsIds).Select(x => new LoodsmanObject(x, this)));
         }
 
         public ILoodsmanObject PreviewBoObject(string typeName, string uniqueId)
@@ -783,7 +788,7 @@ namespace LoodsmanCommon
 
         public List<int> GetLockedObjectsIds()
         {
-            return _iNetPC.Native_GetLockedObjects().GetRows().Select(x => (int)x[0]).ToList();
+            return _iNetPC.Native_GetLockedObjects().Select(x => (int)x[0]).ToList();
         }
 
 

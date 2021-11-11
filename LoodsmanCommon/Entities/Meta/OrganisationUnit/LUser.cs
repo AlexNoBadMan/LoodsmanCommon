@@ -7,8 +7,8 @@ namespace LoodsmanCommon.Entities.Meta.OrganisationUnit
 {
     public class LUser : LOrganisationUnit
     {
-        private int _mainpositionId;
         private LOrganisationUnit _parent;
+        private readonly int _mainpositionId;
         private readonly ILoodsmanMeta _meta;
 
         /// <summary>
