@@ -5,32 +5,7 @@ using System.Linq;
 
 namespace LoodsmanCommon.Entities
 {
-    public class LObjectAttributes : ReadOnlyCollection<LObjectAttribute>
-    {
-        private readonly ILoodsmanObject _owner;
-        private readonly ILoodsmanProxy _proxy;
-
-        public LObjectAttributes(ILoodsmanObject owner, ILoodsmanProxy proxy) : base(new List<LObjectAttribute>(owner.Type.Attributes.Count))
-        {
-            _owner = owner;
-            _proxy = proxy;
-            Init();
-        }
-
-        private void Init()
-        {
-            foreach (var lObjectAttribute in _proxy.GetAttributes(_owner))
-                Items.Add(lObjectAttribute);
-        }
-
-        public void Refresh()
-        {
-            Items.Clear();
-            Init();
-        }
-    }
-
-    public class LObjectAttribute
+    public class LObjectAttribute : IEntity, INamedEntity
     {
         private readonly ILoodsmanProxy _proxy;
         private readonly ILoodsmanObject _owner;

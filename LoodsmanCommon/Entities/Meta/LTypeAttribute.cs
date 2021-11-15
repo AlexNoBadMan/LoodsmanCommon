@@ -2,7 +2,7 @@
 
 namespace LoodsmanCommon.Entities.Meta
 {
-    public class LTypeAttribute
+    public class LTypeAttribute : IEntity, INamedEntity
     {
         private readonly LAttribute _lAttribute;
 

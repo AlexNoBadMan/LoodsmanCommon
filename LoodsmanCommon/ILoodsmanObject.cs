@@ -1,6 +1,7 @@
 ﻿using Loodsman;
 using LoodsmanCommon.Entities;
 using LoodsmanCommon.Entities.Meta;
+using LoodsmanCommon.Entities.Meta.Collections;
 using PDMObjects;
 using System.Data;
 using System.Linq;
@@ -18,12 +19,12 @@ namespace LoodsmanCommon
         bool IsDocument { get; }
         PDMAccessLevels AccessLevel { get; set; }
         PDMLockLevels LockLevel { get; set; }
-        LObjectAttributes Attributes { get; }
+        NamedEntityCollection<LObjectAttribute> Attributes { get; }
     }
 
-    internal class LoodsmanObject : ILoodsmanObject
+    public class LoodsmanObject : ILoodsmanObject
     {
-        private LObjectAttributes _attributes;
+        private NamedEntityCollection<LObjectAttribute> _attributes;
         private LState _state;
         private readonly ILoodsmanProxy _proxy;
 
@@ -49,7 +50,7 @@ namespace LoodsmanCommon
         public bool IsDocument => Type.IsDocument;
         public PDMAccessLevels AccessLevel { get; set; }
         public PDMLockLevels LockLevel { get; set; }
-        public LObjectAttributes Attributes => _attributes ??= new LObjectAttributes(this, _proxy);
+        public NamedEntityCollection<LObjectAttribute> Attributes => _attributes ??= new NamedEntityCollection<LObjectAttribute>(() => _proxy.GetAttributes(this), 10);
 
         public LoodsmanObject(ILoodsmanProxy proxy, LType type, LState state)
         {
