@@ -33,7 +33,7 @@ namespace LoodsmanCommon.Entities
                     return null;
 
                 if (_measureUnit is null && !string.IsNullOrEmpty(_measureId))
-                    _measureUnit = _proxy.Meta.Measures.First(x => x.Guid == _measureId).Units.First(x => x.Guid == _unitId);
+                    _measureUnit = _proxy.Meta.Measures[_measureId].Units[_unitId];
                 return _measureUnit;
             }
             set
