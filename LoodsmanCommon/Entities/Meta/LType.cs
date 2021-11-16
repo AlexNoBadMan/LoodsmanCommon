@@ -10,7 +10,7 @@ namespace LoodsmanCommon.Entities.Meta
     {
         private readonly INetPluginCall _iNetPC;
         private readonly NamedEntityCollection<LAttribute> _lAttributes;
-        private IReadOnlyCollection<LTypeAttribute> _attributes;
+        private NamedEntityCollection<LTypeAttribute> _attributes;
 
         /// <summary>
         /// Ключевой атрибут типа.
@@ -45,13 +45,9 @@ namespace LoodsmanCommon.Entities.Meta
         /// <summary>
         /// Список возможных атрибутов типа, включая служебные.
         /// </summary>
-        public IReadOnlyCollection<LTypeAttribute> Attributes => _attributes ??= _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12)
-                                                .Select(x =>
-                                                {
-                                                    var id = (int)x["_ID"];
-                                                    return new LTypeAttribute(_lAttributes.First(a => a.Id == id), (short)x["_OBLIGATORY"] == 1);
-                                                })
-                                                .ToReadOnlyList();
+        public NamedEntityCollection<LTypeAttribute> Attributes => _attributes ??= new NamedEntityCollection<LTypeAttribute>(
+            () => _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).Select(x => new LTypeAttribute(_lAttributes[x["_NAME"] as string], (short)x["_OBLIGATORY"] == 1)),
+            10);
 
         internal LType(INetPluginCall iNetPC, DataRow dataRow, NamedEntityCollection<LAttribute> lAttributes, NamedEntityCollection<LState> lStates, string nameField = "_TYPENAME") : base(dataRow, nameField)
         {
