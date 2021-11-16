@@ -201,7 +201,7 @@ namespace LoodsmanCommon
         /// <param name="filePath">Путь к файлу относительно диска из настройки "Буква рабочего диска", доступный серверу приложений</param>  
         /// <remarks>
         /// Примечание:
-        /// Если путь указан не на рабочий диск Лоцмана (UserFileDir), то файл будет скопирован на рабочий диск.
+        /// Если путь указан не на рабочий диск Лоцмана <see cref="Entities.Meta.OrganisationUnit.LUser.WorkDir"/>, то файл будет скопирован на рабочий диск.
         /// </remarks>
         string RegistrationOfFile(int documentId, string fileName, string filePath);
 
@@ -215,7 +215,7 @@ namespace LoodsmanCommon
         /// <param name="filePath">Путь к файлу относительно диска из настройки "Буква рабочего диска"</param>  
         /// <remarks>
         /// Примечание:
-        /// Если путь указан не на рабочий диск Лоцмана (UserFileDir), то файл будет скопирован на рабочий диск.
+        /// Если путь указан не на рабочий диск Лоцмана <see cref="Entities.Meta.OrganisationUnit.LUser.WorkDir"/>, то файл будет скопирован на рабочий диск.
         /// </remarks>
         string RegistrationOfFile(string typeName, string product, string version, string fileName, string filePath);
 
@@ -227,7 +227,7 @@ namespace LoodsmanCommon
         /// <param name="removeAfterSave">Признак удаления файла с рабочего диска, после сохранения</param>        
         /// <remarks>
         /// Примечание:
-        /// Если путь указан не на рабочий диск Лоцмана (UserFileDir), то файл будет скопирован на рабочий диск.
+        /// Если путь указан не на рабочий диск Лоцмана <see cref="Entities.Meta.OrganisationUnit.LUser.WorkDir"/>, то файл будет скопирован на рабочий диск.
         /// </remarks>
         void SaveSecondaryView(int documentId, string filePath, bool removeAfterSave = true);
 
@@ -457,8 +457,8 @@ namespace LoodsmanCommon
 
         public ILoodsmanObject NewObject(string typeName, string product, string stateName = null, bool isProject = false)
         {
-            var type = _meta.Types.First(x => x.Name == typeName);
-            var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States.First(x => x.Name == stateName);
+            var type = _meta.Types[typeName];
+            var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States[stateName];
             var loodsmanObject = new LoodsmanObject(this, type, state)
             {
                 Id = _iNetPC.Native_NewObject(type.Name, state.Name, product, isProject),
@@ -473,7 +473,7 @@ namespace LoodsmanCommon
                 throw new ArgumentException($"{nameof(typeName)} - тип не может быть пустым", nameof(typeName));
 
             if (string.IsNullOrEmpty(stateName))
-                stateName = _meta.Types.First(x => x.Name == typeName).DefaultState.Name;
+                stateName = _meta.Types[typeName].DefaultState.Name;
             return stateName;
         }
         #endregion
@@ -727,9 +727,9 @@ namespace LoodsmanCommon
 
         private string CopyIfNeddedOnWorkDir(string filePath)
         {
-            if (!filePath.Contains(_meta.CurrentUser.FileDir))
+            if (!filePath.Contains(_meta.CurrentUser.WorkDir))
             {
-                var newPath = $@"{_meta.CurrentUser.FileDir}\{Path.GetFileName(filePath)}";
+                var newPath = $@"{_meta.CurrentUser.WorkDir}\{Path.GetFileName(filePath)}";
                 File.Copy(filePath, newPath, true);
                 filePath = newPath;
             }
@@ -774,9 +774,9 @@ namespace LoodsmanCommon
             var xmlString = _iNetPC.Native_PreviewBoObject(typeName, uniqueId);
             var xDocument = XDocument.Parse(xmlString);
             var elements = xDocument.Descendants("PreviewBoObjectResult").Elements();
-            var type = _meta.Types.First(x => x.Name == typeName);
+            var type = _meta.Types[typeName];
             var stateName = elements.FirstOrDefault(x => x.Name == "State")?.Value;
-            var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States.First(x => x.Name == stateName);
+            var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States[stateName];
             var loodsmanObject = new LoodsmanObject(this, type, state)
             {
                 Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0,
