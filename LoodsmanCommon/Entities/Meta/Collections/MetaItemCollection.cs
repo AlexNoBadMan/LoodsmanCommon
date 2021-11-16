@@ -28,7 +28,10 @@ namespace LoodsmanCommon.Entities.Meta.Collections
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _items.GetEnumerator();
+            foreach (var item in _items)
+            {
+                yield return item.Value;
+            }
         }
 
         public abstract void Refresh();
