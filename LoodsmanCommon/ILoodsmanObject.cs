@@ -61,7 +61,7 @@ namespace LoodsmanCommon
         }
 
         private LoodsmanObject(ILoodsmanProxy proxy, string typeName, string stateName) :
-            this(proxy, proxy.Meta.Types.First(x => x.Name == typeName), proxy.Meta.States.First(x => x.Name == stateName))
+            this(proxy, proxy.Meta.Types[typeName], proxy.Meta.States[stateName])
         { }
 
         public LoodsmanObject(DataRow dataRow, ILoodsmanProxy proxy) : this(proxy, dataRow["_TYPE"] as string, dataRow["_STATE"] as string)
