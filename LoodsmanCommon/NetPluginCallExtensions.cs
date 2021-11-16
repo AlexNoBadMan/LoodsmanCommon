@@ -763,7 +763,7 @@ namespace LoodsmanCommon
         /// <br/>[_READONLY] int - зарезервировано.
         /// </summary>
         /// <inheritdoc cref="Native_CheckFileNameEx(INetPluginCall, string, string)"/>
-        public static DataTable Native_GetInfoAboutFile(this INetPluginCall pc, string fileName, string filePath) => 
+        public static DataTable Native_GetInfoAboutFile(this INetPluginCall pc, string fileName, string filePath = "") => 
             pc.GetDataTable("GetInfoAboutFile", fileName, filePath);
 
         /// <summary>
@@ -805,7 +805,7 @@ namespace LoodsmanCommon
         /// <br/>[_OUTDATED] integer - равен 1, если при закрытии рабочего проекта или разблокировке документа не удалось удалить файл с рабочего диска пользователя (например, если файл заблокирован инструментом). В этом случае поле [_ID_LOCK] имеет значение 0. Во всех остальных случаях поле [_OUTDATED] имеет значение 0.
         ///</summary>
         /// <inheritdoc cref="Native_CheckFileNameEx(INetPluginCall, string, string)"/>
-        public static DataTable Native_GetChangedFileVersions(this INetPluginCall pc, string fileName, string filePath) => 
+        public static DataTable Native_GetChangedFileVersions(this INetPluginCall pc, string fileName, string filePath = "") => 
             pc.GetDataTable("GetChangedFileVersions", fileName, filePath);
 
         /// <summary>
@@ -825,7 +825,7 @@ namespace LoodsmanCommon
         /// <br/>[_MODIFIED] datetime - дата последней модификации файла.
         ///</summary>
         /// <inheritdoc cref="Native_CheckFileNameEx(INetPluginCall, string, string)"/>
-        public static DataTable Native_GetTempFile(this INetPluginCall pc, string fileName, string filePath) => 
+        public static DataTable Native_GetTempFile(this INetPluginCall pc, string fileName, string filePath = "") => 
             pc.GetDataTable("GetTempFile", fileName, filePath);
 
         /// <summary>
@@ -839,24 +839,24 @@ namespace LoodsmanCommon
         /// В режиме базы данных возвращает полное имя файла с путем. Например: result='\\Server\DOMEN#USER\Temp\FileName.ext'.
         /// <br/>В режиме редактирования объектов возвращает имя файла на рабочем диске. Например: result='Х:\Folder\SubFolder\FileName.ext'.
         /// </returns>
-        public static string Native_GetFile(this INetPluginCall pc, string typeName, string product, string version, string fileName, string filePath) => 
+        public static string Native_GetFile(this INetPluginCall pc, string typeName, string product, string version, string fileName, string filePath = "") => 
             pc.RunMethod("GetFile", typeName, product, version, fileName, filePath) as string;
 
         /// <inheritdoc cref="Native_GetFile(INetPluginCall, string, string, string, string, string)"/>
         /// <param name="documentId">Идентификатор версии документа.</param>
-        public static string Native_GetFile(this INetPluginCall pc, int documentId, string fileName, string filePath) => 
+        public static string Native_GetFile(this INetPluginCall pc, int documentId, string fileName, string filePath = "") => 
             pc.RunMethod("GetFileById", documentId, fileName, filePath) as string;
 
         /// <summary>
         /// Регистрирует в базе данных файл, находящийся на рабочем диске пользователя.
         /// </summary>
         /// <inheritdoc cref="Native_GetFile(INetPluginCall, string, string, string, string, string)"/>
-        public static void Native_RegistrationOfFile(this INetPluginCall pc, string typeName, string product, string version, string fileName, string filePath) => 
+        public static void Native_RegistrationOfFile(this INetPluginCall pc, string typeName, string product, string version, string fileName, string filePath = "") => 
             pc.RunMethod("RegistrationOfFile", typeName, product, version, 0, fileName, filePath);
 
         /// <param name="documentId">Идентификатор версии документа.</param>
         /// <inheritdoc cref="Native_RegistrationOfFile(INetPluginCall, string, string, string, string, string)"/>
-        public static void Native_RegistrationOfFile(this INetPluginCall pc, int documentId, string fileName, string filePath) => 
+        public static void Native_RegistrationOfFile(this INetPluginCall pc, int documentId, string fileName, string filePath = "") => 
             pc.RunMethod("RegistrationOfFile", string.Empty, string.Empty, string.Empty, documentId, fileName, filePath);
 
         /// <summary>
