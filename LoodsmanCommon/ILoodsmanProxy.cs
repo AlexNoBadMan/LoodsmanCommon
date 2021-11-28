@@ -539,7 +539,7 @@ namespace LoodsmanCommon
             if (childId <= 0)
                 throw new ArgumentException($"{nameof(childId)} - отсутствует или неверно задан идентификатор объекта", nameof(childId));
 
-            return NewLink(parentId, string.Empty, string.Empty, string.Empty, childId, string.Empty, string.Empty, string.Empty, linkType, minQuantity, maxQuantity, unitId);
+            return _iNetPC.Native_NewLink(parentId, string.Empty, string.Empty, string.Empty, childId, string.Empty, string.Empty, string.Empty, minQuantity, maxQuantity, unitId, linkType);
         }
 
         public void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
