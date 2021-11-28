@@ -58,10 +58,8 @@ namespace LoodsmanCommon
 
         /// <summary>
         /// Возвращает полный список атрибутов базы данных.
-        /// </summary>
-        /// <param name="mode">Режим возврата списка атрибутов</param>
-        /// <returns>
-        /// Возвращает набор данных с полями:
+        /// <br/>
+        /// <br/>Возвращает набор данных с полями:
         /// <br/>[_ID] int - уникальный идентификатор атрибута;
         /// <br/>[_NAME] string - название атрибута;
         /// <br/>[_ATTRTYPE] int - тип атрибута:
@@ -76,8 +74,9 @@ namespace LoodsmanCommon
         /// <br/>[_ACCESSLEVEL] int - уровень прав доступа (1 - Только чтение, 2 - Чтение/запись). Начиная с версии ЛОЦМАН:PLM 2017 поле устарело и его значение всегда равно 2;
         /// <br/>[_ONLYLISTITEMS] int - атрибут может принимать значения только из списка (0 - Любое, 1 - Из списка);
         /// <br/>[_SYSTEM] int - признак того, что атрибут является служебным (0 - Обычный, 1 - Служебный).
-        /// </returns>
-        public static DataTable Native_GetAttributeList(this INetPluginCall pc, GetAttributeListMode mode = GetAttributeListMode.All) =>
+        /// </summary>
+        /// <param name="mode">Режим возврата списка атрибутов.</param>
+        public static DataTable Native_GetAttributeList(this INetPluginCall pc, GetAttributesMode mode = GetAttributesMode.All) =>
             pc.GetDataTable("GetAttributeList2", mode);
 
         /// <summary>
@@ -693,6 +692,21 @@ namespace LoodsmanCommon
         /// </remarks>
         public static DataTable Native_GetLinkedObjectsAndFiles(this INetPluginCall pc, string typeName, string product, string version, string linkType, bool fullLink) =>
             pc.GetDataTable("GetLinkedObjectsAndFiles", typeName, product, version, linkType, fullLink, false);
+
+
+        /// <inheritdoc cref="GetInfoAboutVersionMode.Mode2"/>
+        /// <param name="pc"></param>
+        /// <param name="idLink">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
+        /// <returns>Возвращает значения атрибутов связи для данного экземпляра связи. Метод не возвращает служебные атрибуты связей. Для их получения воспользуйтесь методом <see cref="Native_GetLinkAttributes2(INetPluginCall, int, GetAttributesMode)">GetLinkAttributes2</see>.</returns>
+        public static DataTable Native_GetLinkAttributes(this INetPluginCall pc, int idLink) =>
+            pc.GetDataTable("GetLinkAttributes", idLink);
+
+        /// <inheritdoc cref="GetInfoAboutVersionMode.Mode3"/>
+        /// <inheritdoc cref="Native_GetAttributeList(INetPluginCall, GetAttributesMode)"/>
+        /// <param name="idLink">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
+        /// <returns>Возвращает значения атрибутов связи для данного экземпляра связи, включая служебные.</returns>
+        public static DataTable Native_GetLinkAttributes2(this INetPluginCall pc, int idLink, GetAttributesMode mode) =>
+            pc.GetDataTable("GetLinkAttributes2", idLink, mode);
         #endregion
 
         #region Работа с файлами
