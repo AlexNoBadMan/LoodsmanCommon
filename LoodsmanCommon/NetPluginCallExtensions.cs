@@ -407,6 +407,11 @@ namespace LoodsmanCommon
         public static void Native_UpAttrValueById(this INetPluginCall pc, int objectId, string attributeName, object attributeValue, string unitId = null, bool toDel = false) =>
             pc.RunMethod("UpAttrValueById", objectId, attributeName, attributeValue, unitId, toDel);
 
+        /// <inheritdoc cref="Native_UpAttrValueById(INetPluginCall, int, string, object, string, bool)"/>
+        /// <param name="linkId">Идентификатор связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
+        public static void Native_UpLinkAttrValue(this INetPluginCall pc, int linkId, string attributeName, object attributeValue, string unitId = null, bool toDel = false) =>
+            pc.RunMethod("UpLinkAttrValue", string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, linkId, attributeName, attributeValue, unitId, toDel, string.Empty);
+
         #endregion
 
         #region Информация об объектах
