@@ -311,7 +311,7 @@ namespace LoodsmanCommon
         /// </summary>
         /// <param name="parentVersion">Номер версии объекта-родителя.</param>
         /// <param name="childVersion">Номер версии объекта-потомка.</param>
-        /// <param name="idLink">Идентификатор связи. </param>
+        /// <param name="linkId">Идентификатор связи. </param>
         /// <param name="minQuantity">Нижняя граница количества</param>
         /// <param name="maxQuantity">Верхняя граница количества.</param>
         /// <param name="unitId">Уникальный идентификатор единицы измерения.</param>
@@ -320,12 +320,12 @@ namespace LoodsmanCommon
         /// <returns>Возвращает идентификатор созданной связи.</returns>
         /// <remarks>
         /// <br/>Метод работает следующим образом: 
-        /// <br/>Если <paramref name="toDel"/>=true, то заданный экземпляр связи с идентификатором <paramref name="idLink"/> удаляется;
-        /// <br/>Если экземпляр связи с идентификатором <paramref name="idLink"/> существует, то его свойства (количество, единицы измерения) будут изменены;
-        /// <br/>Если <paramref name="idLink"/>=0, то будет добавлена связь между объектами, указанными в качестве родителя и потомка.
+        /// <br/>Если <paramref name="toDel"/>=true, то заданный экземпляр связи с идентификатором <paramref name="linkId"/> удаляется;
+        /// <br/>Если экземпляр связи с идентификатором <paramref name="linkId"/> существует, то его свойства (количество, единицы измерения) будут изменены;
+        /// <br/>Если <paramref name="linkId"/>=0, то будет добавлена связь между объектами, указанными в качестве родителя и потомка.
         /// </remarks>
-        public static int Native_UpLink(this INetPluginCall pc, string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, int idLink, double minQuantity, double maxQuantity, string unitId, bool toDel, string linkType) =>
-            (int)pc.RunMethod("UpLink", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, idLink, minQuantity, maxQuantity, unitId, toDel, linkType);
+        public static int Native_UpLink(this INetPluginCall pc, string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, int linkId, double minQuantity, double maxQuantity, string unitId, bool toDel, string linkType) =>
+            (int)pc.RunMethod("UpLink", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, linkId, minQuantity, maxQuantity, unitId, toDel, linkType);
 
         /// <summary>
         /// Изменяет состояние объекта.
@@ -339,6 +339,73 @@ namespace LoodsmanCommon
         /// <inheritdoc cref="Native_KillVersion(INetPluginCall, int)"/>
         public static void Native_UpdateStateOnObject(this INetPluginCall pc, int objectId, string stateName) =>
             pc.RunMethod("UpdateStateOnObjectById", objectId, stateName);
+
+        /// <summary>
+        /// Переименовывает объект.
+        /// </summary>
+        /// <inheritdoc cref="Native_KillVersion(INetPluginCall, string, string, string)"/>
+        /// <param name="newProduct">Новое значение ключевого атрибута.</param>
+        /// <returns>Возвращает значение нового ключевого атрибута объекта. В общем случае возвращаемое значение будет совпадать с <paramref name="newProduct"/>.
+        /// Однако, если типу <paramref name="typeName"/> сопоставлен бизнес-объект, то значение ключевого атрибута будет сформировано согласно установленному правилу и может отличаться от <paramref name="newProduct"/>.</returns>
+        public static string Native_UpObject(this INetPluginCall pc, string typeName, string product, string newProduct) =>
+            (string)pc.RunMethod("UpObject", typeName, product, newProduct);
+
+        /// <summary>
+        /// Устанавливает или снимает с объекта признак проекта.
+        /// </summary>
+        /// <param name="typeName">Название типа.</param>
+        /// <param name="product">Ключевой атрибут.</param>
+        /// <param name="isProject">Признак проекта (true - установить, false - снять).</param>
+        public static void Native_IsProject(this INetPluginCall pc, string typeName, string product, bool isProject) =>
+            pc.RunMethod("IsProject", typeName, product, isProject);
+
+        /// <summary>
+        /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.
+        /// </summary>
+        /// <param name="typeName">Название типа.</param>
+        /// <param name="product">Ключевой атрибут.</param>
+        /// <param name="version">Версия объекта.</param>
+        public static void Native_KillVersion(this INetPluginCall pc, string typeName, string product, string version) =>
+            pc.RunMethod("KillVersion", typeName, product, version);
+
+        /// <summary>
+        /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.        
+        /// </summary>
+        /// <param name="objectId">Идентификатор версии объекта.</param>
+        public static void Native_KillVersion(this INetPluginCall pc, int objectId) =>
+            pc.RunMethod("KillVersionById", objectId);
+
+        /// <summary>
+        /// Удаляет объекты.
+        /// <br/>
+        /// <br/>Возвращает набор данных с полями:
+        /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
+        /// <br/>[_ID_TYPE] int - идентификатор типа объекта;
+        /// <br/>[_PRODUCT] string - ключевой атрибут объекта;
+        /// <br/>[_VERSION] string - версия документа;
+        /// <br/>[_ERR_CODE] int - код ошибки;
+        /// <br/>[_ERR_MSG] string - сообщение об ошибке.
+        /// </summary>
+        /// <param name="objectsIds">Список идентификаторов версий объектов.</param>
+        public static DataTable Native_KillVersions(this INetPluginCall pc, IEnumerable<int> objectsIds) =>
+            pc.GetDataTable("KillVersions", string.Join(Constants.ID_SEPARATOR, objectsIds), 0);
+
+        /// <summary>
+        /// Добавляет, удаляет, обновляет значение атрибута.
+        /// </summary>
+        /// <inheritdoc cref="Native_KillVersion(INetPluginCall, int)"/>
+        /// <param name="attributeName">Название атрибута.</param>
+        /// <param name="attributeValue">Значение атрибута</param>
+        /// <param name="unitId">Уникальный идентификатор единицы измерения.</param>
+        /// <param name="toDel">Признак удаления атрибута (true - удалять, false - не удалять).</param>
+        /// <remarks>
+        /// Метод работает следующим образом:
+        /// <br/>Если <paramref name="toDel"/> = true, то заданный атрибут удаляется (параметры <paramref name="attributeValue"/> и <paramref name="unitId"/> игнорируются);
+        /// <br/>Если атрибут у объекта с именем <paramref name="attributeName"/> уже существует, то его значение будет изменено;
+        /// <br/>Если атрибут у объекта с именем <paramref name="attributeName"/> отсутствует, то он будет добавлен. 
+        /// </remarks>
+        public static void Native_UpAttrValueById(this INetPluginCall pc, int objectId, string attributeName, object attributeValue, string unitId = null, bool toDel = false) =>
+            pc.RunMethod("UpAttrValueById", objectId, attributeName, attributeValue, unitId, toDel);
 
         #endregion
 
@@ -526,11 +593,11 @@ namespace LoodsmanCommon
         /// <summary>
         /// Возвращает информацию об экземпляре связи.
         /// </summary>
-        /// <param name="idLink">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
+        /// <param name="linkId">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
         /// <param name="mode">Режим вывода. В зависимости от его значения выдается соответствующая информация.</param>
         /// <returns>Зависит от режима <see cref="GetInfoAboutLinkMode"/></returns>
-        public static DataTable Native_GetInfoAboutLink(this INetPluginCall pc, int idLink, GetInfoAboutLinkMode mode) => 
-            pc.GetDataTable("GetInfoAboutLink", idLink, (int)mode);
+        public static DataTable Native_GetInfoAboutLink(this INetPluginCall pc, int linkId, GetInfoAboutLinkMode mode) => 
+            pc.GetDataTable("GetInfoAboutLink", linkId, (int)mode);
 
         /// <summary>
         /// Возвращает информацию о версии объекта.
@@ -696,17 +763,17 @@ namespace LoodsmanCommon
 
         /// <inheritdoc cref="GetInfoAboutVersionMode.Mode2"/>
         /// <param name="pc"></param>
-        /// <param name="idLink">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
+        /// <param name="linkId">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
         /// <returns>Возвращает значения атрибутов связи для данного экземпляра связи. Метод не возвращает служебные атрибуты связей. Для их получения воспользуйтесь методом <see cref="Native_GetLinkAttributes2(INetPluginCall, int, GetAttributesMode)">GetLinkAttributes2</see>.</returns>
-        public static DataTable Native_GetLinkAttributes(this INetPluginCall pc, int idLink) =>
-            pc.GetDataTable("GetLinkAttributes", idLink);
+        public static DataTable Native_GetLinkAttributes(this INetPluginCall pc, int linkId) =>
+            pc.GetDataTable("GetLinkAttributes", linkId);
 
         /// <inheritdoc cref="GetInfoAboutVersionMode.Mode3"/>
         /// <inheritdoc cref="Native_GetAttributeList(INetPluginCall, GetAttributesMode)"/>
-        /// <param name="idLink">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
+        /// <param name="linkId">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
         /// <returns>Возвращает значения атрибутов связи для данного экземпляра связи, включая служебные.</returns>
-        public static DataTable Native_GetLinkAttributes2(this INetPluginCall pc, int idLink, GetAttributesMode mode) =>
-            pc.GetDataTable("GetLinkAttributes2", idLink, mode);
+        public static DataTable Native_GetLinkAttributes2(this INetPluginCall pc, int linkId, GetAttributesMode mode) =>
+            pc.GetDataTable("GetLinkAttributes2", linkId, mode);
         #endregion
 
         #region Работа с файлами
@@ -948,67 +1015,6 @@ namespace LoodsmanCommon
         public static DataTable Native_GetParameterList(this INetPluginCall pc, int reportId) => 
             pc.GetDataTable("GetParameterList", reportId);
         
-        #endregion
-
-        #region Редактирование объектов
-
-        /// <summary>
-        /// Устанавливает или снимает с объекта признак проекта.
-        /// </summary>
-        /// <param name="typeName">Название типа.</param>
-        /// <param name="product">Ключевой атрибут.</param>
-        /// <param name="isProject">Признак проекта (true - установить, false - снять).</param>
-        public static void Native_IsProject(this INetPluginCall pc, string typeName, string product, bool isProject) => 
-            pc.RunMethod("IsProject", typeName, product, isProject);
-
-        /// <summary>
-        /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.
-        /// </summary>
-        /// <param name="typeName">Название типа.</param>
-        /// <param name="product">Ключевой атрибут.</param>
-        /// <param name="version">Версия объекта.</param>
-        public static void Native_KillVersion(this INetPluginCall pc, string typeName, string product, string version) => 
-            pc.RunMethod("KillVersion", typeName, product, version);
-
-        /// <summary>
-        /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.        
-        /// </summary>
-        /// <param name="objectId">Идентификатор версии объекта.</param>
-        public static void Native_KillVersion(this INetPluginCall pc, int objectId) => 
-            pc.RunMethod("KillVersionById", objectId);
-
-        /// <summary>
-        /// Удаляет объекты.
-        /// <br/>
-        /// <br/>Возвращает набор данных с полями:
-        /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
-        /// <br/>[_ID_TYPE] int - идентификатор типа объекта;
-        /// <br/>[_PRODUCT] string - ключевой атрибут объекта;
-        /// <br/>[_VERSION] string - версия документа;
-        /// <br/>[_ERR_CODE] int - код ошибки;
-        /// <br/>[_ERR_MSG] string - сообщение об ошибке.
-        /// </summary>
-        /// <param name="objectsIds">Список идентификаторов версий объектов.</param>
-        public static DataTable Native_KillVersions(this INetPluginCall pc, IEnumerable<int> objectsIds) => 
-            pc.GetDataTable("KillVersions", string.Join(Constants.ID_SEPARATOR, objectsIds), 0);
-
-        /// <summary>
-        /// Добавляет, удаляет, обновляет значение атрибута объекта.
-        /// </summary>
-        /// <inheritdoc cref="Native_KillVersion(INetPluginCall, int)"/>
-        /// <param name="attributeName">Название атрибута.</param>
-        /// <param name="attributeValue">Значение атрибута</param>
-        /// <param name="unitId">Уникальный идентификатор единицы измерения.</param>
-        /// <param name="toDel">Признак удаления атрибута (true - удалять, false - не удалять).</param>
-        /// <remarks>
-        /// Метод работает следующим образом:
-        /// <br/>-если boDel =true, то заданный атрибут удаляется (параметры vaAttrValue и stIdUnit игнорируются);
-        /// <br/>-если атрибут у объекта с именем stAttrName уже существует, то его значение будет изменено;
-        /// <br/>-если атрибут у объекта с именем stAttrName отсутствует, то он будет добавлен. 
-        /// </remarks>
-        public static void Native_UpAttrValueById(this INetPluginCall pc, int objectId, string attributeName, object attributeValue, string unitId = null, bool toDel = false) => 
-            pc.RunMethod("UpAttrValueById", objectId, attributeName, attributeValue, unitId, toDel);
-
         #endregion
 
         #region Вторичное представление
