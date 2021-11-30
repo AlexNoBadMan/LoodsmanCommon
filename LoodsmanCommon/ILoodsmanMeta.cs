@@ -114,7 +114,7 @@ namespace LoodsmanCommon
         public EntityCollection<LOrganisationUnit> OrganisationUnits => _organisationUnits ??= new EntityCollection<LOrganisationUnit>(() => InitOrganisationUnits(), 150);
         public LMainDepartment CurrentMainDepartment => _currentMainDepartment ??=
             CurrentUser.Ancestors().FirstOrDefault(x => x is LMainDepartment) as LMainDepartment ?? 
-            OrganisationUnits.FirstOrDefault(x => x is LMainDepartment) as LMainDepartment;
+            OrganisationUnits.Values.FirstOrDefault(x => x is LMainDepartment) as LMainDepartment;
 
         public LoodsmanMeta(INetPluginCall iNetPC)
         {

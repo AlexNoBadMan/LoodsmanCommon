@@ -108,9 +108,12 @@ namespace LoodsmanCommon
 
         private (DateTime created, LUser creator) InitCreationInfo()
         {
-            var dtCreationInfo = _proxy.INetPC.Native_GetInfoAboutVersion(Id, GetInfoAboutVersionMode.Mode13).Rows[0];
-            _creator = _proxy.Meta.Users[dtCreationInfo["_NAME"] as string];
-            _created = dtCreationInfo["_DATEOFCREATE"] as DateTime? ?? DateTime.MinValue;
+            if (_created == null && _creator == null)//В Лоцмане допустимо чтобы владелец(_creator) не был указан
+            {
+                var dtCreationInfo = _proxy.INetPC.Native_GetInfoAboutVersion(Id, GetInfoAboutVersionMode.Mode13).Rows[0];
+                _creator = _proxy.Meta.Users.TryGetValue(dtCreationInfo["_NAME"] as string, out var lUser) ? lUser : null;
+                _created = dtCreationInfo["_DATEOFCREATE"] as DateTime? ?? DateTime.MinValue;
+            }
             return ((DateTime)_created, _creator);
         }
     }
