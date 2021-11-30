@@ -2,7 +2,9 @@
 using LoodsmanCommon.Entities;
 using LoodsmanCommon.Entities.Meta;
 using LoodsmanCommon.Entities.Meta.Collections;
+using LoodsmanCommon.Entities.Meta.OrganisationUnit;
 using PDMObjects;
+using System;
 using System.Data;
 using System.Linq;
 
@@ -20,6 +22,8 @@ namespace LoodsmanCommon
         PDMAccessLevels AccessLevel { get; set; }
         PDMLockLevels LockLevel { get; set; }
         NamedEntityCollection<LObjectAttribute> Attributes { get; }
+        LUser Creator { get; }
+        DateTime Created { get; }
     }
 
     public class LoodsmanObject : ILoodsmanObject
@@ -27,6 +31,8 @@ namespace LoodsmanCommon
         private NamedEntityCollection<LObjectAttribute> _attributes;
         private LState _state;
         private readonly ILoodsmanProxy _proxy;
+        private DateTime? _created;
+        private LUser _creator;
 
         public ILoodsmanObject Parent { get; set; }
         public int Id { get; set; }
@@ -51,6 +57,10 @@ namespace LoodsmanCommon
         public PDMAccessLevels AccessLevel { get; set; }
         public PDMLockLevels LockLevel { get; set; }
         public NamedEntityCollection<LObjectAttribute> Attributes => _attributes ??= new NamedEntityCollection<LObjectAttribute>(() => _proxy.GetAttributes(this), 10);
+        
+        public LUser Creator => _creator ??= InitCreationInfo().creator;
+
+        public DateTime Created => _created ??= InitCreationInfo().created;
 
         public LoodsmanObject(ILoodsmanProxy proxy, LType type, LState state)
         {
@@ -94,6 +104,14 @@ namespace LoodsmanCommon
             LockLevel = obj.LockLevel;
             //IsDocument = obj.IsDocument;
             Parent = obj.Parent is IPDMLink link ? new LoodsmanObject(link.ParentObject, proxy) : null;
+        }
+
+        private (DateTime created, LUser creator) InitCreationInfo()
+        {
+            var dtCreationInfo = _proxy.INetPC.Native_GetInfoAboutVersion(Id, GetInfoAboutVersionMode.Mode13).Rows[0];
+            _creator = _proxy.Meta.Users[dtCreationInfo["_NAME"] as string];
+            _created = dtCreationInfo["_DATEOFCREATE"] as DateTime? ?? DateTime.MinValue;
+            return ((DateTime)_created, _creator);
         }
     }
 }

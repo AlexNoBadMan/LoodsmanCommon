@@ -50,7 +50,7 @@ namespace LoodsmanCommon
         NamedEntityCollection<LMeasure> Measures { get; }
 
         /// <summary>
-        /// Список пользователей.
+        /// Список пользователей. Ключом является свойство <see cref="INamedEntity.Name">Name</see>.
         /// </summary>
         NamedEntityCollection<LUser> Users { get; }
         
