@@ -15,8 +15,8 @@ namespace LoodsmanCommon.Entities.Meta.Collections
 
         protected virtual void Init()
         {
-            var dataRows = _dataFactory();
-            foreach (var lEntity in dataRows)
+            var data = _dataFactory();
+            foreach (var lEntity in data)
             {
                 _items.Add(lEntity.Id, lEntity);
             }

@@ -22,6 +22,7 @@ namespace LoodsmanCommon
         PDMAccessLevels AccessLevel { get; set; }
         PDMLockLevels LockLevel { get; set; }
         NamedEntityCollection<LObjectAttribute> Attributes { get; }
+        EntityCollection<LFile> Files { get; }
         LUser Creator { get; }
         DateTime Created { get; }
     }
@@ -33,11 +34,16 @@ namespace LoodsmanCommon
         private readonly ILoodsmanProxy _proxy;
         private DateTime? _created;
         private LUser _creator;
+        private EntityCollection<LFile> _files;
 
         public ILoodsmanObject Parent { get; set; }
+        
         public int Id { get; set; }
+        
         public LType Type { get; set; }
+        
         public string Product { get; set; }
+        
         public string Version { get; set; }
 
         public LState State
@@ -54,12 +60,19 @@ namespace LoodsmanCommon
         }
 
         public bool IsDocument => Type.IsDocument;
-        public PDMAccessLevels AccessLevel { get; set; }
-        public PDMLockLevels LockLevel { get; set; }
-        public NamedEntityCollection<LObjectAttribute> Attributes => _attributes ??= new NamedEntityCollection<LObjectAttribute>(() => _proxy.GetAttributes(this), 10);
         
-        public LUser Creator => _creator ??= InitCreationInfo().creator;
+        public PDMAccessLevels AccessLevel { get; set; }
+        
+        public PDMLockLevels LockLevel { get; set; }
+        
+        public NamedEntityCollection<LObjectAttribute> Attributes => _attributes ??= new NamedEntityCollection<LObjectAttribute>(() => _proxy.GetAttributes(this), 10);
+       
+        public EntityCollection<LFile> Files => _files ??= IsDocument ?
+            new EntityCollection<LFile>(() => _proxy.INetPC.Native_GetInfoAboutVersion(Id, GetInfoAboutVersionMode.Mode7).Select(x => new LFile(this, x))) :
+            new EntityCollection<LFile>(() => Enumerable.Empty<LFile>());
 
+        public LUser Creator => _creator ??= InitCreationInfo().creator;
+       
         public DateTime Created => _created ??= InitCreationInfo().created;
 
         public LoodsmanObject(ILoodsmanProxy proxy, LType type, LState state)
