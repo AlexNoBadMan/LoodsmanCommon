@@ -1199,23 +1199,13 @@ namespace LoodsmanCommon
 
         /// <summary>
         /// Сохраняет изменения в базе данных.
-        /// <br/>
-        /// <br/>В случае, если один или несколько файлов невозможно сохранить в базе данных, работа метода завершается ошибкой с кодом 1030. При этом метод возвращает набор данных с информацией о файлах, которые не удалось сохранить в базе. 
-        /// <br/>[_ID_VERSION] int - идентификатор версии;
-        /// <br/>[_ID_FILE] int - идентификатор файла;
-        /// <br/>[_NAME] string - имя файла;
-        /// <br/>[_LOCALNAME] string - путь к файлу относительно рабочего диска;
-        /// <br/>[_CACHED] boolean - флаг - установлен в true, если файл находится в кеше версий;
-        /// <br/>[_NEW] boolean - флаг - установлен в true, если файл в рабочем проекте новый;
-        /// <br/>[_ERROR] string - сообщение об ошибке;
-        /// <br/>[_ERRORCODE] int - код ошибки (поддерживается начиная с ЛОЦМАН:PLM 2014).
         /// </summary>
         /// <inheritdoc cref="Native_ConnectToCheckOut(INetPluginCall, string, string)"/>
         /// <remarks>
         /// <br/>После выполнения этой операции все изменения, произведенные в чекауте, сохраняются в базе данных. Объект по-прежнему остается на изменении.
         /// </remarks>
-        public static DataTable Native_SaveChanges(this INetPluginCall pc, string checkOutName, string dBName) => 
-            pc.GetDataTable("SaveChanges", checkOutName, dBName);
+        public static void Native_SaveChanges(this INetPluginCall pc, string checkOutName, string dBName) => 
+            pc.RunMethod("SaveChanges", checkOutName, dBName);
 
         /// <summary>
         /// Выполняет отказ от изменения объекта.
