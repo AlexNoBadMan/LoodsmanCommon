@@ -1,4 +1,5 @@
 ﻿using LoodsmanCommon.Entities.Meta;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -75,7 +76,13 @@ namespace LoodsmanCommon.Entities
 
         private void UpdateAttribute()
         {
-            _proxy.UpAttrValueById(_owner.Id, Name, Value, MeasureUnit);
+            var value = Value;
+            if (Type == AttributeType.DateTime && Value is DateTime dateTime && dateTime.TimeOfDay == TimeSpan.Zero)
+            {
+                value = dateTime.ToShortDateString();
+            }
+
+            _proxy.UpAttrValueById(_owner.Id, Name, value, MeasureUnit);
         }
     }
 }

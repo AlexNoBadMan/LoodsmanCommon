@@ -2,18 +2,18 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>1.6.1</version>
+    <version>1.7.2</version>
     <title>LoodsmanCommon</title>
     <authors>Аскон-Казахстан</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/AlexNoBadMan/LoodsmanCommon</projectUrl>
     <description>Library for working with Loodsman API</description>
-    <releaseNotes>Added comments.</releaseNotes>
+    <releaseNotes>Изменено сохранение атрибута типа DateTime.</releaseNotes>
     <copyright>Copyright 2021</copyright>
     <tags>Ascon Loodsman</tags>
     <dependencies>
-      <group targetFramework=".NETFramework4.7.2"/>
+      <group targetFramework=".NETFramework4.8"/>
     </dependencies>
   </metadata>
 </package>
