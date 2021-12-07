@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>1.7.2</version>
+    <version>1.7.3</version>
     <title>LoodsmanCommon</title>
     <authors>Аскон-Казахстан</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/AlexNoBadMan/LoodsmanCommon</projectUrl>
     <description>Library for working with Loodsman API</description>
-    <releaseNotes>Изменено сохранение атрибута типа DateTime.</releaseNotes>
+    <releaseNotes>Исправлена инициализация организационных единиц.</releaseNotes>
     <copyright>Copyright 2021</copyright>
     <tags>Ascon Loodsman</tags>
     <dependencies>

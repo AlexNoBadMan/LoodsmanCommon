@@ -128,34 +128,44 @@ namespace LoodsmanCommon
 
             var dataRows = _iNetPC.Native_WFGetRoleTree(GetRoleTreeMode.Mode1).Rows;
             var orgUnits = new Dictionary<int, LOrganisationUnit>(dataRows.Count);
-            foreach (DataRow dataRow in dataRows)
+            foreach (DataRow dataRow1 in dataRows)
             {
-                var treeObject = GetOrganisationUnit(dataRow);
-                var parentId = dataRow["_PARENT"] as int? ?? 0;
-                if (parentId > 0)
+                var unitKind = (OrganisationUnitKind)dataRow1["_TYPE"];
+                LOrganisationUnit orgUnit = unitKind switch
                 {
-                    var parent = orgUnits[parentId];
+                    OrganisationUnitKind.Department => new LDepartment(dataRow1),
+                    OrganisationUnitKind.Position => new LPosition(dataRow1),
+                    OrganisationUnitKind.User => null,
+                    OrganisationUnitKind.MainDepartment => new LMainDepartment(dataRow1),
+                    _ => null
+                };
+                if (orgUnit == null)
+                    continue;
+
+                orgUnits.Add(orgUnit.Id, orgUnit);
+                yield return orgUnit;
+            }
+
+            foreach (DataRow dataRow2 in dataRows)
+            {
+                var parentId = dataRow2["_PARENT"] as int? ?? 0;
+                if (parentId <= 0)
+                    continue;
+
+                var parent = orgUnits[parentId];
+                if ((OrganisationUnitKind)dataRow2["_TYPE"] != OrganisationUnitKind.User)
+                {
+                    var treeObject = orgUnits[(int)dataRow2["_ID"]];
                     parent.Children = parent.Children.Append(treeObject);
-                    if (treeObject.Kind == OrganisationUnitKind.User) 
-                        continue;
-                    //Для пользователей не заполняем Parent(родителем будет основная долность) и не добавляем в список т.к. есть список Users
                     treeObject.Parent = parent;
                 }
-                orgUnits.Add(treeObject.Id, treeObject);
-                yield return treeObject;
+                else
+                {
+                    //Для пользователей не заполняем Parent(родителем будет основная долность) и не добавляем в список т.к. есть список Users
+                    //Берём пользователей из готового списка Users
+                    parent.Children = parent.Children.Append(Users[dataRow2["_USERNAME"] as string]);
+                }
             }
-        }
-
-        private LOrganisationUnit GetOrganisationUnit(DataRow dataRow)
-        {
-            var unitKind = (OrganisationUnitKind)dataRow["_TYPE"];
-            return unitKind switch
-            {
-                OrganisationUnitKind.Department => new LDepartment(dataRow),
-                OrganisationUnitKind.Position => new LPosition(dataRow),
-                OrganisationUnitKind.User => Users[dataRow["_USERNAME"] as string], //Берём пользователей из готового списка Users
-                _ => new LMainDepartment(dataRow)
-            };
         }
 
         private LUser InitCurrentUser()
