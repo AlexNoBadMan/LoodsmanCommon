@@ -69,7 +69,7 @@ namespace LoodsmanCommon.Entities
             _proxy = proxy;
             _owner = owner;
             _lTypeAttribute = lTypeAttribute;
-            _value = value;
+            _value = _lTypeAttribute.Type == AttributeType.DateTime && DateTime.TryParse(value as string, out var dateTime) ? dateTime : value;
             _measureId = measureId;
             _unitId = unitId;
         }
