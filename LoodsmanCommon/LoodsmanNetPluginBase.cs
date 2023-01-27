@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace LoodsmanCommon
 {
-    public abstract class LoodsmanPluginBase
+    public abstract class LoodsmanNetPluginBase : ILoodsmanNetPlugin
     {
         protected IntPtr _appHandle;
         protected ILoodsmanApplication _application;

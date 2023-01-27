@@ -1,8 +1,4 @@
 ﻿using Loodsman;
-using LoodsmanCommon.Entities;
-using LoodsmanCommon.Entities.Meta;
-using LoodsmanCommon.Entities.Meta.Collections;
-using LoodsmanCommon.Entities.Meta.OrganisationUnit;
 using PDMObjects;
 using System;
 using System.Data;
@@ -10,33 +6,33 @@ using System.Linq;
 
 namespace LoodsmanCommon
 {
-    public interface ILoodsmanObject
+    public interface ILObject
     {
-        ILoodsmanObject Parent { get; set; }
+        ILObject Parent { get; set; }
         int Id { get; set; }
         LType Type { get; set; }
         string Product { get; set; }
         string Version { get; set; }
-        LState State { get; set; }
+        LStateInfo State { get; set; }
         bool IsDocument { get; }
         PDMAccessLevels AccessLevel { get; set; }
         PDMLockLevels LockLevel { get; set; }
-        NamedEntityCollection<LObjectAttribute> Attributes { get; }
+        NamedEntityCollection<LAttribute> Attributes { get; }
         EntityCollection<LFile> Files { get; }
         LUser Creator { get; }
         DateTime Created { get; }
     }
 
-    public class LoodsmanObject : ILoodsmanObject
+    public class LObject : ILObject
     {
-        private NamedEntityCollection<LObjectAttribute> _attributes;
-        private LState _state;
+        private NamedEntityCollection<LAttribute> _attributes;
+        private LStateInfo _state;
         private readonly ILoodsmanProxy _proxy;
         private DateTime? _created;
         private LUser _creator;
         private EntityCollection<LFile> _files;
 
-        public ILoodsmanObject Parent { get; set; }
+        public ILObject Parent { get; set; }
         
         public int Id { get; set; }
         
@@ -46,7 +42,7 @@ namespace LoodsmanCommon
         
         public string Version { get; set; }
 
-        public LState State
+        public LStateInfo State
         {
             get => _state;
             set
@@ -65,7 +61,7 @@ namespace LoodsmanCommon
         
         public PDMLockLevels LockLevel { get; set; }
         
-        public NamedEntityCollection<LObjectAttribute> Attributes => _attributes ??= new NamedEntityCollection<LObjectAttribute>(() => _proxy.GetAttributes(this), 10);
+        public NamedEntityCollection<LAttribute> Attributes => _attributes ??= new NamedEntityCollection<LAttribute>(() => _proxy.GetAttributes(this), 10);
        
         public EntityCollection<LFile> Files => _files ??= IsDocument ?
             new EntityCollection<LFile>(() => _proxy.INetPC.Native_GetInfoAboutVersion(Id, GetInfoAboutVersionMode.Mode7).Select(x => new LFile(this, x))) :
@@ -75,7 +71,7 @@ namespace LoodsmanCommon
        
         public DateTime Created => _created ??= InitCreationInfo().created;
 
-        public LoodsmanObject(ILoodsmanProxy proxy, LType type, LState state)
+        public LObject(ILoodsmanProxy proxy, LType type, LStateInfo state)
         {
             _proxy = proxy;
             Type = type;
@@ -83,11 +79,11 @@ namespace LoodsmanCommon
             _state = state;
         }
 
-        private LoodsmanObject(ILoodsmanProxy proxy, string typeName, string stateName) :
+        private LObject(ILoodsmanProxy proxy, string typeName, string stateName) :
             this(proxy, proxy.Meta.Types[typeName], proxy.Meta.States[stateName])
         { }
 
-        public LoodsmanObject(DataRow dataRow, ILoodsmanProxy proxy) : this(proxy, dataRow["_TYPE"] as string, dataRow["_STATE"] as string)
+        public LObject(DataRow dataRow, ILoodsmanProxy proxy) : this(proxy, dataRow["_TYPE"] as string, dataRow["_STATE"] as string)
         {
             Id = (int)dataRow["_ID_VERSION"];
             Product = dataRow["_PRODUCT"] as string;
@@ -97,7 +93,7 @@ namespace LoodsmanCommon
             LockLevel = (PDMLockLevels)dataRow.GetValueOrDefault<int>("_LOCKED");
         }
 
-        public LoodsmanObject(IPluginCall pc, ILoodsmanProxy proxy) : this(proxy, pc.stType, pc.Selected.StateName)
+        public LObject(IPluginCall pc, ILoodsmanProxy proxy) : this(proxy, pc.stType, pc.Selected.StateName)
         {
             Id = pc.IdVersion;
             Product = pc.stProduct;
@@ -105,10 +101,10 @@ namespace LoodsmanCommon
             AccessLevel = pc.Selected.AccessLevel;
             LockLevel = pc.Selected.LockLevel;
             //IsDocument = pc.Selected.IsDocument;
-            Parent = pc.ParentObject is IPDMObject ? new LoodsmanObject(pc.ParentObject, proxy) : null;
+            Parent = pc.ParentObject is IPDMObject ? new LObject(pc.ParentObject, proxy) : null;
         }
 
-        public LoodsmanObject(IPDMObject obj, ILoodsmanProxy proxy) : this(proxy, obj.TypeName, obj.StateName)
+        public LObject(IPDMObject obj, ILoodsmanProxy proxy) : this(proxy, obj.TypeName, obj.StateName)
         {
             Id = obj.ID;
             Product = obj.Name;
@@ -116,7 +112,7 @@ namespace LoodsmanCommon
             AccessLevel = obj.AccessLevel;
             LockLevel = obj.LockLevel;
             //IsDocument = obj.IsDocument;
-            Parent = obj.Parent is IPDMLink link ? new LoodsmanObject(link.ParentObject, proxy) : null;
+            Parent = obj.Parent is IPDMLink link ? new LObject(link.ParentObject, proxy) : null;
         }
 
         private (DateTime created, LUser creator) InitCreationInfo()

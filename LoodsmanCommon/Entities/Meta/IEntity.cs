@@ -1,4 +1,4 @@
-﻿namespace LoodsmanCommon.Entities.Meta
+﻿namespace LoodsmanCommon
 {
     public interface IEntity
     {

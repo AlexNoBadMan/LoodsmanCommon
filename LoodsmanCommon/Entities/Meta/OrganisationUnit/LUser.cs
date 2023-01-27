@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 
-namespace LoodsmanCommon.Entities.Meta.OrganisationUnit
+namespace LoodsmanCommon
 {
     public class LUser : LOrganisationUnit
     {

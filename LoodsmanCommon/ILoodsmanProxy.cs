@@ -1,8 +1,5 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
-using LoodsmanCommon.Entities;
-using LoodsmanCommon.Entities.Meta;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -31,12 +28,12 @@ namespace LoodsmanCommon
         /// <summary>
         /// Выбранный объект в дереве Лоцман.
         /// </summary>
-        ILoodsmanObject SelectedObject { get; }
+        ILObject SelectedObject { get; }
         
         /// <summary>
         /// Выбранные объекты в дереве Лоцман.
         /// </summary>
-        IEnumerable<ILoodsmanObject> SelectedObjects { get; }
+        IEnumerable<ILObject> SelectedObjects { get; }
 
         /// <summary>
         /// Название подключенного чекаута.
@@ -59,7 +56,7 @@ namespace LoodsmanCommon
         /// <param name="product">Ключевой атрибут создаваемого объекта</param>
         /// <param name="stateName">Состояние вновь создаваемого объекта (если создается объект)</param>
         /// <param name="isProject">Признак того, что объект будет являться проектом</param>
-        ILoodsmanObject NewObject(string typeName, string product, string stateName = null, bool isProject = false);
+        ILObject NewObject(string typeName, string product, string stateName = null, bool isProject = false);
 
         /// <summary>
         /// Вставляет новое или существующее изделие в редактируемый объект.
@@ -76,7 +73,7 @@ namespace LoodsmanCommon
         /// Если значение - false, то при существовании в базе данных такой пары связанных объектов новый экземпляр связи создаваться не будет, при этом будет вызвано исключение.</para>
         /// </remarks>
         /// <returns>Возвращает идентификатор созданной связи.</returns>
-        int InsertObject(ILoodsmanObject parent, ILoodsmanObject child, string linkType, string stateName = null, bool reuse = false);
+        int InsertObject(ILObject parent, ILObject child, string linkType, string stateName = null, bool reuse = false);
 
         /// <summary>
         /// Вставляет новое или существующее изделие в редактируемый объект.
@@ -109,7 +106,7 @@ namespace LoodsmanCommon
         /// <param name="maxQuantity">Верхняя граница количества</param>
         /// <param name="unitId">Уникальный идентификатор единицы измерения</param>
         /// <returns>Возвращает идентификатор созданной связи.</returns>
-        int NewLink(ILoodsmanObject parent, ILoodsmanObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
+        int NewLink(ILObject parent, ILObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
 
         /// <summary>
         /// Добавляет связь между объектами.
@@ -160,14 +157,14 @@ namespace LoodsmanCommon
         /// <param name="objectId">Идентификатор версии объекта</param>
         /// <param name="linkType">Название типа связи</param>
         /// <param name="inverse">Направление (true - обратное, false - прямое)</param>
-        List<ILoodsmanObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
+        List<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
 
         /// <summary>
         /// Получение атрибутов объекта, включая служебные.
         /// </summary>
         /// <param name="loodsmanObject">Объект Лоцман</param>
         /// <returns>Возвращает атрибуты объекта, включая служебные.</returns>
-        IEnumerable<LObjectAttribute> GetAttributes(ILoodsmanObject loodsmanObject);
+        IEnumerable<LAttribute> GetAttributes(ILObject loodsmanObject);
 
         /// <summary>
         /// Приводит значение к заданной единице измерения.
@@ -183,7 +180,7 @@ namespace LoodsmanCommon
         /// </summary>
         ///  <param name="objectId">Идентификатор версии объекта</param>
         /// <param name="state">Состояние</param>
-        void UpdateState(int objectId, LState state);
+        void UpdateState(int objectId, LStateInfo state);
 
         /// <summary>
         /// Добавляет, удаляет, обновляет значение атрибута объекта.
@@ -255,7 +252,7 @@ namespace LoodsmanCommon
         /// Возвращает объекты с заполнеными свойствами.
         /// </summary>
         /// <param name="objectsIds">Список идентификаторов версий объектов</param>
-        List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds);
+        List<ILObject> GetPropObjects(IEnumerable<int> objectsIds);
 
         /// <summary>
         /// Проверка на существование бизнес объекта в базе Лоцман.
@@ -267,7 +264,7 @@ namespace LoodsmanCommon
         /// Если объект не существует то свойство возвращаемого объекта ILoodsmanObject.Id будет равен 0.
         /// <para>** Для создания бизнес объекта необходимо чтобы product был в формате ***BOSimple</para>
         /// </remarks>
-        ILoodsmanObject PreviewBoObject(string typeName, string uniqueId);
+        ILObject PreviewBoObject(string typeName, string uniqueId);
 
         /// <summary>
         /// Возвращает список идентификаторов версий объектов, заблокированных в текущем чекауте.
@@ -375,8 +372,8 @@ namespace LoodsmanCommon
         private readonly List<(string TypeName, string Product)> _uniqueNames = new List<(string typeName, string product)>();
         private readonly List<(string TypeName, string Product)> _notUniqueNames = new List<(string typeName, string product)>();
         private readonly ILoodsmanMeta _meta;
-        private ILoodsmanObject _selectedObject;
-        private List<ILoodsmanObject> _selectedObjects = new List<ILoodsmanObject>();
+        private ILObject _selectedObject;
+        private List<ILObject> _selectedObjects = new List<ILObject>();
 
         public virtual INetPluginCall INetPC
         {
@@ -390,8 +387,8 @@ namespace LoodsmanCommon
         }
 
         public ILoodsmanMeta Meta => _meta;
-        public ILoodsmanObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(_iNetPC.PluginCall, this);
-        public IEnumerable<ILoodsmanObject> SelectedObjects => GetSelectedObjects();
+        public ILObject SelectedObject => _selectedObject?.Id == _iNetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LObject(_iNetPC.PluginCall, this);
+        public IEnumerable<ILObject> SelectedObjects => GetSelectedObjects();
         public string CheckOutName => _checkOutName;
 
         public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
@@ -446,7 +443,7 @@ namespace LoodsmanCommon
             INetPC = iNetPC;
         }
 
-        private IEnumerable<ILoodsmanObject> GetSelectedObjects()
+        private IEnumerable<ILObject> GetSelectedObjects()
         {
             var ids = _iNetPC.Native_CGetTreeSelectedIDs().Split(new[] { Constants.ID_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
             if (!_selectedObjects.Select(x => x.Id).OrderBy(x => x).SequenceEqual(ids.OrderBy(x => x)))
@@ -456,11 +453,11 @@ namespace LoodsmanCommon
 
         #region NewObject
 
-        public ILoodsmanObject NewObject(string typeName, string product, string stateName = null, bool isProject = false)
+        public ILObject NewObject(string typeName, string product, string stateName = null, bool isProject = false)
         {
             var type = _meta.Types[typeName];
             var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States[stateName];
-            var loodsmanObject = new LoodsmanObject(this, type, state)
+            var loodsmanObject = new LObject(this, type, state)
             {
                 Id = _iNetPC.Native_NewObject(type.Name, state.Name, product, isProject),
                 Product = product,
@@ -480,7 +477,7 @@ namespace LoodsmanCommon
         #endregion
 
         #region Link - Insert/New/Update/Remove
-        public int InsertObject(ILoodsmanObject parent, ILoodsmanObject child, string linkType, string stateName = null, bool reuse = false)
+        public int InsertObject(ILObject parent, ILObject child, string linkType, string stateName = null, bool reuse = false)
         {
             CheckLoodsmanObjectsForError(parent, child);
             CheckInsertedObject(parent);
@@ -488,7 +485,7 @@ namespace LoodsmanCommon
             return InsertObject(parent.Type.Name, parent.Product, parent.Version, linkType, child.Type.Name, child.Product, child.Version, stateName, reuse);
         }
 
-        private void CheckInsertedObject(ILoodsmanObject loodsmanObject)
+        private void CheckInsertedObject(ILObject loodsmanObject)
         {
             if (loodsmanObject.Id <= 0 && string.IsNullOrEmpty(loodsmanObject.Version))
                 loodsmanObject.Version = Constants.DEFAULT_INSERT_NEW_VERSION;
@@ -506,7 +503,7 @@ namespace LoodsmanCommon
             return _iNetPC.Native_InsertObject(parentTypeName, parentProduct, parentVersion, linkType, childTypeName, childProduct, childVersion, stateName, reuse);
         }
 
-        public int NewLink(ILoodsmanObject parent, ILoodsmanObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
+        public int NewLink(ILObject parent, ILObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
         {
             CheckLoodsmanObjectsForError(parent, child);
             if (parent.Id <= 0 && child.Id <= 0)
@@ -588,7 +585,7 @@ namespace LoodsmanCommon
                 throw new ArgumentException($"{nameof(childProduct)} не может быть пустым или иметь значение null", nameof(childProduct));
         }
 
-        private static void CheckLoodsmanObjectsForError(ILoodsmanObject parent, ILoodsmanObject child)
+        private static void CheckLoodsmanObjectsForError(ILObject parent, ILObject child)
         {
             if (parent is null)
                 throw new ArgumentNullException($"{nameof(parent)} не задан родитель для создания связи");
@@ -626,13 +623,13 @@ namespace LoodsmanCommon
             childVersion = tVersion;
         }
 
-        public List<ILoodsmanObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
+        public List<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
         {
-            return new List<ILoodsmanObject>(_iNetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LoodsmanObject(x, this)));
+            return new List<ILObject>(_iNetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LObject(x, this)));
         }
         #endregion
 
-        public IEnumerable<LObjectAttribute> GetAttributes(ILoodsmanObject loodsmanObject)
+        public IEnumerable<LAttribute> GetAttributes(ILObject loodsmanObject)
         {
             var attributesInfo = _iNetPC.Native_GetInfoAboutVersion(loodsmanObject.Id, GetInfoAboutVersionMode.Mode3).Select(x => x);
             foreach (var lTypeAttribute in loodsmanObject.Type.Attributes)
@@ -647,7 +644,7 @@ namespace LoodsmanCommon
                     unitId = attribute["_ID_UNIT"] as string;
                 }
 
-                yield return new LObjectAttribute(this, loodsmanObject, lTypeAttribute, value, measureId, unitId);
+                yield return new LAttribute(this, loodsmanObject, lTypeAttribute, value, measureId, unitId);
             }
         }
 
@@ -662,7 +659,7 @@ namespace LoodsmanCommon
             return _iNetPC.Native_ConverseValue(value, sourceMeasureUnit.Guid, destMeasureUnit.Guid);
         }
 
-        public void UpdateState(int objectId, LState state)
+        public void UpdateState(int objectId, LStateInfo state)
         {
             if (state is null)
                 throw new Exception("Состоянием не может быть пустым");
@@ -765,12 +762,12 @@ namespace LoodsmanCommon
             return _iNetPC.Native_GetReport(reportName, objectsIds, reportParams);
         }
 
-        public List<ILoodsmanObject> GetPropObjects(IEnumerable<int> objectsIds)
+        public List<ILObject> GetPropObjects(IEnumerable<int> objectsIds)
         {
-            return new List<ILoodsmanObject>(_iNetPC.Native_GetPropObjects(objectsIds).Select(x => new LoodsmanObject(x, this)));
+            return new List<ILObject>(_iNetPC.Native_GetPropObjects(objectsIds).Select(x => new LObject(x, this)));
         }
 
-        public ILoodsmanObject PreviewBoObject(string typeName, string uniqueId)
+        public ILObject PreviewBoObject(string typeName, string uniqueId)
         {
             var xmlString = _iNetPC.Native_PreviewBoObject(typeName, uniqueId);
             var xDocument = XDocument.Parse(xmlString);
@@ -778,7 +775,7 @@ namespace LoodsmanCommon
             var type = _meta.Types[typeName];
             var stateName = elements.FirstOrDefault(x => x.Name == "State")?.Value;
             var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States[stateName];
-            var loodsmanObject = new LoodsmanObject(this, type, state)
+            var loodsmanObject = new LObject(this, type, state)
             {
                 Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0,
                 Product = elements.FirstOrDefault(x => x.Name == "Product").Value,

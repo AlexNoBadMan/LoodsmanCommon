@@ -1,15 +1,14 @@
-﻿using LoodsmanCommon.Entities.Meta;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace LoodsmanCommon.Entities
+namespace LoodsmanCommon
 {
-    public class LObjectAttribute : IEntity, INamedEntity
+    public class LAttribute : IEntity, INamedEntity
     {
         private readonly ILoodsmanProxy _proxy;
-        private readonly ILoodsmanObject _owner;
+        private readonly ILObject _owner;
         private readonly LTypeAttribute _lTypeAttribute;
         private readonly string _measureId;
         private readonly string _unitId;
@@ -64,7 +63,7 @@ namespace LoodsmanCommon.Entities
             }
         }
 
-        internal LObjectAttribute(ILoodsmanProxy proxy, ILoodsmanObject owner, LTypeAttribute lTypeAttribute, object value, string measureId, string unitId)
+        internal LAttribute(ILoodsmanProxy proxy, ILObject owner, LTypeAttribute lTypeAttribute, object value, string measureId, string unitId)
         {
             _proxy = proxy;
             _owner = owner;

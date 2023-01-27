@@ -3,9 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using LoodsmanCommon.Entities.Meta;
-using LoodsmanCommon.Entities.Meta.OrganisationUnit;
-using LoodsmanCommon.Entities.Meta.Collections;
 
 namespace LoodsmanCommon
 {
@@ -22,17 +19,17 @@ namespace LoodsmanCommon
         /// <summary>
         /// Список связей.
         /// </summary>
-        NamedEntityCollection<LLink> Links { get; }
+        NamedEntityCollection<LLinkInfo> Links { get; }
 
         /// <summary>
         /// Список состояний.
         /// </summary>
-        NamedEntityCollection<LState> States { get; }
+        NamedEntityCollection<LStateInfo> States { get; }
 
         /// <summary>
         /// Список атрибутов.
         /// </summary>
-        NamedEntityCollection<LAttribute> Attributes { get; }
+        NamedEntityCollection<LAttributeInfo> Attributes { get; }
 
         /// <summary>
         /// Список содержащий случаи использования прокси, типа объекта и типа документа.
@@ -90,9 +87,9 @@ namespace LoodsmanCommon
     internal class LoodsmanMeta : ILoodsmanMeta
     {
         private NamedEntityCollection<LType> _types;
-        private NamedEntityCollection<LLink> _links;
-        private NamedEntityCollection<LState> _states;
-        private NamedEntityCollection<LAttribute> _attributes;
+        private NamedEntityCollection<LLinkInfo> _links;
+        private NamedEntityCollection<LStateInfo> _states;
+        private NamedEntityCollection<LAttributeInfo> _attributes;
         private IReadOnlyList<LProxyUseCase> _proxyUseCases;
         private IReadOnlyList<LLinkInfoBetweenTypes> _linksInfoBetweenTypes;
         private NamedEntityCollection<LMeasure> _measures;
@@ -103,9 +100,9 @@ namespace LoodsmanCommon
         private readonly INetPluginCall _iNetPC;
 
         public NamedEntityCollection<LType> Types => _types ??= new NamedEntityCollection<LType>(() => _iNetPC.Native_GetTypeListEx().Select(x => new LType(_iNetPC, x, Attributes, States)), 300);
-        public NamedEntityCollection<LLink> Links => _links ??= new NamedEntityCollection<LLink>(() => _iNetPC.Native_GetLinkList().Select(x => new LLink(x)), 100);
-        public NamedEntityCollection<LState> States => _states ??= new NamedEntityCollection<LState>(() => _iNetPC.Native_GetStateList().Select(x => new LState(x)), 50);
-        public NamedEntityCollection<LAttribute> Attributes => _attributes ??= new NamedEntityCollection<LAttribute>(() => _iNetPC.Native_GetAttributeList().Select(x => new LAttribute(x)), 500);
+        public NamedEntityCollection<LLinkInfo> Links => _links ??= new NamedEntityCollection<LLinkInfo>(() => _iNetPC.Native_GetLinkList().Select(x => new LLinkInfo(x)), 100);
+        public NamedEntityCollection<LStateInfo> States => _states ??= new NamedEntityCollection<LStateInfo>(() => _iNetPC.Native_GetStateList().Select(x => new LStateInfo(x)), 50);
+        public NamedEntityCollection<LAttributeInfo> Attributes => _attributes ??= new NamedEntityCollection<LAttributeInfo>(() => _iNetPC.Native_GetAttributeList().Select(x => new LAttributeInfo(x)), 500);
         public IReadOnlyList<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().Select(x => new LProxyUseCase(x)).ToReadOnlyList();
         public IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes => _linksInfoBetweenTypes ??= GetLinksInfoBetweenTypes(_iNetPC.Native_GetLinkListEx()).ToReadOnlyList();
         public NamedEntityCollection<LMeasure> Measures => _measures ??= new NamedEntityCollection<LMeasure>(() => _iNetPC.Native_GetFromBO_Nature().Select(x => new LMeasure(_iNetPC, x)), 45);

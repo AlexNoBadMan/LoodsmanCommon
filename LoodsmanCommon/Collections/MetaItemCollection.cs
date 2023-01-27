@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace LoodsmanCommon.Entities.Meta.Collections
+namespace LoodsmanCommon
 {
     public abstract class MetaItemCollection<TKey, TValue> : IEnumerable<TValue>, IReadOnlyCollection<TValue>, IReadOnlyDictionary<TKey, TValue>
     {

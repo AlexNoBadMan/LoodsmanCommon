@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace LoodsmanCommon.Entities.Meta
+namespace LoodsmanCommon
 {
     public class LTypeAttribute : IEntity, INamedEntity
     {
-        private readonly LAttribute _lAttribute;
+        private readonly LAttributeInfo _lAttribute;
 
         public int Id => _lAttribute.Id;
         public string Name => _lAttribute.Name;
@@ -16,7 +16,7 @@ namespace LoodsmanCommon.Entities.Meta
         public bool IsObligatory { get; }
         public bool IsMeasured => _lAttribute.IsMeasured;
 
-        internal LTypeAttribute(LAttribute lAttribute, bool isObligatory)
+        internal LTypeAttribute(LAttributeInfo lAttribute, bool isObligatory)
         {
             _lAttribute = lAttribute;
             IsObligatory = isObligatory;

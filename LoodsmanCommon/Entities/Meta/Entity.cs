@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace LoodsmanCommon.Entities.Meta
+namespace LoodsmanCommon
 {
     public abstract class Entity : IEntity, INamedEntity
     {

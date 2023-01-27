@@ -57,17 +57,17 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Entities\LFile.cs" />
-    <Compile Include="Entities\LObjectsLink.cs" />
-    <Compile Include="Entities\Meta\Collections\EntityCollection.cs" />
+    <Compile Include="Entities\LLink.cs" />
+    <Compile Include="Collections\EntityCollection.cs" />
     <Compile Include="Entities\Meta\IEntity.cs" />
     <Compile Include="Entities\Meta\INamedEntity.cs" />
-    <Compile Include="Entities\Meta\Collections\NamedEntityCollection.cs" />
-    <Compile Include="Entities\Meta\Collections\MetaItemCollection.cs" />
+    <Compile Include="Collections\NamedEntityCollection.cs" />
+    <Compile Include="Collections\MetaItemCollection.cs" />
     <Compile Include="Entities\Meta\OrganisationUnit\LDepartment.cs" />
     <Compile Include="Entities\Meta\LMeasure.cs" />
     <Compile Include="Entities\Meta\LMeasureUnit.cs" />
-    <Compile Include="DataRowExtensions.cs" />
-    <Compile Include="Entities\LObjectAttribute.cs" />
+    <Compile Include="Extensions\DataRowExtensions.cs" />
+    <Compile Include="Entities\LAttribute.cs" />
     <Compile Include="Entities\Meta\Entity.cs" />
     <Compile Include="Entities\Meta\EntityIcon.cs" />
     <Compile Include="Entities\Meta\OrganisationUnit\LMainDepartment.cs" />
@@ -76,21 +76,20 @@
     <Compile Include="Entities\Meta\LTypeAttribute.cs" />
     <Compile Include="Entities\Meta\OrganisationUnit\LUser.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="DataTableExtensions.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="IContext.cs" />
+    <Compile Include="Extensions\DataTableExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="ILoodsmanMeta.cs" />
-    <Compile Include="ILoodsmanObject.cs" />
+    <Compile Include="Entities\ILObject.cs" />
     <Compile Include="ILoodsmanProxy.cs" />
-    <Compile Include="Entities\Meta\LAttribute.cs" />
-    <Compile Include="Entities\Meta\LLink.cs" />
+    <Compile Include="Entities\Meta\LAttributeInfo.cs" />
+    <Compile Include="Entities\Meta\LLinkInfo.cs" />
     <Compile Include="Entities\Meta\LLinkInfoBetweenTypes.cs" />
-    <Compile Include="LoodsmanPluginBase.cs" />
-    <Compile Include="LoodsmanWPFPluginBase.cs" />
+    <Compile Include="LoodsmanNetPluginBase.cs" />
+    <Compile Include="LoodsmanWPFNetPluginBase.cs" />
     <Compile Include="Entities\Meta\LProxyUseCase.cs" />
-    <Compile Include="Entities\Meta\LState.cs" />
+    <Compile Include="Entities\Meta\LStateInfo.cs" />
     <Compile Include="Entities\Meta\LType.cs" />
-    <Compile Include="NetPluginCallExtensions.cs" />
+    <Compile Include="Extensions\NetPluginCallExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

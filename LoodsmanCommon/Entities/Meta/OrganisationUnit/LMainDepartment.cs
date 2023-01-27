@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace LoodsmanCommon.Entities.Meta.OrganisationUnit
+namespace LoodsmanCommon
 {
     public class LMainDepartment : LOrganisationUnit
     {

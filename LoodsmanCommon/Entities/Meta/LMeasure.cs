@@ -1,8 +1,7 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
-using LoodsmanCommon.Entities.Meta.Collections;
 using System.Data;
 
-namespace LoodsmanCommon.Entities.Meta
+namespace LoodsmanCommon
 {
     public class LMeasure : INamedEntity
     {

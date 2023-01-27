@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 
-namespace LoodsmanCommon.Entities.Meta
+namespace LoodsmanCommon
 {
-    public class LAttribute : Entity
+    public class LAttributeInfo : Entity
     {
         public AttributeType Type { get; }
         public string DefaultValue { get; }
@@ -14,7 +14,7 @@ namespace LoodsmanCommon.Entities.Meta
         public bool IsSystem { get; }
         public bool IsMeasured => Type == AttributeType.Int || Type == AttributeType.Double;
 
-        internal LAttribute(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
+        internal LAttributeInfo(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
         {
             Type = (AttributeType)dataRow["_ATTRTYPE"];
             DefaultValue = dataRow["_DEFAULT"] as string;

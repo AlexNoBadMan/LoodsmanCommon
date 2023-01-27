@@ -2,20 +2,19 @@
 using System.Linq;
 using System.Collections.Generic;
 using Ascon.Plm.Loodsman.PluginSDK;
-using LoodsmanCommon.Entities.Meta.Collections;
 
-namespace LoodsmanCommon.Entities.Meta
+namespace LoodsmanCommon
 {
     public class LType : EntityIcon
     {
         private readonly INetPluginCall _iNetPC;
-        private readonly NamedEntityCollection<LAttribute> _lAttributes;
+        private readonly NamedEntityCollection<LAttributeInfo> _lAttributes;
         private NamedEntityCollection<LTypeAttribute> _attributes;
 
         /// <summary>
         /// Ключевой атрибут типа.
         /// </summary>
-        public LAttribute KeyAttribute { get; }
+        public LAttributeInfo KeyAttribute { get; }
 
         /// <summary>
         /// Является ли документом.
@@ -30,7 +29,7 @@ namespace LoodsmanCommon.Entities.Meta
         /// <summary>
         /// Состояние по умолчанию.
         /// </summary>
-        public LState DefaultState { get; }
+        public LStateInfo DefaultState { get; }
 
         /// <summary>
         /// Может ли быть проектом.
@@ -49,7 +48,7 @@ namespace LoodsmanCommon.Entities.Meta
             () => _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).Select(x => new LTypeAttribute(_lAttributes[x["_NAME"] as string], (short)x["_OBLIGATORY"] == 1)),
             10);
 
-        internal LType(INetPluginCall iNetPC, DataRow dataRow, NamedEntityCollection<LAttribute> lAttributes, NamedEntityCollection<LState> lStates, string nameField = "_TYPENAME") : base(dataRow, nameField)
+        internal LType(INetPluginCall iNetPC, DataRow dataRow, NamedEntityCollection<LAttributeInfo> lAttributes, NamedEntityCollection<LStateInfo> lStates, string nameField = "_TYPENAME") : base(dataRow, nameField)
         {
             _iNetPC = iNetPC;
             _lAttributes = lAttributes;

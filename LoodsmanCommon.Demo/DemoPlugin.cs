@@ -8,12 +8,11 @@ using System.Windows;
 using LoodsmanCommon;
 using System.Data;
 using System.Diagnostics;
-using LoodsmanCommon.Entities.Meta.OrganisationUnit;
 
 namespace LoodsmanCommon.Demo
 {
     [LoodsmanPlugin]
-    public class DemoPlugin : LoodsmanWPFPluginBase
+    public class DemoPlugin : LoodsmanWPFNetPluginBase
     {
         public override void BindMenu(IMenuDefinition menu)
         {
@@ -89,9 +88,9 @@ namespace LoodsmanCommon.Demo
         private void Command4(INetPluginCall iNetPC)
         {
             _proxy.InitNetPluginCall(iNetPC);
-            var massa = _meta.Measures.FirstOrDefault(x => x.Name == "Масса");
-            var valueUnit = massa.Units.FirstOrDefault(x => x.IsBase);
-            var convertValueUnit = massa.Units.FirstOrDefault(x => x.Name == "г");
+            var massa = _meta.Measures.Values.FirstOrDefault(x => x.Name == "Масса");
+            var valueUnit = massa.Units.Values.FirstOrDefault(x => x.IsBase);
+            var convertValueUnit = massa.Units.Values.FirstOrDefault(x => x.Name == "г");
             var value = 5; 
             var convertValue = _proxy.ConverseValue(value, convertValueUnit, valueUnit);
             MessageBox.Show($"Исходное значение: {value} {convertValueUnit.Name} \nПреобразованное значение: {convertValue} {valueUnit.Name}");
@@ -100,7 +99,7 @@ namespace LoodsmanCommon.Demo
         private void Command5(INetPluginCall iNetPC)
         {
             _proxy.InitNetPluginCall(iNetPC);
-            var mainDepartaments = _meta.OrganisationUnits.Where(x => x.Kind == OrganisationUnitKind.MainDepartment).Cast<LMainDepartment>().OrderBy(x => x.Id).ToArray();
+            var mainDepartaments = _meta.OrganisationUnits.Values.Where(x => x.Kind == OrganisationUnitKind.MainDepartment).Cast<LMainDepartment>().OrderBy(x => x.Id).ToArray();
             var orgInfo = $"Головных орг. единиц: {mainDepartaments.Length}\n\n";
             for (var i = 0; i < mainDepartaments.Length; i++)
             {

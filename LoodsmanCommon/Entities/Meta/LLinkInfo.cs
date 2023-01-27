@@ -1,14 +1,13 @@
 ﻿using System.Data;
 
-
-namespace LoodsmanCommon.Entities.Meta
+namespace LoodsmanCommon
 {
-    public class LLink : EntityIcon
+    public class LLinkInfo : EntityIcon
     {
         public string InverseName { get; }
         public bool VerticalLink { get; }
 
-        internal LLink(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
+        internal LLinkInfo(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
         {
             InverseName = dataRow["_INVERSENAME"] as string;
             VerticalLink = (short)dataRow["_TYPE"] == 0; //Приведение к int вызвало ошибку с short проблем не возникло

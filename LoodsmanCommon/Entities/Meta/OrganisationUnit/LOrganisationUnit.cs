@@ -2,7 +2,7 @@
 using System.Data;
 using System.Linq;
 
-namespace LoodsmanCommon.Entities.Meta.OrganisationUnit
+namespace LoodsmanCommon
 {
     public abstract class LOrganisationUnit : Entity
     {

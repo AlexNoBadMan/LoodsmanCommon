@@ -2,18 +2,18 @@
 using System;
 using System.Data;
 
-namespace LoodsmanCommon.Entities
+namespace LoodsmanCommon
 {
     public class LFile : Entity
     {
-        public ILoodsmanObject Owner { get; }
+        public ILObject Owner { get; }
         public string RelativePath { get; }
         public long Size { get; }
         public long CRC { get; }
         public DateTime Created { get; }
         public DateTime Modified { get; }
 
-        internal LFile(ILoodsmanObject owner, DataRow dataRow) : base((int)dataRow["_ID_FILE"], dataRow["_NAME"] as string)
+        internal LFile(ILObject owner, DataRow dataRow) : base((int)dataRow["_ID_FILE"], dataRow["_NAME"] as string)
         {
             Owner = owner;
             RelativePath = dataRow["_LOCALNAME"] as string;

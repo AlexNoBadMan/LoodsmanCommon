@@ -7,8 +7,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-
-namespace LoodsmanCommon.Entities.Meta
+namespace LoodsmanCommon
 {
     public abstract class EntityIcon : Entity
     {

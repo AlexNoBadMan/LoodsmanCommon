@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LoodsmanCommon.Entities.Meta.Collections
+namespace LoodsmanCommon
 {
     public class NamedEntityCollection<TValue> : MetaItemCollection<string, TValue> where TValue : INamedEntity
     {
