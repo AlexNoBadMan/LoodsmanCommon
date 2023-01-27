@@ -369,8 +369,8 @@ namespace LoodsmanCommon
     {
         private readonly ILoodsmanMeta _meta;
         private string _checkOutName;
-        private ILoodsmanObject _selectedObject;
-        private List<ILoodsmanObject> _selectedObjects = new List<ILoodsmanObject>();
+        private ILObject _selectedObject;
+        private List<ILObject> _selectedObjects = new List<ILObject>();
 
         public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
         {
@@ -423,9 +423,9 @@ namespace LoodsmanCommon
 
         public ILoodsmanMeta Meta => _meta;
 
-        public ILoodsmanObject SelectedObject => GetSelectedObject();
+        public ILObject SelectedObject => GetSelectedObject();
 
-        public IEnumerable<ILoodsmanObject> SelectedObjects => GetSelectedObjects();
+        public IEnumerable<ILObject> SelectedObjects => GetSelectedObjects();
 
         public string CheckOutName => _checkOutName;
 
@@ -434,12 +434,12 @@ namespace LoodsmanCommon
             INetPC = iNetPC;
         }
 
-        private ILoodsmanObject GetSelectedObject()
+        private ILObject GetSelectedObject()
         {
-            return _selectedObject?.Id == INetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LoodsmanObject(INetPC.PluginCall, this); 
+            return _selectedObject?.Id == INetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LObject(INetPC.PluginCall, this); 
         }
 
-        private IEnumerable<ILoodsmanObject> GetSelectedObjects()
+        private IEnumerable<ILObject> GetSelectedObjects()
         {
             var ids = INetPC.Native_CGetTreeSelectedIDs().Split(new[] { Constants.ID_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
             if (!_selectedObjects.Select(x => x.Id).OrderBy(x => x).SequenceEqual(ids.OrderBy(x => x)))
@@ -621,7 +621,7 @@ namespace LoodsmanCommon
 
         public List<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
         {
-            return new List<ILoodsmanObject>(INetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LoodsmanObject(x, this)));
+            return new List<ILObject>(INetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LObject(x, this)));
         }
         #endregion
 
@@ -743,7 +743,7 @@ namespace LoodsmanCommon
 
         public List<ILObject> GetPropObjects(IEnumerable<int> objectsIds)
         {
-            return new List<ILoodsmanObject>(INetPC.Native_GetPropObjects(objectsIds).Select(x => new LoodsmanObject(x, this)));
+            return new List<ILObject>(INetPC.Native_GetPropObjects(objectsIds).Select(x => new LObject(x, this)));
         }
 
         public ILObject PreviewBoObject(string typeName, string uniqueId)

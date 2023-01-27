@@ -1,5 +1,4 @@
-﻿using LoodsmanCommon.Entities.Meta;
-using System;
+﻿using System;
 using System.Data;
 
 namespace LoodsmanCommon

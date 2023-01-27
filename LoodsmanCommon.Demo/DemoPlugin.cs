@@ -19,7 +19,6 @@ namespace LoodsmanCommon.Demo
             menu.AddMenuItem("Тест демо#Получение информации об организационной структуре", Command5, FreeCheckCommand);
         }
 
-
         protected override bool CheckCommand(INetPluginCall iNetPC)
         {
             if (_proxy is null && iNetPC != null) //метод OnConnectToDb не срабатывает при первом добавлении команды на панель инструментов.
