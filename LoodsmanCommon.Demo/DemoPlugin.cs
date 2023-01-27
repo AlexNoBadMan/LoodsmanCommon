@@ -1,17 +1,13 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using LoodsmanCommon;
 using System.Data;
-using System.Diagnostics;
 
 namespace LoodsmanCommon.Demo
 {
-    [LoodsmanPlugin]
+  [LoodsmanPlugin]
     public class DemoPlugin : LoodsmanWPFNetPluginBase
     {
         public override void BindMenu(IMenuDefinition menu)
@@ -88,9 +84,9 @@ namespace LoodsmanCommon.Demo
         private void Command4(INetPluginCall iNetPC)
         {
             _proxy.InitNetPluginCall(iNetPC);
-            var massa = _meta.Measures.Values.FirstOrDefault(x => x.Name == "Масса");
+            var massa = _meta.Measures["Масса"];
             var valueUnit = massa.Units.Values.FirstOrDefault(x => x.IsBase);
-            var convertValueUnit = massa.Units.Values.FirstOrDefault(x => x.Name == "г");
+            var convertValueUnit = massa.Units["г"];
             var value = 5; 
             var convertValue = _proxy.ConverseValue(value, convertValueUnit, valueUnit);
             MessageBox.Show($"Исходное значение: {value} {convertValueUnit.Name} \nПреобразованное значение: {convertValue} {valueUnit.Name}");
