@@ -1030,9 +1030,9 @@ namespace LoodsmanCommon
         /// <br/>Для ЛОЦМАН:PLM 2017 и более поздних версий системы этот метод устарел и оставлен только для совместимости с предыдущими версиями.
         /// <br/>В ЛОЦМАН:PLM 2017 и более поздних версиях метод удаляет все ревизии вторичного представления указанного документа. Чтобы удалить конкретную ревизию вторичного представления, воспользуйтесь методом <see cref="Native_DelSecondaryViewRevision(INetPluginCall, int, int)"/>.
         /// </summary>
-        /// <param name="documenId">Идентификатор версии документа.</param>
-        public static void Native_DelSecondaryView(this INetPluginCall pc, int documenId) => 
-            pc.RunMethod("DelSecondaryView", documenId);
+        /// <param name="documentId">Идентификатор версии документа.</param>
+        public static void Native_DelSecondaryView(this INetPluginCall pc, int documentId) => 
+            pc.RunMethod("DelSecondaryView", documentId);
 
         /// <summary>
         /// Удаляет аннотацию или ревизию вторичного представления документа.
@@ -1042,10 +1042,10 @@ namespace LoodsmanCommon
         /// <br/>
         /// <br/>Идентификатор ревизии вторичного представления или аннотации. Может быть получен с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>
         /// </summary>
-        /// <param name="documenId">Идентификатор версии документа.</param>
+        /// <param name="documentId">Идентификатор версии документа.</param>
         /// <param name="revisionId">Идентификатор ревизии вторичного представления или аннотации.</param>
-        public static void Native_DelSecondaryViewRevision(this INetPluginCall pc, int documenId, int revisionId) => 
-            pc.RunMethod("DelSecondaryViewRevision", documenId, revisionId);
+        public static void Native_DelSecondaryViewRevision(this INetPluginCall pc, int documentId, int revisionId) => 
+            pc.RunMethod("DelSecondaryViewRevision", documentId, revisionId);
 
         /// <summary>
         /// Возвращает информацию о последней корневой ревизии вторичного представления для группы документов.
@@ -1089,9 +1089,9 @@ namespace LoodsmanCommon
         /// <br/>[_STATE] string - состояние объекта на момент создания ревизии вторичного представления;
         /// <br/>[_USERS_ANNOTATED_BY] string - список имен пользователей, аннотирующих в данный момент ревизию вторичного представления. Разделитель - символ с кодом «1».
         /// </summary>
-        /// <param name="documenId">Идентификатор версии документа.</param>
-        public static DataTable Native_GetSecondaryViewRevisions(this INetPluginCall pc, int documenId) => 
-            pc.GetDataTable("GetSecondaryViewRevisions", documenId);
+        /// <param name="documentId">Идентификатор версии документа.</param>
+        public static DataTable Native_GetSecondaryViewRevisions(this INetPluginCall pc, int documentId) => 
+            pc.GetDataTable("GetSecondaryViewRevisions", documentId);
 
         /// <summary>
         /// Возвращает состояние «флага» аннотирования текущим пользователем.
@@ -1099,9 +1099,9 @@ namespace LoodsmanCommon
         /// <br/>Начиная с версии ЛОЦМАН:PLM 2017 допускается аннотирование документа несколькими пользователями одновременно. 
         /// <br/>Получить список пользователей, выполняющих в данный момент аннотирование документа, можно с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>.
         /// </summary>
-        /// <param name="documenId">Идентификатор версии документа.</param>
-        public static bool Native_GetViewLock(this INetPluginCall pc, int documenId) => 
-            pc.RunMethod("GetViewLock", documenId) as int? == 1;
+        /// <param name="documentId">Идентификатор версии документа.</param>
+        public static bool Native_GetViewLock(this INetPluginCall pc, int documentId) => 
+            pc.RunMethod("GetViewLock", documentId) as int? == 1;
 
         /// <summary>
         /// Сохраняет аннотацию документа.
@@ -1111,10 +1111,10 @@ namespace LoodsmanCommon
         /// <br/>
         /// <br/>Аннотация прикрепляется к корневой ревизии, последней на момент начала аннотирования.
         /// </summary>
-        /// <param name="documenId">Идентификатор версии документа.</param>
+        /// <param name="documentId">Идентификатор версии документа.</param>
         /// <param name="annotationPath">Сетевой путь к файлу аннотации, доступный серверу приложений.</param>
-        public static void Native_SaveAnnotationFile(this INetPluginCall pc, int documenId, string annotationPath) => 
-            pc.RunMethod("SaveAnnotationFile", documenId, annotationPath);
+        public static void Native_SaveAnnotationFile(this INetPluginCall pc, int documentId, string annotationPath) => 
+            pc.RunMethod("SaveAnnotationFile", documentId, annotationPath);
 
         /// <summary>
         /// Сохраняет вторичное представление документа.
@@ -1124,10 +1124,10 @@ namespace LoodsmanCommon
         /// <br/>
         /// <br/>Начиная с версии ЛОЦМАН:PLM 2017 каждый следующий вызов метода создает новую корневую ревизию вторичного представления. Предыдущие ревизии остаются доступными для просмотра и аннотирования.
         /// </summary>
-        /// <param name="documenId">Идентификатор версии документа.</param>
+        /// <param name="documentId">Идентификатор версии документа.</param>
         /// <param name="filePath">Сетевой путь к файлу вторичного представления, доступный серверу приложений.</param>
-        public static void Native_SaveSecondaryView(this INetPluginCall pc, int documenId, string filePath) => 
-            pc.RunMethod("SaveSecondaryView", documenId, filePath);
+        public static void Native_SaveSecondaryView(this INetPluginCall pc, int documentId, string filePath) => 
+            pc.RunMethod("SaveSecondaryView", documentId, filePath);
 
         /// <summary>
         /// Указывает, что текущий пользователь начал или окончил аннотирование последней доступной корневой ревизии вторичного представления.
@@ -1135,10 +1135,10 @@ namespace LoodsmanCommon
         /// <br/>Начиная с версии ЛОЦМАН:PLM 2017 допускается аннотирование документа несколькими пользователями одновременно. 
         /// <br/>Получить список пользователей, выполняющих в данный момент аннотирование документа, можно с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>.
         /// </summary>
-        /// <param name="documenId">Идентификатор версии документа.</param>
+        /// <param name="documentId">Идентификатор версии документа.</param>
         /// <param name="isLock">Флаг аннотирования. Установите в true, чтобы указать, что текущий пользователь начал аннотирование; false - что текущий пользователь окончил аннотирование.</param>
-        public static void Native_SetViewLock(this INetPluginCall pc, int documenId, bool isLock) => 
-            pc.RunMethod("SetViewLock", documenId, isLock);
+        public static void Native_SetViewLock(this INetPluginCall pc, int documentId, bool isLock) => 
+            pc.RunMethod("SetViewLock", documentId, isLock);
 
         /// <summary>
         /// Изменяет аннотацию документа.
