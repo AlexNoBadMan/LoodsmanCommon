@@ -40,6 +40,10 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ascon.Plm.DataPacket">
+      <HintPath>C:\Program Files (x86)\ASCON\Loodsman\AppServer\Ascon.Plm.DataPacket.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Ascon.Plm.Loodsman.PluginSDK">
       <HintPath>C:\Program Files (x86)\ASCON\Loodsman\Client\Ascon.Plm.Loodsman.PluginSDK.dll</HintPath>
       <Private>False</Private>
@@ -78,6 +82,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions\DataTableExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\PluginCallExtensions.cs" />
     <Compile Include="ILoodsmanMeta.cs" />
     <Compile Include="Entities\ILObject.cs" />
     <Compile Include="ILoodsmanProxy.cs" />
