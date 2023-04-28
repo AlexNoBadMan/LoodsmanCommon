@@ -69,7 +69,7 @@ namespace LoodsmanCommon
         /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
         protected virtual ILoodsmanProxy GetLoodsmanProxy(INetPluginCall iNetPC)
         {
-            return _proxy ?? new LoodsmanProxy(iNetPC, _meta);
+            return _proxy ?? new LoodsmanProxy(iNetPC, _meta ??= GetLoodsmanMeta(iNetPC));
         }
 
         /// <summary>
