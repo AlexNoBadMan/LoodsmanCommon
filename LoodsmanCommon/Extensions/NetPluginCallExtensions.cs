@@ -4,22 +4,16 @@ using System.Data;
 
 namespace LoodsmanCommon
 {
-    /// <summary>
-    /// Расширения для интерфейса <see cref="INetPluginCall"/>.
-    /// </summary>
+    /// <summary> Расширения для интерфейса <see cref="INetPluginCall"/>. /summary>
     public static class NetPluginCallExtensions
     {
 
-        ///<summary>
-        /// Позволяет получить список объектов, выделенных в дереве «ЛОЦМАН Клиент».
-        /// </summary>
-        /// <returns>Список идентификаторов выделенных в дереве объектов с разделителем «,».</returns>
+        /// <summary> Возвращает список идентификаторов объектов, выделенных в дереве «ЛОЦМАН Клиент». </summary>
+        /// <returns> Список идентификаторов выделенных в дереве объектов с разделителем «,». </returns>
         public static string Native_CGetTreeSelectedIDs(this INetPluginCall pc) => 
             pc.RunMethod("CGetTreeSelectedIDs") as string ?? string.Empty;
 
-        /// <summary>
-        /// Возвращает признак того, является ли пользователь, подключенный к текущей базе данных, администратором этой базы.
-        /// </summary>
+        /// <summary> Возвращает признак того, является ли пользователь, подключенный к текущей базе данных, администратором этой базы. </summary>
         /// <returns>
         /// <br/>true - пользователь является администратором.
         /// <br/>false - пользователь не является администратором.
