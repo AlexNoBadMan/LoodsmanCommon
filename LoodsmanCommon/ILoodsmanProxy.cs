@@ -351,12 +351,13 @@ namespace LoodsmanCommon
     public int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string linkType, string childTypeName, string childProduct, string childVersion = Constants.DEFAULT_INSERT_NEW_VERSION, string stateName = null, bool reuse = false)
     {
       CheckKeyAttributesForErrors(parentTypeName, parentProduct, childTypeName, childProduct);
-      var linkInfo = GetLinkInfo(parentTypeName, childTypeName, linkType);
-      if (linkInfo.Direction == LinkDirection.Backward)
-        Swap(ref parentTypeName, ref parentProduct, ref parentVersion, ref childTypeName, ref childProduct, ref childVersion);
+      //var linkInfo = GetLinkInfo(parentTypeName, childTypeName, linkType);
+      //if (linkInfo.Direction == LinkDirection.Backward)
+      //  Swap(ref parentTypeName, ref parentProduct, ref parentVersion, ref childTypeName, ref childProduct, ref childVersion);
 
       if (string.IsNullOrEmpty(stateName))
         stateName = StateIfNullGetDefault(parentVersion == Constants.DEFAULT_INSERT_NEW_VERSION ? parentTypeName : childTypeName);
+
       return INetPC.Native_InsertObject(parentTypeName, parentProduct, parentVersion, linkType, childTypeName, childProduct, childVersion, stateName, reuse);
     }
 
@@ -415,15 +416,15 @@ namespace LoodsmanCommon
       if (string.IsNullOrEmpty(linkType))
         throw new ArgumentException($"{nameof(linkType)} не может быть пустым, не указан тип связи", nameof(linkType));
 
-      var linkInfo = GetLinkInfo(parentTypeName, childTypeName, linkType);
-      if (linkInfo.Direction == LinkDirection.Backward)
-        Swap(ref parentId, ref parentTypeName, ref parentProduct, ref parentVersion, ref childId, ref childTypeName, ref childProduct, ref childVersion);
+      //var linkInfo = GetLinkInfo(parentTypeName, childTypeName, linkType);
+      //if (linkInfo.Direction == LinkDirection.Backward)
+      //  Swap(ref parentId, ref parentTypeName, ref parentProduct, ref parentVersion, ref childId, ref childTypeName, ref childProduct, ref childVersion);
 
-      if (linkInfo.IsQuantity && minQuantity <= 0 && maxQuantity <= 0)
-      {
-        minQuantity = 1;
-        maxQuantity = 1;
-      }
+      //if (linkInfo.IsQuantity && minQuantity <= 0 && maxQuantity <= 0)
+      //{
+      //  minQuantity = 1;
+      //  maxQuantity = 1;
+      //}
       return INetPC.Native_NewLink(parentId, parentTypeName, parentProduct, parentVersion, childId, childTypeName, childProduct, childVersion, minQuantity, maxQuantity, unitId, linkType);
     }
 
@@ -451,34 +452,34 @@ namespace LoodsmanCommon
         throw new ArgumentNullException($"{nameof(child)} не задан потомок для создания связи");
     }
 
-    private LLinkInfoBetweenTypes GetLinkInfo(string parentTypeName, string childTypeName, string linkType)
-    {
-      var linkInfo = _meta.LinksInfoBetweenTypes.FirstOrDefault(x => x.TypeName1 == parentTypeName && x.TypeName2 == childTypeName && x.Name == linkType);
-      if (linkInfo is null)
-        throw new InvalidOperationException($"Не удалось найти информацию о связи типов {nameof(parentTypeName)}: \"{parentTypeName}\" - {nameof(childTypeName)}: \"{childTypeName}\", по связи: \"{linkType}\"");
-      return linkInfo;
-    }
+    //private LLinkInfoBetweenTypes GetLinkInfo(string parentTypeName, string childTypeName, string linkType)
+    //{
+    //  var linkInfo = _meta.LinksInfoBetweenTypes.FirstOrDefault(x => x.TypeName1 == parentTypeName && x.TypeName2 == childTypeName && x.Name == linkType);
+    //  if (linkInfo is null)
+    //    throw new InvalidOperationException($"Не удалось найти информацию о связи типов {nameof(parentTypeName)}: \"{parentTypeName}\" - {nameof(childTypeName)}: \"{childTypeName}\", по связи: \"{linkType}\"");
+    //  return linkInfo;
+    //}
 
-    private static void Swap(ref int parentId, ref string parentTypeName, ref string parentProduct, ref string parentVersion, ref int childId, ref string childTypeName, ref string childProduct, ref string childVersion)
-    {
-      var tId = parentId;
-      parentId = childId;
-      childId = tId;
-      Swap(ref parentTypeName, ref parentProduct, ref parentVersion, ref childTypeName, ref childProduct, ref childVersion);
-    }
+    //private static void Swap(ref int parentId, ref string parentTypeName, ref string parentProduct, ref string parentVersion, ref int childId, ref string childTypeName, ref string childProduct, ref string childVersion)
+    //{
+    //  var tId = parentId;
+    //  parentId = childId;
+    //  childId = tId;
+    //  Swap(ref parentTypeName, ref parentProduct, ref parentVersion, ref childTypeName, ref childProduct, ref childVersion);
+    //}
 
-    private static void Swap(ref string parentTypeName, ref string parentProduct, ref string parentVersion, ref string childTypeName, ref string childProduct, ref string childVersion)
-    {
-      var tTypeName = parentTypeName;
-      var tProduct = parentProduct;
-      var tVersion = parentVersion;
-      parentTypeName = childTypeName;
-      parentProduct = childProduct;
-      parentVersion = childVersion;
-      childTypeName = tTypeName;
-      childProduct = tProduct;
-      childVersion = tVersion;
-    }
+    //private static void Swap(ref string parentTypeName, ref string parentProduct, ref string parentVersion, ref string childTypeName, ref string childProduct, ref string childVersion)
+    //{
+    //  var tTypeName = parentTypeName;
+    //  var tProduct = parentProduct;
+    //  var tVersion = parentVersion;
+    //  parentTypeName = childTypeName;
+    //  parentProduct = childProduct;
+    //  parentVersion = childVersion;
+    //  childTypeName = tTypeName;
+    //  childProduct = tProduct;
+    //  childVersion = tVersion;
+    //}
 
     public List<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
     {
