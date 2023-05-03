@@ -3,7 +3,6 @@ using Loodsman;
 using System;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace LoodsmanCommon
@@ -14,14 +13,6 @@ namespace LoodsmanCommon
     protected ILoodsmanApplication _application;
     protected ILoodsmanProxy _proxy;
     protected ILoodsmanMeta _meta;
-
-    protected static ILoodsmanApplication GetLoodsmanApplication(INetPluginCall iNetPC)
-    {
-      var pUnk = Marshal.GetIUnknownForObject(iNetPC.PluginCall);
-      var guid = typeof(ILoodsmanApplication).GUID;
-      var hr = Marshal.QueryInterface(pUnk, ref guid, out var pI);
-      return (ILoodsmanApplication)Marshal.GetTypedObjectForIUnknown(pI, typeof(ILoodsmanApplication));
-    }
 
     public abstract void BindMenu(IMenuDefinition menu);
 
@@ -57,7 +48,7 @@ namespace LoodsmanCommon
     /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
     protected virtual void PluginInit(INetPluginCall iNetPC)
     {
-      _application = GetLoodsmanApplication(iNetPC);
+      _application = (ILoodsmanApplication)iNetPC.PluginCall;
       _appHandle = new IntPtr(_application.AppHandle);
       _meta = GetLoodsmanMeta(iNetPC);
       _proxy = GetLoodsmanProxy(iNetPC);
