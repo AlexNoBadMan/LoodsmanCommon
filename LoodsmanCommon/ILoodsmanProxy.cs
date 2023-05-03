@@ -597,7 +597,7 @@ namespace LoodsmanCommon
     {
       if (!filePath.Contains(_meta.CurrentUser.WorkDir))
       {
-        var newPath = $@"{_meta.CurrentUser.WorkDir}\{Path.GetFileName(filePath)}";
+        var newPath = Path.Combine(_meta.CurrentUser.WorkDir, Path.GetFileName(filePath));
         File.Copy(filePath, newPath, true);
         filePath = newPath;
       }
