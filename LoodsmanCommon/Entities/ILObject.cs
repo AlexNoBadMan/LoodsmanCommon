@@ -71,7 +71,7 @@ namespace LoodsmanCommon
        
         public DateTime Created => _created ??= InitCreationInfo().created;
 
-        public LObject(ILoodsmanProxy proxy, LType type, LStateInfo state)
+        internal LObject(ILoodsmanProxy proxy, LType type, LStateInfo state)
         {
             _proxy = proxy;
             Type = type;
