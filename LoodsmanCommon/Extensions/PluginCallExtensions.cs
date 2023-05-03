@@ -1,18 +1,14 @@
 ﻿using Ascon.Plm.DataPacket;
 using Ascon.Plm.Loodsman.PluginSDK;
 using Loodsman;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LoodsmanCommon.Extensions
 {
+  /// <summary> Расширения для интерфейса <see cref="IPluginCall"/>. /summary>
   public static class PluginCallExtensions
   {
-    /// <summary>  </summary>
+    /// <summary> Возвращает интерфейс предназначенный для .NET плагинов ЛОЦМАН:PLM. </summary>
     /// <returns> Возвращает новый экземпляр объекта <see cref="INetPluginCall"/>. </returns>
     public static INetPluginCall GetNetPluginCall(this IPluginCall pc) => new NetPuginCall(pc);
 
@@ -22,7 +18,7 @@ namespace LoodsmanCommon.Extensions
       {
         PluginCall = pluginCall;
       }
-
+      
       public IPluginCall PluginCall { get; }
 
       public DataTable GetDataTable(string methodName, params object[] arguments)
@@ -42,5 +38,4 @@ namespace LoodsmanCommon.Extensions
       }
     }
   }
-  
 }
