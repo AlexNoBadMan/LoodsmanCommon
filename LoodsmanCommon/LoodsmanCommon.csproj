@@ -97,7 +97,9 @@
     <Compile Include="Entities\Meta\LStateInfo.cs" />
     <Compile Include="Entities\Meta\LType.cs" />
     <Compile Include="Extensions\NetPluginCallExtensions.cs" />
+    <Compile Include="MetaBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProxyBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Loodsman">

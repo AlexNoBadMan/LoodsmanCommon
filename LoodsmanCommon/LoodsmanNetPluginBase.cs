@@ -57,14 +57,14 @@ namespace LoodsmanCommon
     /// <param name="iNetPC"> Интерфейс взаимодействия с плагином. </param>
     protected virtual ILoodsmanProxy GetLoodsmanProxy(INetPluginCall iNetPC)
     {
-      return _proxy ?? new LoodsmanProxy(iNetPC, _meta ??= GetLoodsmanMeta(iNetPC));
+      return ProxyBuilder.GetInstance(iNetPC);
     }
 
     /// <summary> Возвращает объект меты, имеет смысл переопределять в случае собственной реализации интерфейса. </summary>
     /// <param name="iNetPC"> Интерфейс взаимодействия с плагином. </param>
     protected virtual ILoodsmanMeta GetLoodsmanMeta(INetPluginCall iNetPC)
     {
-      return _meta ?? new LoodsmanMeta(iNetPC);
+      return MetaBuilder.GetInstance(iNetPC);
     }
 
     /// <summary> Вызывается при необходимости найти сборку. </summary>
