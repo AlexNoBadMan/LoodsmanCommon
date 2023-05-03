@@ -27,6 +27,7 @@ namespace LoodsmanCommon
     public virtual void PluginLoad()
     {
       AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+      CultureHelper.ApplyLoodsmanCulture();
     }
 
     public virtual void PluginUnload()

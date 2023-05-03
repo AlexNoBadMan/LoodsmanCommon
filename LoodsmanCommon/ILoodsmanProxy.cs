@@ -301,14 +301,6 @@ namespace LoodsmanCommon
     {
       INetPC = iNetPC;
       _application = (ILoodsmanApplication)INetPC.PluginCall;
-      var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-      culture.NumberFormat.NumberDecimalSeparator = ".";
-      culture.DateTimeFormat.DateSeparator = ".";
-      culture.DateTimeFormat.ShortDatePattern = "dd.MM.yyyy";
-      culture.DateTimeFormat.ShortTimePattern = "HH:mm";
-      culture.DateTimeFormat.LongDatePattern = "HH:mm:ss";
-      Thread.CurrentThread.CurrentCulture = culture;
-      Thread.CurrentThread.CurrentUICulture = culture;
       /*
       var userInfo = (DataSet)pluginCall.GetDataSet("GetInfoAboutCurrentUser", new object[] { });
       //CurrentUser = userInfo["_FULLNAME"] as string;
