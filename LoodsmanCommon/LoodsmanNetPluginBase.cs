@@ -43,10 +43,8 @@ namespace LoodsmanCommon
       // || (iNetPC.PluginCall.Selected.LockLevel == PDMObjects.PDMLockLevels.SelfLock && iNetPC.PluginCall.CheckOut != 0));
     }
 
-    /// <summary>
-    /// Инициализация свойств плагина, рекомендуется переопределить метод с вызовом base.
-    /// </summary>
-    /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
+    /// <summary> Инициализация свойств плагина, рекомендуется переопределить метод с вызовом base. </summary>
+    /// <param name="iNetPC"> Интерфейс взаимодействия с плагином. </param>
     protected virtual void PluginInit(INetPluginCall iNetPC)
     {
       _application = (ILoodsmanApplication)iNetPC.PluginCall;
@@ -55,30 +53,24 @@ namespace LoodsmanCommon
       _proxy = GetLoodsmanProxy(iNetPC);
     }
 
-    /// <summary>
-    /// Возвращает прокси объект, имеет смысл переопределять в случае собственной реализации интерфейса.
-    /// </summary>
-    /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
+    /// <summary> Возвращает прокси объект, имеет смысл переопределять в случае собственной реализации интерфейса. </summary>
+    /// <param name="iNetPC"> Интерфейс взаимодействия с плагином. </param>
     protected virtual ILoodsmanProxy GetLoodsmanProxy(INetPluginCall iNetPC)
     {
       return _proxy ?? new LoodsmanProxy(iNetPC, _meta ??= GetLoodsmanMeta(iNetPC));
     }
 
-    /// <summary>
-    /// Возвращает объект меты, имеет смысл переопределять в случае собственной реализации интерфейса.
-    /// </summary>
-    /// <param name="iNetPC">Интерфейс взаимодействия с плагином</param>
+    /// <summary> Возвращает объект меты, имеет смысл переопределять в случае собственной реализации интерфейса. </summary>
+    /// <param name="iNetPC"> Интерфейс взаимодействия с плагином. </param>
     protected virtual ILoodsmanMeta GetLoodsmanMeta(INetPluginCall iNetPC)
     {
       return _meta ?? new LoodsmanMeta(iNetPC);
     }
 
-    /// <summary>
-    /// Обработчик события загрузки необходимых сборок.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
-    /// <returns></returns>
+    /// <summary> Вызывается при необходимости найти сборку. </summary>
+    /// <param name="sender"> Источник события. </param>
+    /// <param name="args"> Параметры события. </param>
+    /// <returns> Найденную сборку или <c>null</c>. </returns>
     protected Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
     {
       try

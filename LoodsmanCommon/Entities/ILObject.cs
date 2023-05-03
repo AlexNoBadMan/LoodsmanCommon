@@ -27,8 +27,6 @@ namespace LoodsmanCommon
     private NamedEntityCollection<LAttribute> _attributes;
     private LStateInfo _state;
     private readonly ILoodsmanProxy _proxy;
-    private DateTime? _created;
-    private LUser _creator;
     private EntityCollection<LFile> _files;
     private CreationInfo _creationInfo;
 

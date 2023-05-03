@@ -14,16 +14,12 @@ namespace LoodsmanCommon
         pc.RunMethod("CGetTreeSelectedIDs") as string ?? string.Empty;
 
     /// <summary> Возвращает признак того, является ли пользователь, подключенный к текущей базе данных, администратором этой базы. </summary>
-    /// <returns>
-    /// <br/>true - пользователь является администратором.
-    /// <br/>false - пользователь не является администратором.
-    /// </returns>
+    /// <returns> true - пользователь является администратором, false - пользователь не является администратором. </returns>
     public static bool Native_IsAdmin(this INetPluginCall pc) =>
         pc.RunMethod("IsAdmin") as int? == 1;
 
 
-    /// <summary>
-    /// Возвращает случаи использования прокси, типа объекта и типа документа.
+    /// <summary> Возвращает случаи использования прокси, типа объекта и типа документа.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID] int - уникальный идентификатор случая использования;
@@ -41,17 +37,16 @@ namespace LoodsmanCommon
     /// <br/>[_NAME_OUTRANSLATOR] string - название выходного транслятора;
     /// <br/>[_ID_CONDITION] int - уникальный идентификатор условий преобразования.      
     /// </summary>
-    /// <param name="proxyId">Идентификатор прокси. Может быть передано значение 0, что означает «любое значение».</param>
-    /// <param name="typeId">Идентификатор типа объекта. Может быть передано значение 0, что означает «любое значение».</param>
-    /// <param name="documentId">Идентификатор типа документа. Может быть передано значение 0, что означает «любое значение».</param>
+    /// <param name="proxyId"> Идентификатор прокси. Может быть передано значение 0, что означает «любое значение». </param>
+    /// <param name="typeId"> Идентификатор типа объекта. Может быть передано значение 0, что означает «любое значение». </param>
+    /// <param name="documentId"> Идентификатор типа документа. Может быть передано значение 0, что означает «любое значение». </param>
     public static DataTable Native_GetProxyUseCases(this INetPluginCall pc, int proxyId = 0, int typeId = 0, int documentId = 0) =>
         pc.GetDataTable("GetProxyUseCases", proxyId, typeId, documentId);
 
 
     #region Справочная информация
 
-    /// <summary>
-    /// Возвращает полный список атрибутов базы данных.
+    /// <summary> Возвращает полный список атрибутов базы данных.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID] int - уникальный идентификатор атрибута;
@@ -69,12 +64,11 @@ namespace LoodsmanCommon
     /// <br/>[_ONLYLISTITEMS] int - атрибут может принимать значения только из списка (0 - Любое, 1 - Из списка);
     /// <br/>[_SYSTEM] int - признак того, что атрибут является служебным (0 - Обычный, 1 - Служебный).
     /// </summary>
-    /// <param name="mode">Режим возврата списка атрибутов.</param>
+    /// <param name="mode"> Режим возврата списка атрибутов. </param>
     public static DataTable Native_GetAttributeList(this INetPluginCall pc, GetAttributesMode mode = GetAttributesMode.All) =>
         pc.GetDataTable("GetAttributeList2", mode);
 
-    /// <summary>
-    /// Возвращает информацию о текущем пользователе.
+    /// <summary> Возвращает информацию о текущем пользователе.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_NAME] string - имя пользователя;
@@ -86,17 +80,14 @@ namespace LoodsmanCommon
     public static DataTable Native_GetInfoAboutCurrentUser(this INetPluginCall pc) =>
         pc.GetDataTable("GetInfoAboutCurrentUser");
 
-    /// <summary>
-    /// Возвращает информацию о типе.
-    /// </summary>
-    /// <param name="typeName">Название типа.</param>
-    /// <param name="mode">Режим вывода. В зависимости от его значения выдается соответствующая информация.</param>
-    /// <returns>Зависит от режима <see cref="GetInfoAboutTypeMode"/></returns>
+    /// <summary> Возвращает информацию о типе. </summary>
+    /// <param name="typeName"> Название типа. </param>
+    /// <param name="mode"> Режим вывода. В зависимости от его значения выдается соответствующая информация. </param>
+    /// <returns> Зависит от режима <see cref="GetInfoAboutTypeMode"/>. </returns>
     public static DataTable Native_GetInfoAboutType(this INetPluginCall pc, string typeName, GetInfoAboutTypeMode mode) =>
         pc.GetDataTable("GetInfoAboutType", typeName, (int)mode);
 
-    /// <summary>
-    /// Возвращает список возможных типов связей.
+    /// <summary> Возвращает список возможных типов связей.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID] int - уникальный идентификатор типа связи;
@@ -109,8 +100,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetLinkList(this INetPluginCall pc) =>
         pc.GetDataTable("GetLinkList");
 
-    /// <summary>
-    /// Возвращает список возможных типов связей с указанием связываемых типов.
+    /// <summary> Возвращает список возможных типов связей с указанием связываемых типов.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:      
     /// <br/>[_TYPE_ID_1] int - ID первого типа;
@@ -127,23 +117,19 @@ namespace LoodsmanCommon
     public static DataTable Native_GetLinkListEx(this INetPluginCall pc) =>
         pc.GetDataTable("GetLinkListEx");
 
-    /// <summary>
-    /// Возвращает список возможных единиц измерения для измеряемой сущности. 
+    /// <summary> Возвращает список возможных единиц измерения для измеряемой сущности. 
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_UNIT] string - уникальный идентификатор единицы измерения;
     /// <br/>[_NAME] string - название единицы измерения;
     /// <br/>[_BASICUNIT] int - признак базовой единицы измерения (1 - является базовой, 0 - не является базовой).
     /// </summary>
-    /// <param name="measureGuid">Идентификатор измеряемой сущности</param>
+    /// <param name="measureGuid"> Идентификатор измеряемой сущности. </param>
     public static DataTable Native_GetMUnitList(this INetPluginCall pc, string measureGuid) =>
         pc.GetDataTable("GetMUnitList", measureGuid);
 
-    /// <summary>
-    /// Возвращает список возможных состояний.
-    /// </summary>
-    /// <returns>
-    /// Возвращает набор данных с полями:
+    /// <summary> Возвращает список возможных состояний. </summary>
+    /// <returns> Набор данных с полями:
     /// <br/>[_ID] int - уникальный идентификатор состояния;
     /// <br/>[_NAME] string - название состояния;
     /// <br/>[_ICON] image - значок состояния.
@@ -151,8 +137,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetStateList(this INetPluginCall pc) =>
         pc.GetDataTable("GetStateList");
 
-    /// <summary>
-    /// ** Недокументированный метод.
+    /// <summary> ** Недокументированный метод.
     /// <br/>Возвращает измеряемые сущности. 
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
@@ -163,8 +148,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetFromBO_Nature(this INetPluginCall pc) =>
         pc.GetDataTable("GetFromBO_Nature");
 
-    /// <summary>
-    /// Возвращает список доступных типов, включая абстрактные.
+    /// <summary> Возвращает список доступных типов, включая абстрактные.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID] int - уникальный идентификатор типа;
@@ -187,8 +171,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetTypeListEx(this INetPluginCall pc) =>
         pc.GetDataTable("GetTypeListEx");
 
-    /// <summary>
-    /// Возвращает список всех пользователей текущей базы данных.
+    /// <summary> Возвращает список всех пользователей текущей базы данных.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID] int - идентификатор пользователя;
@@ -216,24 +199,19 @@ namespace LoodsmanCommon
         pc.GetDataTable("GetUserList");
 
     /// <inheritdoc cref="Native_GetUserList(INetPluginCall)"/>
-    /// <param name="userId">Идентификатор пользователя.</param>
+    /// <param name="userId"> Идентификатор пользователя. </param>
     public static DataTable Native_WFGetUserProperties(this INetPluginCall pc, int userId) =>
         pc.GetDataTable("WFGetUserProperties", userId);
 
-    ///// <summary>
-    ///// Метод возвращает структуру подразделений, должностей и пользователей в виде дерева.
-    ///// </summary>
-    ///// <param name="parentId">Идентификатор узла подразделения.</param>
-    ///// <param name="mode">Режим вывода.</param>
-    ///// <param name="signRoleId">Идентификатор параметра Характер работы.</param>
-    //public static DataTable Native_WFGetAddressBookTree(this INetPluginCall pc, int parentId, int mode, int signRoleId) => 
-    //    pc.GetDataTable("WFGetAddressBookTree", parentId, mode, signRoleId);
+    /// <summary> Метод возвращает структуру подразделений, должностей и пользователей в виде дерева. </summary>
+    /// <param name="parentId"> Идентификатор узла подразделения. </param>
+    /// <param name="mode"> Режим вывода. </param>
+    /// <param name="signRoleId"> Идентификатор параметра Характер работы. </param>
+    public static DataTable Native_WFGetAddressBookTree(this INetPluginCall pc, int parentId, int mode, int signRoleId) =>
+        pc.GetDataTable("WFGetAddressBookTree", parentId, mode, signRoleId);
 
-
-    /// <summary>
-    /// Метод возвращает структурный список подразделений, должностей и пользователей.
-    /// </summary>
-    /// <param name="mode">Режим вывода.</param>
+    /// <summary> Метод возвращает структурный список подразделений, должностей и пользователей. </summary>
+    /// <param name="mode"> Режим вывода. </param>
     public static DataTable Native_WFGetRoleTree(this INetPluginCall pc, GetRoleTreeMode mode) =>
         pc.GetDataTable("WFGetRoleTree", mode);
 
@@ -241,77 +219,55 @@ namespace LoodsmanCommon
 
     #region Редактирование объектов
 
-    ///// <summary>
-    ///// Приводит целочисленное значение к заданной единице измерения.
-    ///// </summary>
-    ///// <param name="value">Значение</param>
-    ///// <param name="measureGuid">Идентификатор исходной единицы измерения</param>
-    ///// <param name="destMeasureGuid">Идентификатор требуемой единицы измерения</param>
-    ///// <returns>Возвращает преобразованное значение.</returns>
-    //public static int Native_ConverseValue(this INetPluginCall pc, int value, string measureGuid, string destMeasureGuid)
-    //{
-    //    return (int)pc.RunMethod("ConverseValue", value, measureGuid, destMeasureGuid);
-    //}
-
-    /// <summary>
-    /// Приводит значение к заданной единице измерения.
-    /// </summary>
-    /// <param name="value">Значение</param>
-    /// <param name="sourceMeasureGuid">Идентификатор исходной единицы измерения</param>
-    /// <param name="destMeasureGuid">Идентификатор требуемой единицы измерения</param>
-    /// <returns>Возвращает преобразованное значение.</returns>
+    /// <summary> Приводит значение к заданной единице измерения. </summary>
+    /// <param name="value"> Значение</param>
+    /// <param name="sourceMeasureGuid"> Идентификатор исходной единицы измерения. </param>
+    /// <param name="destMeasureGuid"> Идентификатор требуемой единицы измерения. </param>
+    /// <returns> Возвращает преобразованное значение. </returns>
     public static double Native_ConverseValue(this INetPluginCall pc, double value, string sourceMeasureGuid, string destMeasureGuid) =>
         (double)pc.RunMethod("ConverseValue", value, sourceMeasureGuid, destMeasureGuid);
 
-    /// <summary>
-    /// Создает новый объект.
-    /// </summary>
+    /// <summary> Создает новый объект. </summary>
     /// <inheritdoc cref="Native_UpdateStateOnObject(INetPluginCall, string, string, string, string)"/>
-    /// <param name="isProject">Признак того, что объект будет являться проектом (true - будет проектом, false - не будет проектом).</param>
-    /// <returns>Возвращает идентификатор созданной версии.</returns>
+    /// <param name="isProject"> Признак того, что объект будет являться проектом (true - будет проектом, false - не будет проектом). </param>
+    /// <returns> Возвращает идентификатор созданной версии. </returns>
     public static int Native_NewObject(this INetPluginCall pc, string typeName, string stateName, string product, bool isProject = false) =>
         (int)pc.RunMethod("NewObject", typeName, stateName, product, isProject ? 1 : 0);
 
-    /// <summary>
-    /// Вставляет новое или существующее изделие в редактируемый объект.
-    /// </summary>
-    /// <param name="parentTypeName">Наименование типа объекта-родителя.</param>
-    /// <param name="parentProduct">Значение ключевого атрибута объекта-родителя.</param>
-    /// <param name="parentVersion">Номер версии объекта-родителя. Если равен #32, то будет осуществлена попытка создать объект типа <paramref name="parentTypeName"/> с ключевым атрибутом <paramref name="parentProduct"/>.</param>
-    /// <param name="linkType">Тип связи, которой нужно связать объекты.</param>
-    /// <param name="childTypeName">Наименование типа объекта-потомка.</param>
-    /// <param name="childProduct">Значение ключевого атрибута объекта-потомка.</param>
-    /// <param name="childVersion">Номер версии объекта-потомка. Если равен #32, то будет осуществлена попытка создать объект типа <paramref name="childTypeName"/> с ключевым атрибутом <paramref name="childProduct"/></param>
-    /// <param name="stateName">Состояние созданного объекта (имеет смысл только если <paramref name="parentVersion"/> или <paramref name="childVersion"/> равен #32).</param>
-    /// <param name="reuse">Устанавливает возможность повторного применения объекта. 
+    /// <summary> Вставляет новое или существующее изделие в редактируемый объект. </summary>
+    /// <param name="parentTypeName"> Наименование типа объекта-родителя. </param>
+    /// <param name="parentProduct"> Значение ключевого атрибута объекта-родителя. </param>
+    /// <param name="parentVersion"> Номер версии объекта-родителя. Если равен #32, то будет осуществлена попытка создать объект типа <paramref name="parentTypeName"/> с ключевым атрибутом <paramref name="parentProduct"/>. </param>
+    /// <param name="linkType"> Тип связи, которой нужно связать объекты. </param>
+    /// <param name="childTypeName"> Наименование типа объекта-потомка. </param>
+    /// <param name="childProduct"> Значение ключевого атрибута объекта-потомка. </param>
+    /// <param name="childVersion"> Номер версии объекта-потомка. Если равен #32, то будет осуществлена попытка создать объект типа <paramref name="childTypeName"/> с ключевым атрибутом <paramref name="childProduct"/>. </param>
+    /// <param name="stateName"> Состояние созданного объекта (имеет смысл только если <paramref name="parentVersion"/> или <paramref name="childVersion"/> равен #32). </param>
+    /// <param name="reuse"> Устанавливает возможность повторного применения объекта. 
     /// <br/>Если значение - true, то независимо от существования в базе данных такой пары связанных объектов будет создаваться еще один экземпляр связи.
     /// <br/>Если значение - false, то при существовании в базе данных такой пары связанных объектов новый экземпляр связи создаваться не будет, при этом код возврата inReturnCode будет иметь значение, отличное от нуля.
     /// </param>
-    /// <returns>Возвращает идентификатор созданной связи.</returns>
+    /// <returns> Возвращает идентификатор созданной связи. </returns>
     public static int Native_InsertObject(this INetPluginCall pc, string parentTypeName, string parentProduct, string parentVersion, string linkType, string childTypeName, string childProduct, string childVersion, string stateName, bool reuse) =>
         (int)pc.RunMethod("InsertObject", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, linkType, stateName, reuse);
 
-    /// <summary>
-    /// Добавляет связь между объектами.
-    /// </summary>
-    /// <param name="parentId">Идентификатор версии объекта-родителя.</param>
-    /// <param name="childId">Идентификатор версии объекта-потомка.</param>
+    /// <summary> Добавляет связь между объектами. </summary>
+    /// <param name="parentId"> Идентификатор версии объекта-родителя. </param>
+    /// <param name="childId"> Идентификатор версии объекта-потомка. </param>
     /// <inheritdoc cref="Native_UpLink(INetPluginCall, string, string, string, string, string, string, int, double, double, string, bool, string)"/>
     public static int Native_NewLink(this INetPluginCall pc, int parentId, string parentTypeName, string parentProduct, string parentVersion, int childId, string childTypeName, string childProduct, string childVersion, double minQuantity, double maxQuantity, string unitId, string linkType) =>
         (int)pc.RunMethod("NewLink", parentId, parentTypeName, parentProduct, parentVersion, childId, childTypeName, childProduct, childVersion, minQuantity, maxQuantity, unitId, linkType);
 
-    /// <summary>
-    /// Добавляет, удаляет, обновляет связь между объектами.
-    /// </summary>
-    /// <param name="parentVersion">Номер версии объекта-родителя.</param>
-    /// <param name="childVersion">Номер версии объекта-потомка.</param>
-    /// <param name="linkId">Идентификатор связи. </param>
-    /// <param name="minQuantity">Нижняя граница количества</param>
-    /// <param name="maxQuantity">Верхняя граница количества.</param>
-    /// <param name="unitId">Уникальный идентификатор единицы измерения.</param>
-    /// <param name="toDel">Признак удаления экземпляра связи (true - удалять, false - не удалять)</param>
+    /// <summary> Добавляет, удаляет, обновляет связь между объектами. </summary>
+    /// <param name="parentVersion"> Номер версии объекта-родителя. </param>
+    /// <param name="childVersion"> Номер версии объекта-потомка. </param>
+    /// <param name="linkId"> Идентификатор связи. </param>
+    /// <param name="minQuantity"> Нижняя граница количества. </param>
+    /// <param name="maxQuantity"> Верхняя граница количества. </param>
+    /// <param name="unitId"> Уникальный идентификатор единицы измерения. </param>
+    /// <param name="toDel"> Признак удаления экземпляра связи (true - удалять, false - не удалять). </param>
     /// <inheritdoc cref="Native_InsertObject(INetPluginCall, string, string, string, string, string, string, string, string, bool)"/>
-    /// <returns>Возвращает идентификатор созданной связи.</returns>
+    /// <returns> Возвращает идентификатор созданной связи. </returns>
     /// <remarks>
     /// <br/>Метод работает следующим образом: 
     /// <br/>Если <paramref name="toDel"/>=true, то заданный экземпляр связи с идентификатором <paramref name="linkId"/> удаляется;
@@ -321,11 +277,9 @@ namespace LoodsmanCommon
     public static int Native_UpLink(this INetPluginCall pc, string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, int linkId, double minQuantity, double maxQuantity, string unitId, bool toDel, string linkType) =>
         (int)pc.RunMethod("UpLink", parentTypeName, parentProduct, parentVersion, childTypeName, childProduct, childVersion, linkId, minQuantity, maxQuantity, unitId, toDel, linkType);
 
-    /// <summary>
-    /// Изменяет состояние объекта.
-    /// </summary>
+    /// <summary> Изменяет состояние объекта. </summary>
     /// <inheritdoc cref="Native_KillVersion(INetPluginCall, string, string, string)"/>
-    /// <param name="stateName">Название состояния.</param>
+    /// <param name="stateName"> Название состояния. </param>
     public static void Native_UpdateStateOnObject(this INetPluginCall pc, string typeName, string product, string version, string stateName) =>
         pc.RunMethod("UpdateStateOnObject", typeName, product, version, stateName);
 
@@ -334,44 +288,36 @@ namespace LoodsmanCommon
     public static void Native_UpdateStateOnObject(this INetPluginCall pc, int objectId, string stateName) =>
         pc.RunMethod("UpdateStateOnObjectById", objectId, stateName);
 
-    /// <summary>
-    /// Переименовывает объект.
-    /// </summary>
+    /// <summary> Переименовывает объект. </summary>
     /// <inheritdoc cref="Native_KillVersion(INetPluginCall, string, string, string)"/>
-    /// <param name="newProduct">Новое значение ключевого атрибута.</param>
-    /// <returns>Возвращает значение нового ключевого атрибута объекта. В общем случае возвращаемое значение будет совпадать с <paramref name="newProduct"/>.
-    /// Однако, если типу <paramref name="typeName"/> сопоставлен бизнес-объект, то значение ключевого атрибута будет сформировано согласно установленному правилу и может отличаться от <paramref name="newProduct"/>.</returns>
+    /// <param name="newProduct"> Новое значение ключевого атрибута. </param>
+    /// <returns> Возвращает значение нового ключевого атрибута объекта. В общем случае возвращаемое значение будет совпадать с <paramref name="newProduct"/>. 
+    /// <br/>Однако, если типу <paramref name="typeName"/> сопоставлен бизнес-объект, то значение ключевого атрибута будет сформировано согласно установленному правилу и может отличаться от <paramref name="newProduct"/>. </returns>
     public static string Native_UpObject(this INetPluginCall pc, string typeName, string product, string newProduct) =>
         (string)pc.RunMethod("UpObject", typeName, product, newProduct);
 
-    /// <summary>
-    /// Устанавливает или снимает с объекта признак проекта.
-    /// </summary>
-    /// <param name="typeName">Название типа.</param>
-    /// <param name="product">Ключевой атрибут.</param>
-    /// <param name="isProject">Признак проекта (true - установить, false - снять).</param>
+    /// <summary> Устанавливает или снимает с объекта признак проекта. </summary>
+    /// <param name="typeName"> Название типа. </param>
+    /// <param name="product"> Ключевой атрибут. </param>
+    /// <param name="isProject"> Признак проекта (true - установить, false - снять). </param>
     public static void Native_IsProject(this INetPluginCall pc, string typeName, string product, bool isProject) =>
         pc.RunMethod("IsProject", typeName, product, isProject);
 
-    /// <summary>
-    /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.
-    /// </summary>
-    /// <param name="typeName">Название типа.</param>
-    /// <param name="product">Ключевой атрибут.</param>
-    /// <param name="version">Версия объекта.</param>
+    /// <summary> Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных. </summary>
+    /// <param name="typeName"> Название типа. </param>
+    /// <param name="product"> Ключевой атрибут. </param>
+    /// <param name="version"> Версия объекта. </param>
     public static void Native_KillVersion(this INetPluginCall pc, string typeName, string product, string version) =>
         pc.RunMethod("KillVersion", typeName, product, version);
 
-    /// <summary>
-    /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.        
-    /// </summary>
-    /// <param name="objectId">Идентификатор версии объекта.</param>
+    /// <summary> Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных. </summary>
+    /// <param name="objectId"> Идентификатор версии объекта. </param>
     public static void Native_KillVersion(this INetPluginCall pc, int objectId) =>
         pc.RunMethod("KillVersionById", objectId);
 
-    /// <summary>
-    /// Удаляет объекты.
+    /// <summary> Помечает объекты, находящиеся на изменении, как подлежащие удалению при возврате в базу данных.
     /// <br/>
+    /// <br/>** При наличии ошибок:
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
     /// <br/>[_ID_TYPE] int - идентификатор типа объекта;
@@ -380,18 +326,16 @@ namespace LoodsmanCommon
     /// <br/>[_ERR_CODE] int - код ошибки;
     /// <br/>[_ERR_MSG] string - сообщение об ошибке.
     /// </summary>
-    /// <param name="objectsIds">Список идентификаторов версий объектов.</param>
+    /// <param name="objectsIds"> Список идентификаторов версий объектов. </param>
     public static DataTable Native_KillVersions(this INetPluginCall pc, IEnumerable<int> objectsIds) =>
         pc.GetDataTable("KillVersions", string.Join(Constants.ID_SEPARATOR, objectsIds), 0);
 
-    /// <summary>
-    /// Добавляет, удаляет, обновляет значение атрибута.
-    /// </summary>
+    /// <summary> Добавляет, удаляет, обновляет значение атрибута. </summary>
     /// <inheritdoc cref="Native_KillVersion(INetPluginCall, int)"/>
-    /// <param name="attributeName">Название атрибута.</param>
-    /// <param name="attributeValue">Значение атрибута</param>
-    /// <param name="unitId">Уникальный идентификатор единицы измерения.</param>
-    /// <param name="toDel">Признак удаления атрибута (true - удалять, false - не удалять).</param>
+    /// <param name="attributeName"> Название атрибута. </param>
+    /// <param name="attributeValue"> Значение атрибута</param>
+    /// <param name="unitId"> Уникальный идентификатор единицы измерения. </param>
+    /// <param name="toDel"> Признак удаления атрибута (true - удалять, false - не удалять). </param>
     /// <remarks>
     /// Метод работает следующим образом:
     /// <br/>Если <paramref name="toDel"/> = true, то заданный атрибут удаляется (параметры <paramref name="attributeValue"/> и <paramref name="unitId"/> игнорируются);
@@ -402,15 +346,14 @@ namespace LoodsmanCommon
         pc.RunMethod("UpAttrValueById", objectId, attributeName, attributeValue, unitId, toDel);
 
     /// <inheritdoc cref="Native_UpAttrValueById(INetPluginCall, int, string, object, string, bool)"/>
-    /// <param name="linkId">Идентификатор связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
+    /// <param name="linkId"> Идентификатор связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})"> GetLinkedObjects</see>. </param>
     public static void Native_UpLinkAttrValue(this INetPluginCall pc, int linkId, string attributeName, object attributeValue, string unitId = null, bool toDel = false) =>
         pc.RunMethod("UpLinkAttrValue", string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, linkId, attributeName, attributeValue, unitId, toDel, string.Empty);
 
     #endregion
 
     #region Информация об объектах
-    /// <summary>
-    /// Возвращает список версий, привязанных соответствующей связью.
+    /// <summary> Возвращает список версий, привязанных соответствующей связью.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
@@ -426,13 +369,12 @@ namespace LoodsmanCommon
     /// <br/>[_LOCKED] int - уровень блокировки объекта (0 - не блокирован, 1 - блокирован текущим пользователем, 2 - блокирован другим пользователем).
     /// </summary>
     /// <inheritdoc cref="Native_KillVersion(INetPluginCall, int)"/>
-    /// <param name="linkType">Тип связи.</param>
-    /// <param name="inverse">Направление (true - обратное, false - прямое).</param>
+    /// <param name="linkType"> Тип связи. </param>
+    /// <param name="inverse"> Направление (true - обратное, false - прямое). </param>
     public static DataTable Native_GetLinkedFast(this INetPluginCall pc, int objectId, string linkType, bool inverse = false) =>
         pc.GetDataTable("GetLinkedFast", objectId, linkType, inverse);
 
-    /// <summary>
-    /// Возвращает список версий, привязанных соответствующей связью.
+    /// <summary> Возвращает список версий, привязанных соответствующей связью.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
@@ -449,8 +391,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetLinkedFast2(this INetPluginCall pc, int objectId, string linkType, bool inverse = false) =>
         pc.GetDataTable("GetLinkedFast2", objectId, linkType, inverse);
 
-    /// <summary>
-    /// Возвращает список связанных объектов для отображения в дереве.
+    /// <summary> Возвращает список связанных объектов для отображения в дереве.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
@@ -465,8 +406,8 @@ namespace LoodsmanCommon
     /// <br/>[_LOCKED] int - уровень блокировки объекта (0 - не блокирован, 1 - блокирован текущим пользователем, 2 - блокирован другим пользователем).
     /// </summary>
     /// <inheritdoc cref="Native_KillVersion(INetPluginCall, string, string, string)"/>
-    /// <param name="linkTypeNames">Список связей.</param>
-    /// <param name="withAttributes">Возвращать или не возвращать атрибуты.</param>
+    /// <param name="linkTypeNames"> Список связей. </param>
+    /// <param name="withAttributes"> Возвращать или не возвращать атрибуты. </param>
     public static DataTable Native_GetTree(this INetPluginCall pc, string typeName, string product, string version, IEnumerable<string> linkTypeNames, bool withAttributes = false) =>
         pc.GetDataTable("GetTree", typeName, product, version, 0, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), withAttributes);
 
@@ -475,8 +416,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetTree(this INetPluginCall pc, int objectId, IEnumerable<string> linkTypeNames, bool withAttributes = false) =>
         pc.GetDataTable("GetTree", string.Empty, string.Empty, string.Empty, objectId, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), withAttributes);
 
-    /// <summary>
-    /// Возвращает список связанных объектов для отображения в дереве.
+    /// <summary> Возвращает список связанных объектов для отображения в дереве.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
@@ -493,8 +433,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetTree2(this INetPluginCall pc, int objectId, IEnumerable<string> linkTypeNames, bool withAttributes = false) =>
         pc.GetDataTable("GetTree2", objectId, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), withAttributes ? 1 : 0);
 
-    /// <summary>
-    /// Возвращает информацию о связанных объектах для группы объектов.
+    /// <summary> Возвращает информацию о связанных объектах для группы объектов.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
@@ -511,8 +450,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetLObjs(this INetPluginCall pc, int objectId, bool inverse = false) =>
         pc.GetDataTable("GetLObjs", objectId, inverse);
 
-    /// <summary>
-    /// Возвращает список связанных объектов.
+    /// <summary> Возвращает список связанных объектов.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
@@ -530,18 +468,17 @@ namespace LoodsmanCommon
     /// </summary>
     /// <inheritdoc cref="Native_KillVersion(INetPluginCall, string, string, string)"/>
     /// <inheritdoc cref="Native_GetLObjs(INetPluginCall, int, bool)" path="param"/>
-    /// <param name="fullLink">Признак полной разузловки.</param>
-    /// <param name="groupByProduct">Признак группировки по изделиям (для случая полной разузловки), если true дополнительно возвращается поле [_ASSEMBLY] string.</param>
+    /// <param name="fullLink"> Признак полной разузловки. </param>
+    /// <param name="groupByProduct"> Признак группировки по изделиям (для случая полной разузловки), если true дополнительно возвращается поле [_ASSEMBLY] string. </param>
     public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, string typeName, string product, string version, string linkType, bool inverse, bool fullLink, bool groupByProduct) =>
         pc.GetDataTable("GetLinkedObjects", typeName, product, version, linkType, inverse, fullLink, groupByProduct, false);
 
-    /// <param name="linkTypeNames">Список связей.</param>
+    /// <param name="linkTypeNames"> Список связей. </param>
     /// <inheritdoc cref="Native_GetLinkedObjects(INetPluginCall, string, string, string, string, bool, bool, bool)"/>        
     public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, string typeName, string product, string version, IEnumerable<string> linkTypeNames) =>
         pc.GetDataTable("GetLinkedObjects2", typeName, product, version, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), false, false, false, true);
 
-    /// <summary>
-    /// Возвращает список связанных объектов
+    /// <summary> Возвращает список связанных объектов
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
@@ -560,13 +497,12 @@ namespace LoodsmanCommon
     public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, int objectId, string linkType, bool inverse, bool fullLink, bool groupByProduct) =>
         pc.GetDataTable("GetLinkedObjects2", objectId, linkType, inverse, fullLink, groupByProduct, false);
 
-    /// <param name="linkTypeNames">Список связей.</param>
+    /// <param name="linkTypeNames"> Список связей. </param>
     /// <inheritdoc cref="Native_GetLinkedObjects(INetPluginCall, int, string, bool, bool, bool)"/>        
     public static DataTable Native_GetLinkedObjects(this INetPluginCall pc, int objectId, IEnumerable<string> linkTypeNames) =>
         pc.GetDataTable("GetLinkedObjects2", objectId, string.Join(Constants.LINK_SEPARATOR, linkTypeNames), false, false, false, true);
 
-    /// <summary>
-    /// Возвращает информацию о связанных объектах для группы объектов.
+    /// <summary> Возвращает информацию о связанных объектах для группы объектов.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_LINK] int - числовой идентификатор связи;
@@ -583,27 +519,24 @@ namespace LoodsmanCommon
     /// <br/>[_ACCESSLEVEL] int - уровень доступа пользователя, подключившегося к связанному объекту;
     /// <br/>[_ID_LOCK] int - идентификатор рабочей области, блокирующей связанный объект.
     /// </summary>
-    /// <param name="linkTypeIds">Список идентификаторов связей.</param>
-    /// <param name="inverse">Направление (true - обратное, false - прямое).</param>
+    /// <param name="linkTypeIds"> Список идентификаторов связей. </param>
+    /// <param name="inverse"> Направление (true - обратное, false - прямое). </param>
     /// <inheritdoc cref="Native_KillVersions(INetPluginCall, IEnumerable{int})"/>
     public static DataTable Native_GetLinkedObjectsForObjects(this INetPluginCall pc, IEnumerable<int> objectsIds, IEnumerable<int> linkTypeIds, bool inverse = false) =>
         pc.GetDataTable("GetLinkedObjectsForObjects", string.Join(Constants.ID_SEPARATOR, objectsIds), string.Join(Constants.ID_SEPARATOR, linkTypeIds), inverse);
 
-    /// <summary>
-    /// Возвращает информацию об экземпляре связи.
-    /// </summary>
-    /// <param name="linkId">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
-    /// <param name="mode">Режим вывода. В зависимости от его значения выдается соответствующая информация.</param>
-    /// <returns>Зависит от режима <see cref="GetInfoAboutLinkMode"/></returns>
+    /// <summary> Возвращает информацию об экземпляре связи. </summary>
+    /// <param name="linkId"> Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>. </param>
+    /// <param name="mode"> Режим вывода. В зависимости от его значения выдается соответствующая информация. </param>
+    /// <returns> Зависит от режима <see cref="GetInfoAboutLinkMode"/>. </returns>
     public static DataTable Native_GetInfoAboutLink(this INetPluginCall pc, int linkId, GetInfoAboutLinkMode mode) =>
         pc.GetDataTable("GetInfoAboutLink", linkId, (int)mode);
 
-    /// <summary>
-    /// Возвращает информацию о версии объекта.
+    /// <summary> Возвращает информацию о версии объекта.
     /// </summary>
     /// <inheritdoc cref="Native_KillVersion(INetPluginCall, int)"/>
-    /// <param name="mode">Режим вывода. В зависимости от его значения выдается соответствующая информация.</param>
-    /// <returns>Зависит от режима <see cref="GetInfoAboutVersionMode"/></returns>
+    /// <param name="mode"> Режим вывода. В зависимости от его значения выдается соответствующая информация. </param>
+    /// <returns> Зависит от режима <see cref="GetInfoAboutVersionMode"/>. </returns>
     public static DataTable Native_GetInfoAboutVersion(this INetPluginCall pc, int objectId, GetInfoAboutVersionMode mode) =>
         pc.GetDataTable("GetInfoAboutVersion", string.Empty, string.Empty, string.Empty, objectId, (int)mode);
 
@@ -612,8 +545,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetInfoAboutVersion(this INetPluginCall pc, string typeName, string product, string version, GetInfoAboutVersionMode mode) =>
         pc.GetDataTable("GetInfoAboutVersion", typeName, product, version, 0, (int)mode);
 
-    /// <summary>
-    /// Возвращает свойства объектов.
+    /// <summary> Возвращает свойства объектов.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
@@ -629,13 +561,10 @@ namespace LoodsmanCommon
     public static DataTable Native_GetPropObjects(this INetPluginCall pc, IEnumerable<int> objectsIds) =>
         pc.GetDataTable("GetPropObjects", string.Join(Constants.ID_SEPARATOR, objectsIds), 0);
 
-    /// <summary>
-    /// Возвращает все версии заданного объекта или «похожего» объекта, если в базе данных установлена соответствующая настройка.
-    /// </summary>
-    /// <param name="typeName">Название типа.</param>
-    /// <param name="product">Ключевой атрибут.</param>
-    /// <returns>
-    /// Возвращает набор данных с полями:
+    /// <summary> Возвращает все версии заданного объекта или «похожего» объекта, если в базе данных установлена соответствующая настройка. </summary>
+    /// <param name="typeName"> Название типа. </param>
+    /// <param name="product"> Ключевой атрибут. </param>
+    /// <returns> Набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
     /// <br/>[_PRODUCT] string - ключевой атрибут объекта (если найдены «похожие» объекты, то содержится ключевой атрибут «похожего» объекта);
     /// <br/>[_VERSION] string - номер версии объекта;
@@ -649,8 +578,7 @@ namespace LoodsmanCommon
     public static DataTable Native_CheckUniqueName(this INetPluginCall pc, string typeName, string product) =>
         pc.GetDataTable("CheckUniqueName", typeName, product);
 
-    /// <summary>
-    /// **Недокументированный метод.
+    /// <summary> **Недокументированный метод.
     /// <br/>** Для создания бизнес объекта необходимо чтобы product был в формате (***BOSimple...).
     /// <br/>Проверка на существование бизнес объекта в базе Лоцман.
     /// <br/>
@@ -681,13 +609,12 @@ namespace LoodsmanCommon
     /// <br/>  &lt;/Attributes&gt;
     /// <br/>&lt;/PreviewBoObjectResult&gt; 
     /// </summary>
-    /// <param name="typeName">Название типа.</param>
-    /// <param name="uniqueId">Ключевой атрибут формата (***BOSimple...).</param>
+    /// <param name="typeName"> Название типа. </param>
+    /// <param name="uniqueId"> Ключевой атрибут формата (***BOSimple...). </param>
     public static string Native_PreviewBoObject(this INetPluginCall pc, string typeName, string uniqueId) =>
         (string)pc.RunMethod("PreviewBoObject", typeName, uniqueId);
 
-    /// <summary>
-    /// Возвращает список объектов, заблокированных в текущем чекауте.
+    /// <summary> Возвращает список объектов, заблокированных в текущем чекауте.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии.
@@ -695,8 +622,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetLockedObjects(this INetPluginCall pc) =>
         pc.GetDataTable("GetLockedObjects", 0);
 
-    /// <summary>
-    /// Возвращает значения атрибутов для списка объектов.
+    /// <summary> Возвращает значения атрибутов для списка объектов.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - идентификатор объекта;
@@ -706,7 +632,7 @@ namespace LoodsmanCommon
     /// <br/>[_ID_UINT] string - идентификатор единицы измерения в справочнике единиц измерения;
     /// <br/>[_UINT] string - название единицы измерения.
     /// </summary>
-    /// <param name="attributesIds">Список идентификаторов атрибутов.</param>
+    /// <param name="attributesIds"> Список идентификаторов атрибутов. </param>
     /// <inheritdoc cref="Native_KillVersions(INetPluginCall, IEnumerable{int})"/>
     public static DataTable Native_GetAttributesValues(this INetPluginCall pc, IEnumerable<int> objectsIds, IEnumerable<int> attributesIds) =>
         pc.GetDataTable("GetAttributesValues2", string.Join(Constants.ID_SEPARATOR, objectsIds), string.Join(Constants.ID_SEPARATOR, attributesIds));
@@ -715,8 +641,7 @@ namespace LoodsmanCommon
 
     #region Связанные объекты
 
-    /// <summary>
-    /// Возвращает список связанных объектов и их файлов.
+    /// <summary> Возвращает список связанных объектов и их файлов.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
@@ -738,11 +663,11 @@ namespace LoodsmanCommon
     /// <br/>[_CRC] long - контрольная сумма содержимого файла;
     /// <br/>[_MODIFIED] datetime - дата последнего изменения файла.
     /// </summary>
-    /// <param name="typeName">Название типа.</param>
-    /// <param name="product">Ключевой атрибут.</param>
-    /// <param name="version">Версия объекта.</param>
-    /// <param name="linkType">Тип связи.</param>
-    /// <param name="fullLink">Признак полной разузловки.</param>
+    /// <param name="typeName"> Название типа. </param>
+    /// <param name="product"> Ключевой атрибут. </param>
+    /// <param name="version"> Версия объекта. </param>
+    /// <param name="linkType"> Тип связи. </param>
+    /// <param name="fullLink"> Признак полной разузловки. </param>
     /// <remarks>
     /// <br/>Записи приходят в виде:
     /// <br/>Документ1
@@ -761,24 +686,23 @@ namespace LoodsmanCommon
 
 
     /// <inheritdoc cref="GetInfoAboutVersionMode.Mode2"/>
-    /// <param name="pc"></param>
-    /// <param name="linkId">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
-    /// <returns>Возвращает значения атрибутов связи для данного экземпляра связи. Метод не возвращает служебные атрибуты связей. Для их получения воспользуйтесь методом <see cref="Native_GetLinkAttributes2(INetPluginCall, int, GetAttributesMode)">GetLinkAttributes2</see>.</returns>
+    /// <param name="pc"> </param>
+    /// <param name="linkId"> Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>. </param>
+    /// <returns>Возвращает значения атрибутов связи для данного экземпляра связи. Метод не возвращает служебные атрибуты связей. Для их получения воспользуйтесь методом <see cref="Native_GetLinkAttributes2(INetPluginCall, int, GetAttributesMode)">GetLinkAttributes2</see>. </returns>
     public static DataTable Native_GetLinkAttributes(this INetPluginCall pc, int linkId) =>
         pc.GetDataTable("GetLinkAttributes", linkId);
 
     /// <inheritdoc cref="GetInfoAboutVersionMode.Mode3"/>
     /// <inheritdoc cref="Native_GetAttributeList(INetPluginCall, GetAttributesMode)"/>
-    /// <param name="linkId">Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>.</param>
-    /// <returns>Возвращает значения атрибутов связи для данного экземпляра связи, включая служебные.</returns>
+    /// <param name="linkId"> Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>. </param>
+    /// <returns> Возвращает значения атрибутов связи для данного экземпляра связи, включая служебные. </returns>
     public static DataTable Native_GetLinkAttributes2(this INetPluginCall pc, int linkId, GetAttributesMode mode) =>
         pc.GetDataTable("GetLinkAttributes2", linkId, mode);
     #endregion
 
     #region Работа с файлами
 
-    /// <summary>
-    /// Возвращает все версии файлов с указанным именем (включая новые, измененные и удаленные) для всех пользователей базы данных.  
+    /// <summary> Возвращает все версии файлов с указанным именем (включая новые, измененные и удаленные) для всех пользователей базы данных.  
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_FILE] integer - идентификатор файла;
@@ -799,8 +723,8 @@ namespace LoodsmanCommon
     /// <br/>[_USERNAME] string - имя пользователя;
     /// <br/>[_FULLNAME] string - полное имя пользователя.
     /// </summary>
-    /// <param name="fileName">Название файла. Может быть получено методами <see cref="Native_GetInfoAboutVersion(INetPluginCall, int, GetInfoAboutVersionMode)">GetInfoAboutVersion</see> (режим <see cref="GetInfoAboutVersionMode.Mode7">режим 7</see>), <see cref="Native_GetLinkedObjectsAndFiles(INetPluginCall, string, string, string, string, bool)">GetLinkedObjectsAndFiles</see>.</param>
-    /// <param name="filePath">Путь к файлу относительно диска из настройки «Буква рабочего диска». Может быть получено методами <see cref="Native_GetInfoAboutVersion(INetPluginCall, int, GetInfoAboutVersionMode)">GetInfoAboutVersion</see> (режим <see cref="GetInfoAboutVersionMode.Mode7">режим 7</see>), <see cref="Native_GetLinkedObjectsAndFiles(INetPluginCall, string, string, string, string, bool)">GetLinkedObjectsAndFiles</see>.</param>
+    /// <param name="fileName"> Название файла. Может быть получено методами <see cref="Native_GetInfoAboutVersion(INetPluginCall, int, GetInfoAboutVersionMode)">GetInfoAboutVersion</see> (режим <see cref="GetInfoAboutVersionMode.Mode7">режим 7</see>), <see cref="Native_GetLinkedObjectsAndFiles(INetPluginCall, string, string, string, string, bool)">GetLinkedObjectsAndFiles</see>. </param>
+    /// <param name="filePath"> Путь к файлу относительно диска из настройки «Буква рабочего диска». Может быть получено методами <see cref="Native_GetInfoAboutVersion(INetPluginCall, int, GetInfoAboutVersionMode)">GetInfoAboutVersion</see> (режим <see cref="GetInfoAboutVersionMode.Mode7">режим 7</see>), <see cref="Native_GetLinkedObjectsAndFiles(INetPluginCall, string, string, string, string, bool)">GetLinkedObjectsAndFiles</see>. </param>
     /// <remarks>
     /// <br/>
     /// <br/>Название и путь файла, могут быть получены методами:
@@ -809,24 +733,19 @@ namespace LoodsmanCommon
     public static DataTable Native_CheckFileNameEx(this INetPluginCall pc, string fileName, string filePath) =>
         pc.GetDataTable("CheckFileNameEx", fileName, filePath);
 
-    /// <summary>
-    /// Извлекает файл из базы данных (для просмотра).
-    /// </summary>
-    /// <returns>
-    /// Возвращает полное имя файла с путем. Например: result='\\Server\DOMEN#USER\Temp\FileName.ext'.
-    /// </returns>
+    /// <summary> Извлекает файл из базы данных (для просмотра). </summary>
+    /// <returns> Возвращает полное имя файла с путем. Например: result='\\Server\DOMEN#USER\Temp\FileName.ext'. </returns>
     /// <inheritdoc cref="Native_GetFile(INetPluginCall, string, string, string, string, string)"/>
-    /// <param name="restoreFullFilePath">Файл копируется в зарезервированную временную папку пользователя. (true - с восстановлением относительного пути к файлу, false - в корень)</param>
+    /// <param name="restoreFullFilePath"> Файл копируется в зарезервированную временную папку пользователя. (true - с восстановлением относительного пути к файлу, false - в корень). </param>
     public static string Native_ExtractFile(this INetPluginCall pc, string typeName, string product, string version, string fileName, string filePath, bool restoreFullFilePath = false) =>
         pc.RunMethod("ExtractFile", typeName, product, version, 0, fileName, filePath, restoreFullFilePath ? 1 : 0) as string;
 
     /// <inheritdoc cref="Native_ExtractFile(INetPluginCall, string, string, string, string, string, bool)"/>
-    /// <param name="documentId">Идентификатор версии документа.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
     public static string Native_ExtractFile(this INetPluginCall pc, int documentId, string fileName, string filePath, bool restoreFullFilePath = false) =>
         pc.RunMethod("ExtractFile", string.Empty, string.Empty, string.Empty, documentId, fileName, filePath, restoreFullFilePath ? 1 : 0) as string;
 
-    /// <summary>
-    /// Возвращает информацию о файле.
+    /// <summary> Возвращает информацию о файле.
     /// <br/> 
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_VERSION] int - уникальный идентификатор версии;
@@ -846,8 +765,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetInfoAboutFile(this INetPluginCall pc, string fileName, string filePath = "") =>
         pc.GetDataTable("GetInfoAboutFile", fileName, filePath);
 
-    /// <summary>
-    /// Возвращает информацию о файлах, связанных с объектами.
+    /// <summary> Возвращает информацию о файлах, связанных с объектами.
     /// <br/> 
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_DOCUMENT] int - идентификатор объекта (документа, т. к. в ЛОЦМАН:PLM файлы могут быть связаны только с документам);
@@ -860,12 +778,11 @@ namespace LoodsmanCommon
     /// <br/>[_CRC] long - контрольная сумма содержимого файла на момент последнего сохранения в рабочем проекте;
     /// <br/>[_MODIFIED] datetime - дата последнего изменения файла (если метод вызывается в контексте рабочего проекта, в котором файл выгружался на рабочий диск, то возвращается дата последнего изменения файла на рабочем диске, в противном случае - дата последнего изменения файла на момент последнего сохранения в рабочем проекте).
     /// </summary>
-    /// <param name="documentsIds">Список идентификаторов документов.</param>
+    /// <param name="documentsIds"> Список идентификаторов документов. </param>
     public static DataTable Native_GetInfoAboutVersionsFiles(this INetPluginCall pc, IEnumerable<int> documentsIds) =>
         pc.GetDataTable("GetInfoAboutVersionsFiles", string.Join(Constants.ID_SEPARATOR, documentsIds));
 
-    /// <summary>
-    /// Возвращает список одноименных файлов, которые были выгружены на рабочий диск текущим пользователем.
+    /// <summary> Возвращает список одноименных файлов, которые были выгружены на рабочий диск текущим пользователем.
     /// <br/>
     /// <br/>Возвращает набор данных с полями
     /// <br/>[_ID_FILE] integer - идентификатор файла;
@@ -888,8 +805,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetChangedFileVersions(this INetPluginCall pc, string fileName, string filePath = "") =>
         pc.GetDataTable("GetChangedFileVersions", fileName, filePath);
 
-    /// <summary>
-    /// Возвращает информацию о файле, который на момент вызова находится в рабочей папке текущего пользователя.
+    /// <summary> Возвращает информацию о файле, который на момент вызова находится в рабочей папке текущего пользователя.
     /// <br/>
     /// <br/>Возвращает набор данных с полями
     /// <br/>[_ID_FILE] integer - идентификатор файла;
@@ -908,8 +824,7 @@ namespace LoodsmanCommon
     public static DataTable Native_GetTempFile(this INetPluginCall pc, string fileName, string filePath = "") =>
         pc.GetDataTable("GetTempFile", fileName, filePath);
 
-    /// <summary>
-    /// Выгружает файл из системы ЛОЦМАН:PLM.
+    /// <summary> Выгружает файл из системы ЛОЦМАН:PLM.
     /// <br/>В режиме базы данных копирует файл в зарезервированную временную папку пользователя.
     /// <br/>В режиме редактирования объектов копирует файл на рабочий диск (настройка «Буква рабочего диска») пользователя.
     /// </summary>
@@ -923,33 +838,28 @@ namespace LoodsmanCommon
         pc.RunMethod("GetFile", typeName, product, version, fileName, filePath) as string;
 
     /// <inheritdoc cref="Native_GetFile(INetPluginCall, string, string, string, string, string)"/>
-    /// <param name="documentId">Идентификатор версии документа.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
     public static string Native_GetFile(this INetPluginCall pc, int documentId, string fileName, string filePath = "") =>
         pc.RunMethod("GetFileById", documentId, fileName, filePath) as string;
 
-    /// <summary>
-    /// Регистрирует в базе данных файл, находящийся на рабочем диске пользователя.
-    /// </summary>
+    /// <summary> Регистрирует в базе данных файл, находящийся на рабочем диске пользователя. </summary>
     /// <inheritdoc cref="Native_GetFile(INetPluginCall, string, string, string, string, string)"/>
     public static void Native_RegistrationOfFile(this INetPluginCall pc, string typeName, string product, string version, string fileName, string filePath = "") =>
         pc.RunMethod("RegistrationOfFile", typeName, product, version, 0, fileName, filePath);
 
-    /// <param name="documentId">Идентификатор версии документа.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
     /// <inheritdoc cref="Native_RegistrationOfFile(INetPluginCall, string, string, string, string, string)"/>
     public static void Native_RegistrationOfFile(this INetPluginCall pc, int documentId, string fileName, string filePath = "") =>
         pc.RunMethod("RegistrationOfFile", string.Empty, string.Empty, string.Empty, documentId, fileName, filePath);
 
-    /// <summary>
-    /// Переименовывает файл.
-    /// </summary>
-    /// <returns/>
-    /// <param name="newFileName">Новое название файла.</param>
-    /// <param name="newFilePath">Новый путь к файлу относительно диска из настройки «Буква рабочего диска».</param>
+    /// <summary> Переименовывает файл. </summary>
+    /// <param name="newFileName"> Новое название файла. </param>
+    /// <param name="newFilePath"> Новый путь к файлу относительно диска из настройки «Буква рабочего диска». </param>
     /// <inheritdoc cref="Native_GetFile(INetPluginCall, string, string, string, string, string)"/>
     public static void Native_RenameFile(this INetPluginCall pc, string typeName, string product, string version, string fileName, string filePath, string newFileName, string newFilePath) =>
         pc.RunMethod("RenameFile", typeName, product, version, fileName, filePath, newFileName, newFilePath);
 
-    /// <param name="documentId">Идентификатор версии документа.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
     /// <inheritdoc cref="Native_RenameFile(INetPluginCall, string, string, string, string, string, string, string)"/>
     public static void Native_RenameFile(this INetPluginCall pc, int documentId, string fileName, string filePath, string newFileName, string newFilePath) =>
         pc.RunMethod("RenameFileById", documentId, fileName, filePath, newFileName, newFilePath);
@@ -957,20 +867,15 @@ namespace LoodsmanCommon
     #endregion
 
     #region Отчёты
-    /// <summary>
-    /// Возвращает данные для формирования отчета.
-    /// </summary>
-    /// <param name="reportName">Название хранимой процедуры.</param>
-    /// <param name="objectsIds">Коллекция идентификаторов объектов.</param>
-    /// <param name="reportParams">Произвольный набор параметров. Применяется по усмотрению разработчика.</param>
-    /// <returns>
-    /// Возвращает набор данных с полями, определенными в соответствующей хранимой процедуре.
-    /// </returns>
+    /// <summary> Возвращает данные для формирования отчета. </summary>
+    /// <param name="reportName"> Название хранимой процедуры. </param>
+    /// <param name="objectsIds"> Коллекция идентификаторов объектов. </param>
+    /// <param name="reportParams"> Произвольный набор параметров. Применяется по усмотрению разработчика. </param>
+    /// <returns> Набор данных с полями, определенными в соответствующей хранимой процедуре. </returns>
     public static DataTable Native_GetReport(this INetPluginCall pc, string reportName, IEnumerable<int> objectsIds = null, string reportParams = null) =>
         pc.GetDataTable("GetReport", reportName, objectsIds, reportParams);
 
-    /// <summary>
-    /// Возвращает список отчетов и папок.
+    /// <summary> Возвращает список отчетов и папок.
     /// <br/>Параметры отчета можно получить с помощью метода <see cref="Native_GetParameterList(INetPluginCall, int)">GetParameterList</see>
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
@@ -994,12 +899,11 @@ namespace LoodsmanCommon
     /// <br/>0 - отчет не входит в список избранных отчетов текущего пользователя;
     /// <br/>1 - отчет входит в список избранных отчетов текущего пользователя.
     /// </summary>
-    /// <param name="folderId">Идентификатор папки. Если значение параметра равно -1, то возвращаются все отчеты и папки.</param>
+    /// <param name="folderId"> Идентификатор папки. Если значение параметра равно -1, то возвращаются все отчеты и папки. </param>
     public static DataTable Native_GetReportsAndFolders(this INetPluginCall pc, int folderId = -1) =>
         pc.GetDataTable("GetReportsAndFolders", folderId);
 
-    /// <summary>
-    /// Возвращает список параметров отчета.
+    /// <summary> Возвращает список параметров отчета.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_ID_PARAM] int - идентификатор параметра;
@@ -1010,7 +914,7 @@ namespace LoodsmanCommon
     /// <br/>[_MAX_VALUE] string - максимальное значение параметра;
     /// <br/>[_VALUE_LIST] text - список возможных значений параметра.
     /// </summary>
-    /// <param name="reportId">Идентификатор отчета.</param>
+    /// <param name="reportId"> Идентификатор отчета. </param>
     public static DataTable Native_GetParameterList(this INetPluginCall pc, int reportId) =>
         pc.GetDataTable("GetParameterList", reportId);
 
@@ -1018,31 +922,28 @@ namespace LoodsmanCommon
 
     #region Вторичное представление
 
-    /// <summary>
-    /// Удаляет вторичное представление документа.
+    /// <summary> Удаляет вторичное представление документа.
     /// <br/>
     /// <br/>Для ЛОЦМАН:PLM 2017 и более поздних версий системы этот метод устарел и оставлен только для совместимости с предыдущими версиями.
     /// <br/>В ЛОЦМАН:PLM 2017 и более поздних версиях метод удаляет все ревизии вторичного представления указанного документа. Чтобы удалить конкретную ревизию вторичного представления, воспользуйтесь методом <see cref="Native_DelSecondaryViewRevision(INetPluginCall, int, int)"/>.
     /// </summary>
-    /// <param name="documentId">Идентификатор версии документа.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
     public static void Native_DelSecondaryView(this INetPluginCall pc, int documentId) =>
         pc.RunMethod("DelSecondaryView", documentId);
 
-    /// <summary>
-    /// Удаляет аннотацию или ревизию вторичного представления документа.
+    /// <summary> Удаляет аннотацию или ревизию вторичного представления документа.
     /// <br/>
     /// <br/>Удаление аннотации возможно только в режиме базы данных.
     /// <br/>Удаление корневой ревизии вторичного представления возможно и в режиме базы данных, и в режиме изменения объектов.
     /// <br/>
     /// <br/>Идентификатор ревизии вторичного представления или аннотации. Может быть получен с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>
     /// </summary>
-    /// <param name="documentId">Идентификатор версии документа.</param>
-    /// <param name="revisionId">Идентификатор ревизии вторичного представления или аннотации.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
+    /// <param name="revisionId"> Идентификатор ревизии вторичного представления или аннотации. </param>
     public static void Native_DelSecondaryViewRevision(this INetPluginCall pc, int documentId, int revisionId) =>
         pc.RunMethod("DelSecondaryViewRevision", documentId, revisionId);
 
-    /// <summary>
-    /// Возвращает информацию о последней корневой ревизии вторичного представления для группы документов.
+    /// <summary> Возвращает информацию о последней корневой ревизии вторичного представления для группы документов.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
     /// <br/>[_REVISION_ID] int - идентификатор последней корневой ревизии вторичного представления;
@@ -1050,22 +951,17 @@ namespace LoodsmanCommon
     /// <br/>[_EXT] string - расширение файла последней корневой ревизии вторичного представления.
     /// <br/>
     /// </summary>
-    /// <param name="documentsIds">Идентификаторы версий документов.</param>
+    /// <param name="documentsIds"> Идентификаторы версий документов. </param>
     public static DataTable Native_GetInfoAboutSecondaryViews(this INetPluginCall pc, int[] documentsIds) =>
         pc.GetDataTable("GetInfoAboutSecondaryViews", documentsIds);
 
-    /// <summary>
-    /// Выгружает файл ревизии вторичного представления и возвращает сетевой путь к нему.
-    /// </summary>
-    /// <param name="revisionId">Идентификатор ревизии вторичного представления.</param>
-    /// <returns>
-    /// Возвращает сетевой путь к файлу вторичного представления.
-    /// </returns>
+    /// <summary> Выгружает файл ревизии вторичного представления и возвращает сетевой путь к нему. </summary>
+    /// <param name="revisionId"> Идентификатор ревизии вторичного представления. </param>
+    /// <returns> Возвращает сетевой путь к файлу вторичного представления. </returns>
     public static string Native_GetSecondaryViewRevisionFile(this INetPluginCall pc, int revisionId) =>
         pc.RunMethod("GetSecondaryViewRevisionFile", revisionId) as string;
 
-    /// <summary>
-    /// Возвращает дерево ревизий вторичного представления.
+    /// <summary> Возвращает дерево ревизий вторичного представления.
     /// <br/>
     /// <br/>Метод позволяет получать корневые и некорневые ревизии вторичного представления.
     /// <br/>Корневая ревизия создается при получении информации из программы-инструмента либо при вызове метода <see cref="Native_SaveSecondaryView(INetPluginCall, int, string)"/> и содержит только вторичное представление без аннотирования. 
@@ -1083,59 +979,54 @@ namespace LoodsmanCommon
     /// <br/>[_STATE] string - состояние объекта на момент создания ревизии вторичного представления;
     /// <br/>[_USERS_ANNOTATED_BY] string - список имен пользователей, аннотирующих в данный момент ревизию вторичного представления. Разделитель - символ с кодом «1».
     /// </summary>
-    /// <param name="documentId">Идентификатор версии документа.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
     public static DataTable Native_GetSecondaryViewRevisions(this INetPluginCall pc, int documentId) =>
         pc.GetDataTable("GetSecondaryViewRevisions", documentId);
 
-    /// <summary>
-    /// Возвращает состояние «флага» аннотирования текущим пользователем.
+    /// <summary> Возвращает состояние «флага» аннотирования текущим пользователем.
     /// <br/>
     /// <br/>Начиная с версии ЛОЦМАН:PLM 2017 допускается аннотирование документа несколькими пользователями одновременно. 
     /// <br/>Получить список пользователей, выполняющих в данный момент аннотирование документа, можно с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>.
     /// </summary>
-    /// <param name="documentId">Идентификатор версии документа.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
     public static bool Native_GetViewLock(this INetPluginCall pc, int documentId) =>
         pc.RunMethod("GetViewLock", documentId) as int? == 1;
 
-    /// <summary>
-    /// Сохраняет аннотацию документа.
+    /// <summary> Сохраняет аннотацию документа.
     /// <br/>
     /// <br/>Метод работает только в режиме базы данных. 
     /// <br/>Перед вызовом этого метода необходимо начать аннотирование вторичного представления с помощью метода <see cref="Native_SetViewLock(INetPluginCall, int, bool)"/>.
     /// <br/>
     /// <br/>Аннотация прикрепляется к корневой ревизии, последней на момент начала аннотирования.
     /// </summary>
-    /// <param name="documentId">Идентификатор версии документа.</param>
-    /// <param name="annotationPath">Сетевой путь к файлу аннотации, доступный серверу приложений.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
+    /// <param name="annotationPath"> Сетевой путь к файлу аннотации, доступный серверу приложений. </param>
     public static void Native_SaveAnnotationFile(this INetPluginCall pc, int documentId, string annotationPath) =>
         pc.RunMethod("SaveAnnotationFile", documentId, annotationPath);
 
-    /// <summary>
-    /// Сохраняет вторичное представление документа.
+    /// <summary> Сохраняет вторичное представление документа.
     /// <br/>
     /// <br/>Метод работает только в режиме изменения объектов. 
     /// <br/>Список ревизий можно получить с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>.
     /// <br/>
     /// <br/>Начиная с версии ЛОЦМАН:PLM 2017 каждый следующий вызов метода создает новую корневую ревизию вторичного представления. Предыдущие ревизии остаются доступными для просмотра и аннотирования.
     /// </summary>
-    /// <param name="documentId">Идентификатор версии документа.</param>
-    /// <param name="filePath">Сетевой путь к файлу вторичного представления, доступный серверу приложений.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
+    /// <param name="filePath"> Сетевой путь к файлу вторичного представления, доступный серверу приложений. </param>
     public static void Native_SaveSecondaryView(this INetPluginCall pc, int documentId, string filePath) =>
         pc.RunMethod("SaveSecondaryView", documentId, filePath);
 
-    /// <summary>
-    /// Указывает, что текущий пользователь начал или окончил аннотирование последней доступной корневой ревизии вторичного представления.
+    /// <summary> Указывает, что текущий пользователь начал или окончил аннотирование последней доступной корневой ревизии вторичного представления.
     /// <br/>
     /// <br/>Начиная с версии ЛОЦМАН:PLM 2017 допускается аннотирование документа несколькими пользователями одновременно. 
     /// <br/>Получить список пользователей, выполняющих в данный момент аннотирование документа, можно с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>.
     /// </summary>
-    /// <param name="documentId">Идентификатор версии документа.</param>
-    /// <param name="isLock">Флаг аннотирования. Установите в true, чтобы указать, что текущий пользователь начал аннотирование; false - что текущий пользователь окончил аннотирование.</param>
+    /// <param name="documentId"> Идентификатор версии документа. </param>
+    /// <param name="isLock"> Флаг аннотирования. Установите в true, чтобы указать, что текущий пользователь начал аннотирование; false - что текущий пользователь окончил аннотирование. </param>
     public static void Native_SetViewLock(this INetPluginCall pc, int documentId, bool isLock) =>
         pc.RunMethod("SetViewLock", documentId, isLock);
 
-    /// <summary>
-    /// Изменяет аннотацию документа.
+    /// <summary> Изменяет аннотацию документа.
     /// <br/>
     /// <br/>Метод работает только в режиме базы данных. 
     /// <br/>Метод изменяет существующую ревизию вторичного представления. Список ревизий можно получить с помощью метода <see cref="Native_GetSecondaryViewRevisions(INetPluginCall, int)"/>.
@@ -1143,67 +1034,50 @@ namespace LoodsmanCommon
     /// <br/>Изменять аннотацию может только тот пользователь, который ее создал.
     /// <br/>Изменять можно только аннотации (корневые ревизии изменять запрещено).
     /// </summary>
-    /// <param name="revisionId">Идентификатор ревизии вторичного представления (аннотации), содержимое которой требуется изменить.</param>
-    /// <param name="annotationPath">Сетевой путь к файлу аннотации, доступный серверу приложений.</param>
+    /// <param name="revisionId"> Идентификатор ревизии вторичного представления (аннотации), содержимое которой требуется изменить. </param>
+    /// <param name="annotationPath"> Сетевой путь к файлу аннотации, доступный серверу приложений. </param>
     public static void Native_UpdateAnnotationFile(this INetPluginCall pc, int revisionId, string annotationPath) =>
         pc.RunMethod("UpdateAnnotationFile", revisionId, annotationPath);
     #endregion
 
     #region CheckOut
 
-    /// <summary>
-    /// Берет объект на редактирование.
-    /// </summary>
+    /// <summary> Берет объект на редактирование. </summary>
     /// <inheritdoc cref="Native_KillVersion(INetPluginCall, string, string, string)"/>
-    /// <param name="mode">Определяет дополнительные опции при взятии объекта на изменение</param>
-    /// <returns>
-    /// Внутреннее название редактируемого объекта (название чекаута).
-    /// </returns>
+    /// <param name="mode"> Определяет дополнительные опции при взятии объекта на изменение. </param>
+    /// <returns> Внутреннее название редактируемого объекта (название чекаута). </returns>
     public static string Native_CheckOut(this INetPluginCall pc, string typeName, string product, string version, CheckOutMode mode = CheckOutMode.Default) =>
         pc.RunMethod("CheckOut", typeName, product, version, (int)mode) as string;
 
-    /// <summary>
-    /// Делает объект доступным для изменения только в рамках текущего чекаута (блокирует его).
-    /// </summary>
+    /// <summary> Делает объект доступным для изменения только в рамках текущего чекаута (блокирует его). </summary>
     /// <inheritdoc cref="Native_KillVersion(INetPluginCall, int)"/>
-    /// <param name="isRoot">Помещать или не помещать объект в качестве головного объекта чекаута.</param>
+    /// <param name="isRoot"> Помещать или не помещать объект в качестве головного объекта чекаута. </param>
     public static void Native_AddToCheckOut(this INetPluginCall pc, int objectId, bool isRoot = false) =>
         pc.RunMethod("AddToCheckOut", objectId, isRoot);
 
-    /// <summary>
-    /// Осуществляет подключение к редактируемому объекту (чекауту).
-    /// </summary>
-    /// <param name="checkOutName">Название чекаута.</param>
-    /// <param name="dBName">Название базы данных, к которой нужно подключиться.</param>
+    /// <summary> Осуществляет подключение к редактируемому объекту (чекауту). </summary>
+    /// <param name="checkOutName"> Название чекаута. </param>
+    /// <param name="dBName"> Название базы данных, к которой нужно подключиться. </param>
     public static void Native_ConnectToCheckOut(this INetPluginCall pc, string checkOutName, string dBName) =>
         pc.RunMethod("ConnectToCheckOut", checkOutName, dBName);
 
-    /// <summary>
-    /// Отключается от редактируемого объекта (чекаута).
-    /// </summary>
+    /// <summary> Отключается от редактируемого объекта (чекаута). </summary>
     /// <inheritdoc cref="Native_ConnectToCheckOut(INetPluginCall, string, string)"/>
     public static void Native_DisconnectCheckOut(this INetPluginCall pc, string checkOutName, string dBName) =>
         pc.RunMethod("DisconnectCheckOut", checkOutName, dBName);
 
-    /// <summary>
-    /// Возвращает измененный объект в базу данных.
+    /// <summary> Возвращает измененный объект в базу данных.
     /// <inheritdoc cref="Native_ConnectToCheckOut(INetPluginCall, string, string)"/>
     public static void Native_CheckIn(this INetPluginCall pc, string checkOutName, string dBName) =>
         pc.RunMethod("CheckIn", checkOutName, dBName);
 
-    /// <summary>
-    /// Сохраняет изменения в базе данных.
-    /// </summary>
+    /// <summary> Сохраняет изменения в базе данных. </summary>
     /// <inheritdoc cref="Native_ConnectToCheckOut(INetPluginCall, string, string)"/>
-    /// <remarks>
-    /// <br/>После выполнения этой операции все изменения, произведенные в чекауте, сохраняются в базе данных. Объект по-прежнему остается на изменении.
-    /// </remarks>
+    /// <remarks> <br/>После выполнения этой операции все изменения, произведенные в чекауте, сохраняются в базе данных. Объект по-прежнему остается на изменении. </remarks>
     public static void Native_SaveChanges(this INetPluginCall pc, string checkOutName, string dBName) =>
         pc.RunMethod("SaveChanges", checkOutName, dBName);
 
-    /// <summary>
-    /// Выполняет отказ от изменения объекта.
-    /// </summary>
+    /// <summary> Выполняет отказ от изменения объекта. </summary>
     /// <inheritdoc cref="Native_ConnectToCheckOut(INetPluginCall, string, string)"/>
     public static void Native_CancelCheckOut(this INetPluginCall pc, string checkOutName, string dBName) =>
         pc.RunMethod("CancelCheckOut", checkOutName, dBName);
