@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 
 namespace LoodsmanCommon
 {
-    public static class EnumerableExtensions
-    {
-        public static IReadOnlyList<T> ToReadOnlyList<T>(this IEnumerable<T> source) => new ReadOnlyCollection<T>(source.ToArray());
-    }
+  public static class EnumerableExtensions
+  {
+    public static IReadOnlyList<T> ToReadOnlyList<T>(this IEnumerable<T> source) => new ReadOnlyCollection<T>(source.ToArray());
+  }
 }

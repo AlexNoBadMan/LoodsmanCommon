@@ -25,7 +25,7 @@ namespace LoodsmanCommon.Extensions
       {
         var data = (byte[])RunMethod(methodName, arguments);
         var dataTable = new DataTable();
-        using (DataPacketReader reader = new DataPacketReader(data))
+        using (var reader = new DataPacketReader(data))
         {
           dataTable.Load(reader);
         }
