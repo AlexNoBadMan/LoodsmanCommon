@@ -6,81 +6,50 @@ using System.Linq;
 
 namespace LoodsmanCommon
 {
-  /// <summary>
-  /// Метаданные базы ЛОЦМАН:PLM.
-  /// </summary>
+  /// <summary> Метаданные базы ЛОЦМАН:PLM. </summary>
   public interface ILoodsmanMeta
   {
-    /// <summary>
-    /// Список типов.
-    /// </summary>
+    /// <summary> Возвращает список типов. </summary>
     NamedEntityCollection<LType> Types { get; }
 
-    /// <summary>
-    /// Список связей.
-    /// </summary>
+    /// <summary> Возвращает список связей. </summary>
     NamedEntityCollection<LLinkInfo> Links { get; }
 
-    /// <summary>
-    /// Список состояний.
-    /// </summary>
+    /// <summary> Возвращает список состояний. </summary>
     NamedEntityCollection<LStateInfo> States { get; }
 
-    /// <summary>
-    /// Список атрибутов.
-    /// </summary>
+    /// <summary> Возвращает список атрибутов. </summary>
     NamedEntityCollection<LAttributeInfo> Attributes { get; }
 
-    /// <summary>
-    /// Список содержащий случаи использования прокси, типа объекта и типа документа.
-    /// </summary>
+    /// <summary> Возвращает список содержащий случаи использования прокси, типа объекта и типа документа. </summary>
     IReadOnlyList<LProxyUseCase> ProxyUseCases { get; }
 
-    /// <summary>
-    /// Список содержащий информацию о связях между типами.
-    /// </summary>
+    /// <summary> Возвращает список содержащий информацию о связях между типами. </summary>
     IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes { get; }
 
-    /// <summary>
-    /// Список единиц измерения.
-    /// </summary>
+    /// <summary> Возвращает список единиц измерения. </summary>
     NamedEntityCollection<LMeasure> Measures { get; }
 
-    /// <summary>
-    /// Список пользователей. Ключом является свойство <see cref="INamedEntity.Name">Name</see>.
-    /// </summary>
+    /// <summary> Возвращает список пользователей. Ключом является свойство <see cref="INamedEntity.Name">Name</see>. </summary>
     NamedEntityCollection<LUser> Users { get; }
 
-    /// <summary>
-    /// Информация о текущем пользователе.
-    /// </summary>
+    /// <summary> Возвращает информацию о текущем пользователе. </summary>
     public LUser CurrentUser { get; }
 
-    /// <summary>
-    /// Список подразделений, должностей (не включает пользователей). Пользователей можно получить при помощи свойства <see cref="Users"/>.
-    /// </summary>
+    /// <summary> Возвращает список подразделений, должностей (не включает пользователей). Пользователей можно получить при помощи свойства <see cref="Users"/>. </summary>
     EntityCollection<LOrganisationUnit> OrganisationUnits { get; }
 
-    /// <summary>
-    /// Информация о текущей головной организационной единице (зависит от основной должности текущего пользователя). 
-    /// </summary>
-    /// <remarks>
-    /// Если текущему пользователю не назначена должность, то свойство вернёт первую в списке головную организационную единицу.
-    /// </remarks>
+    /// <summary> Возвращает информацию о текущей головной организационной единице (зависит от основной должности текущего пользователя). </summary>
+    /// <remarks> Если текущему пользователю не назначена должность, то свойство вернёт первую в списке головную организационную единицу. </remarks>
     LMainDepartment CurrentMainDepartment { get; }
 
-    /// <summary>
-    /// Получить случай использования прокси.
-    /// </summary>
+    /// <summary> Возвращает случай использования прокси. </summary>
     /// <param name="parentType"></param>
     /// <param name="childDocumentType"></param>
     /// <param name="extension">Расширение файла (наличие точки не обязательно).</param>
-    /// <returns>Возвращает случай использования прокси</returns>
     LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension);
 
-    /// <summary>
-    /// Очистить загруженные данные.
-    /// </summary>
+    /// <summary> Очистить загруженные данные. </summary>
     void Clear();
   }
 
