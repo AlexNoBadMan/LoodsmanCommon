@@ -31,7 +31,6 @@ namespace LoodsmanCommon.Demo
     {
       try
       {
-        _proxy.InitNetPluginCall(iNetPC);
         _proxy.SelectedObjectCheckOut();
         _proxy.KillVersion(_proxy.SelectedObject.Id);
         _proxy.CancelCheckOut();
@@ -47,7 +46,6 @@ namespace LoodsmanCommon.Demo
     {
       try
       {
-        _proxy.InitNetPluginCall(iNetPC);
         _proxy.CheckOut();
         _proxy.ConnectToCheckOut();
         var testObjectId = 1012;
@@ -66,7 +64,6 @@ namespace LoodsmanCommon.Demo
     {
       try
       {
-        _proxy.InitNetPluginCall(iNetPC);
         _proxy.CheckOut("Сборочная единица", "АГ52.289.047", "2");
         _proxy.ConnectToCheckOut();
         var testObjectId = 1012;
@@ -82,7 +79,6 @@ namespace LoodsmanCommon.Demo
 
     private void Command4(INetPluginCall iNetPC)
     {
-      _proxy.InitNetPluginCall(iNetPC);
       var massa = _meta.Measures["Масса"];
       var valueUnit = massa.Units.Values.FirstOrDefault(x => x.IsBase);
       var convertValueUnit = massa.Units["г"];
@@ -93,7 +89,6 @@ namespace LoodsmanCommon.Demo
 
     private void Command5(INetPluginCall iNetPC)
     {
-      _proxy.InitNetPluginCall(iNetPC);
       var mainDepartaments = _meta.OrganisationUnits.Values.Where(x => x.Kind == OrganisationUnitKind.MainDepartment).Cast<LMainDepartment>().OrderBy(x => x.Id).ToArray();
       var orgInfo = $"Головных орг. единиц: {mainDepartaments.Length}\n\n";
       for (var i = 0; i < mainDepartaments.Length; i++)

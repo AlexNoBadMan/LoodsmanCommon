@@ -1,4 +1,5 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
+using Loodsman;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,57 +11,29 @@ using System.Xml.Linq;
 
 namespace LoodsmanCommon
 {
-  /// <summary>
-  /// Прокси объект для удобного взаимодействия с ЛОЦМАН:PLM.
-  /// </summary>
+  /// <summary> Прокси объект для удобного взаимодействия с ЛОЦМАН:PLM. </summary>
   public interface ILoodsmanProxy
   {
-    /// <summary>
-    /// Интерфейс, передаваемый в подключаемые модули ЛОЦМАН:PLM.
-    /// </summary>
-    INetPluginCall INetPC { get; }
-
-    /// <summary>
-    /// Метаданные конфигурации базы Лоцман.
-    /// </summary>
+    /// <summary> Возвращает метаданные конфигурации базы Лоцман. </summary>
     ILoodsmanMeta Meta { get; }
 
-    /// <summary>
-    /// Выбранный объект в дереве Лоцман.
-    /// </summary>
+    /// <summary> Возвращает выбранный объект в дереве Лоцман. </summary>
     ILObject SelectedObject { get; }
 
-    /// <summary>
-    /// Выбранные объекты в дереве Лоцман.
-    /// </summary>
+    /// <summary> Возвращает выбранные объекты в дереве Лоцман. </summary>
     IEnumerable<ILObject> SelectedObjects { get; }
 
-    /// <summary>
-    /// Название подключенного чекаута.
-    /// </summary>
+    /// <summary> Возвращает название подключенного чекаута. </summary>
     string CheckOutName { get; }
 
-    /// <summary>
-    /// Инициализирует свойство INetPC.
-    /// </summary>
-    /// <remarks>
-    /// Примечание:
-    /// ** Небходимо использовать в начале метода обработчика команд!
-    /// </remarks>
-    void InitNetPluginCall(INetPluginCall iNetPC);
-
-    /// <summary>
-    /// Регистрирует в базе данных файл, находящийся на рабочем диске пользователя.
-    /// </summary>
+    /// <summary> Регистрирует в базе данных файл, находящийся на рабочем диске пользователя. </summary>
     /// <param name="typeName">Название типа создаваемого объекта</param>
     /// <param name="product">Ключевой атрибут создаваемого объекта</param>
     /// <param name="stateName">Состояние вновь создаваемого объекта (если создается объект)</param>
     /// <param name="isProject">Признак того, что объект будет являться проектом</param>
     ILObject NewObject(string typeName, string product, string stateName = null, bool isProject = false);
 
-    /// <summary>
-    /// Вставляет новое или существующее изделие в редактируемый объект.
-    /// </summary>
+    /// <summary> Вставляет новое или существующее изделие в редактируемый объект. </summary>
     /// <param name="parent">Объект родителя</param>
     /// <param name="child">Объект потомка</param>
     /// <param name="linkType">Название типа связи</param>
@@ -75,9 +48,7 @@ namespace LoodsmanCommon
     /// <returns>Возвращает идентификатор созданной связи.</returns>
     int InsertObject(ILObject parent, ILObject child, string linkType, string stateName = null, bool reuse = false);
 
-    /// <summary>
-    /// Вставляет новое или существующее изделие в редактируемый объект.
-    /// </summary>
+    /// <summary> Вставляет новое или существующее изделие в редактируемый объект. </summary>
     /// <param name="parentTypeName">Тип объекта-родителя</param>
     /// <param name="parentProduct">Значение ключевого атрибута объекта-родителя</param>
     /// <param name="parentVersion">Номер версии объекта-родителя</param>
@@ -96,9 +67,7 @@ namespace LoodsmanCommon
     /// <returns>Возвращает идентификатор созданной связи.</returns>
     int InsertObject(string parentTypeName, string parentProduct, string parentVersion, string linkType, string childTypeName, string childProduct, string childVersion = " ", string stateName = null, bool reuse = false);
 
-    /// <summary>
-    /// Добавляет связь между объектами.
-    /// </summary>
+    /// <summary> Добавляет связь между объектами. </summary>
     /// <param name="parent">Объект родителя</param>
     /// <param name="child">Объект потомка</param>
     /// <param name="linkType">Название типа связи</param>
@@ -108,9 +77,7 @@ namespace LoodsmanCommon
     /// <returns>Возвращает идентификатор созданной связи.</returns>
     int NewLink(ILObject parent, ILObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
 
-    /// <summary>
-    /// Добавляет связь между объектами.
-    /// </summary>
+    /// <summary> Добавляет связь между объектами. </summary>
     /// <param name="parentId">Идентификатор версии объекта-родителя</param>
     /// <param name="childId">Идентификатор версии объекта-потомка</param>
     /// <param name="linkType">Название типа связи</param>
@@ -120,9 +87,7 @@ namespace LoodsmanCommon
     /// <returns>Возвращает идентификатор созданной связи.</returns>
     int NewLink(int parentId, int childId, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
 
-    /// <summary>
-    /// Добавляет связь между объектами.
-    /// </summary>
+    /// <summary> Добавляет связь между объектами. </summary>
     /// <param name="parentTypeName">Тип объекта-родителя</param>
     /// <param name="parentProduct">Значение ключевого атрибута объекта-родителя</param>
     /// <param name="parentVersion">Номер версии объекта-родителя</param>
@@ -136,64 +101,48 @@ namespace LoodsmanCommon
     /// <returns>Возвращает идентификатор созданной связи.</returns>
     int NewLink(string parentTypeName, string parentProduct, string parentVersion, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
 
-    /// <summary>
-    /// Обновляет связь между объектами.
-    /// </summary>
+    /// <summary> Обновляет связь между объектами. </summary>
     /// <param name="idLink">Идентификатор связи</param>
     /// <param name="minQuantity">Нижняя граница количества</param>
     /// <param name="maxQuantity">Верхняя граница количества</param>
     /// <param name="unitId">Уникальный идентификатор единицы измерения</param>
     void UpLink(int idLink, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
 
-    /// <summary>
-    /// Удаляет связь между объектами.
-    /// </summary>
+    /// <summary> Удаляет связь между объектами. </summary>
     /// <param name="idLink">Идентификатор связи</param>
     void DeleteLink(int idLink);
 
-    /// <summary>
-    /// Возвращает список объектов, привязанных соответствующей связью.
-    /// </summary>
+    /// <summary> Возвращает список объектов, привязанных соответствующей связью. </summary>
     /// <param name="objectId">Идентификатор версии объекта</param>
     /// <param name="linkType">Название типа связи</param>
     /// <param name="inverse">Направление (true - обратное, false - прямое)</param>
     List<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
 
-    /// <summary>
-    /// Получение атрибутов объекта, включая служебные.
-    /// </summary>
+    /// <summary> Получение атрибутов объекта, включая служебные. </summary>
     /// <param name="loodsmanObject">Объект Лоцман</param>
-    /// <returns>Возвращает атрибуты объекта, включая служебные.</returns>
+    /// <returns> Возвращает атрибуты объекта, включая служебные. </returns>
     IEnumerable<LAttribute> GetAttributes(ILObject loodsmanObject);
 
-    /// <summary>
-    /// Приводит значение к заданной единице измерения.
-    /// </summary>
+    /// <summary> Приводит значение к заданной единице измерения. </summary>
     /// <param name="value">Значение</param>
     /// <param name="sourceMeasureUnit">Исходная единица измерения</param>
     /// <param name="destMeasureUnit">Требуемая единица измерения</param>
     /// <returns>Возвращает преобразованное значение.</returns>
     double ConverseValue(double value, LMeasureUnit sourceMeasureUnit, LMeasureUnit destMeasureUnit);
 
-    /// <summary>
-    /// Изменяет состояние объекта.
-    /// </summary>
-    ///  <param name="objectId">Идентификатор версии объекта</param>
+    /// <summary> Изменяет состояние объекта. </summary>
+    /// <param name="objectId">Идентификатор версии объекта</param>
     /// <param name="state">Состояние</param>
     void UpdateState(int objectId, LStateInfo state);
 
-    /// <summary>
-    /// Добавляет, удаляет, обновляет значение атрибута объекта.
-    /// </summary>
+    /// <summary> Добавляет, удаляет, обновляет значение атрибута объекта. </summary>
     /// <param name="objectId">Идентификатор версии объекта</param>
     /// <param name="attributeName">Название атрибута</param>
     /// <param name="attributeValue">Значение атрибута. Если null или string.Empty то атрибут будет помечен на удаление</param>
     /// <param name="measureUnit">Единица измерения</param>
     void UpAttrValueById(int objectId, string attributeName, object attributeValue, LMeasureUnit measureUnit = null);
 
-    /// <summary>
-    /// Регистрирует в базе данных файл, находящийся на рабочем диске пользователя.
-    /// </summary>
+    /// <summary> Регистрирует в базе данных файл, находящийся на рабочем диске пользователя. </summary>
     /// <param name="documentId">Идентификатор версии объекта</param>
     /// <param name="fileName">Название файла (должен быть уникальным)</param>
     /// <param name="filePath">Путь к файлу относительно диска из настройки "Буква рабочего диска", доступный серверу приложений</param>  
@@ -203,9 +152,7 @@ namespace LoodsmanCommon
     /// </remarks>
     string RegistrationOfFile(int documentId, string fileName, string filePath);
 
-    /// <summary>
-    /// Регистрирует в базе данных файл, находящийся на рабочем диске пользователя.
-    /// </summary>
+    /// <summary> Регистрирует в базе данных файл, находящийся на рабочем диске пользователя. </summary>
     /// <param name="typeName">Название типа</param>
     /// <param name="product">Ключевой атрибут</param>
     /// <param name="version">Версия объекта</param>
@@ -217,9 +164,7 @@ namespace LoodsmanCommon
     /// </remarks>
     string RegistrationOfFile(string typeName, string product, string version, string fileName, string filePath);
 
-    /// <summary>
-    /// Сохраняет вторичное представление документа.
-    /// </summary>
+    /// <summary> Сохраняет вторичное представление документа. </summary>
     /// <param name="documentId">Идентификатор версии объекта</param>
     /// <param name="filePath">Путь к файлу вторичного представления, относительно диска из настройки "Буква рабочего диска", доступный серверу приложений</param>        
     /// <param name="removeAfterSave">Признак удаления файла с рабочего диска, после сохранения</param>        
@@ -229,16 +174,12 @@ namespace LoodsmanCommon
     /// </remarks>
     void SaveSecondaryView(int documentId, string filePath, bool removeAfterSave = true);
 
-    /// <summary>
-    /// Возвращает все версии заданного объекта или "похожего" объекта, если в базе данных установлена соответствующая настройка.
-    /// </summary>
+    /// <summary> Возвращает все версии заданного объекта или "похожего" объекта, если в базе данных установлена соответствующая настройка. </summary>
     /// <param name="typeName">Название типа</param>
     /// <param name="product">Ключевой атрибут</param>
     bool CheckUniqueName(string typeName, string product);
 
-    /// <summary>
-    /// Возвращает данные для формирования отчета.
-    /// </summary>
+    /// <summary> Возвращает данные для формирования отчета. </summary>
     /// <param name="reportName">Название хранимой процедуры</param>
     /// <param name="objectsIds">Список идентификаторов версий объектов</param>
     /// <param name="reportParams">Параметры отчёта формата "параметр1=значение1;параметр2=значение2"</param>        
@@ -248,15 +189,11 @@ namespace LoodsmanCommon
     /// </remarks>
     DataTable GetReport(string reportName, IEnumerable<int> objectsIds = null, string reportParams = null);
 
-    /// <summary>
-    /// Возвращает объекты с заполнеными свойствами.
-    /// </summary>
+    /// <summary> Возвращает объекты с заполнеными свойствами. </summary>
     /// <param name="objectsIds">Список идентификаторов версий объектов</param>
     List<ILObject> GetPropObjects(IEnumerable<int> objectsIds);
 
-    /// <summary>
-    /// Проверка на существование бизнес объекта в базе Лоцман.
-    /// </summary>
+    /// <summary> Проверка на существование бизнес объекта в базе Лоцман. </summary>
     /// <param name="typeName">Название типа</param>
     /// <param name="uniqueId">Ключевой атрибут формата ***BOSimple</param>
     /// <remarks>
@@ -266,39 +203,29 @@ namespace LoodsmanCommon
     /// </remarks>
     ILObject PreviewBoObject(string typeName, string uniqueId);
 
-    /// <summary>
-    /// Возвращает список идентификаторов версий объектов, заблокированных в текущем чекауте.
-    /// </summary>
+    /// <summary> Возвращает список идентификаторов версий объектов, заблокированных в текущем чекауте. </summary>
     List<int> GetLockedObjectsIds();
 
-    /// <summary>
-    /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.
-    /// </summary>
+    /// <summary> Помечает объект, находящийся на изменении, как подлежащий удалению при возврате из работы. </summary>
     /// <param name="objectId">Идентификатор версии объекта</param>
     void KillVersion(int objectId);
 
-    /// <summary>
-    /// Помечает объекты, находящиеся на изменении, как подлежащий удалению при возврате в базу данных.
-    /// </summary>
+    /// <summary> Помечает объекты, находящиеся на изменении, как подлежащий удалению при возврате из работы. </summary>
     /// <param name="objectsIds">Список идентификаторов версий объектов</param>
     void KillVersion(IEnumerable<int> objectsIds);
 
-    /// <summary>
-    /// Помечает объект, находящийся на изменении, как подлежащий удалению при возврате в базу данных.
-    /// </summary>
+    /// <summary> Помечает объект, находящийся на изменении, как подлежащий удалению при возврате из работы. </summary>
     /// <param name="typeName">Название типа</param>
     /// <param name="product">Ключевой атрибут</param>
     /// <param name="version">Версия объекта</param>
     void KillVersion(string typeName, string product, string version);
 
-    /// <summary>
-    /// Берет объект на редактирование.
-    /// </summary>
+    /// <summary> Берет объект на редактирование. </summary>
     /// <param name="typeName">Название типа</param>
     /// <param name="product">Ключевой атрибут</param>
     /// <param name="version">Версия объекта</param>
     /// <param name="mode">Режим</param>
-    /// <returns>Возвращает внутреннее название редактируемого объекта (название чекаута).</returns>
+    /// <returns> Возвращает внутреннее название редактируемого объекта (название чекаута). </returns>
     /// <remarks>
     /// Примечание:
     /// При пустых значениях typeName, product и version, будет создан пустой чекаут. С ним можно работать, как с обычным. 
@@ -307,15 +234,11 @@ namespace LoodsmanCommon
     /// </remarks>
     string CheckOut(string typeName = null, string product = null, string version = null, CheckOutMode mode = CheckOutMode.Default);
 
-    /// <summary>
-    /// Берет в работу текущий SelectedObject, если он уже находится в работе просто возращает PluginCall.CheckOut. Будет автоматически подключен к чекауту методом ConnectToCheckOut.
-    /// </summary>
-    /// <returns>Возвращает внутреннее название редактируемого объекта (название чекаута).</returns>
+    /// <summary> Берет в работу текущий SelectedObject, если он уже находится в работе просто возращает PluginCall.CheckOut. Будет автоматически подключен к чекауту методом ConnectToCheckOut. </summary>
+    /// <returns> Возвращает внутреннее название редактируемого объекта (название чекаута). </returns>
     string SelectedObjectCheckOut(CheckOutMode mode = CheckOutMode.Default);
 
-    /// <summary>
-    /// Подключается к указанному чекауту.
-    /// </summary>
+    /// <summary> Подключается к указанному чекауту. </summary>
     /// <param name="checkOutName">Название чекаута</param>
     /// <param name="dBName">Название базы данных</param>
     /// <remarks>
@@ -324,16 +247,12 @@ namespace LoodsmanCommon
     /// </remarks>
     void ConnectToCheckOut(string checkOutName = null, string dBName = null);
 
-    /// <summary>
-    /// Делает объект доступным для изменения только в рамках текущего чекаута (блокирует его).
-    /// </summary>
-    /// <param name="objectId">Идентификатор версии</param>
+    /// <summary> Делает объект доступным для изменения только в рамках текущего чекаута (блокирует его). </summary>
+    /// <param name="objectId"> Идентификатор версии. </param>
     /// <param name="isRoot">Признак головного объекта</param>
     void AddToCheckOut(int objectId, bool isRoot = false);
 
-    /// <summary>
-    /// Возвращает измененный объект в базу данных.
-    /// </summary>
+    /// <summary> Сохранияет изменения и возвращает чекаут из работы. </summary>
     /// <param name="checkOutName">Название чекаута</param>
     /// <param name="dBName">Название базы данных</param>
     /// <remarks>
@@ -342,9 +261,7 @@ namespace LoodsmanCommon
     /// </remarks>
     void CheckIn(string checkOutName = null, string dBName = null);
 
-    /// <summary>
-    /// Возвращает измененный объект в базу данных.
-    /// </summary>
+    /// <summary> Сохраняет изменения в базу данных. </summary>
     /// <param name="checkOutName">Название чекаута</param>
     /// <param name="dBName">Название базы данных</param>
     /// <remarks>
@@ -353,9 +270,7 @@ namespace LoodsmanCommon
     /// </remarks>
     void SaveChanges(string checkOutName = null, string dBName = null);
 
-    /// <summary>
-    /// Выполняет отказ от изменения объекта и вызывает метод DisconnectCheckOut
-    /// </summary>
+    /// <summary> Выполняет отказ от изменения объекта и вызывает метод DisconnectCheckOut. </summary>
     /// <param name="checkOutName">Название чекаута</param>
     /// <param name="dBName">Название базы данных</param>
     /// <remarks>
@@ -363,10 +278,20 @@ namespace LoodsmanCommon
     /// При пустых значении: checkOutName - используется PluginCall.CheckOut, dBName - используется PluginCall.DBName. 
     /// </remarks>
     void CancelCheckOut(string checkOutName = null, string dBName = null);
+
+    /// <summary> Возвращает имя владельца и дату создания версии. </summary>
+    /// <param name="objectId"> Идентификатор версии. </param>
+    CreationInfo GetCreationInfo(int objectId);
+
+    /// <summary> Возвращает список файлов, прикрепленных к документу. </summary>
+    /// <param name="lObject"></param>
+    /// <returns> Возвращает список файлов, прикрепленных к документу, в случе если <paramref name="lObject"/> не является документом то вернёт пустой список без запроса. </returns>
+    IEnumerable<LFile> GetFiles(ILObject lObject);
   }
 
   internal class LoodsmanProxy : ILoodsmanProxy
   {
+    private readonly ILoodsmanApplication _application;
     private readonly ILoodsmanMeta _meta;
     private string _checkOutName;
     private ILObject _selectedObject;
@@ -375,7 +300,7 @@ namespace LoodsmanCommon
     public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
     {
       INetPC = iNetPC;
-
+      _application = (ILoodsmanApplication)INetPC.PluginCall;
       var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
       culture.NumberFormat.NumberDecimalSeparator = ".";
       culture.DateTimeFormat.DateSeparator = ".";
@@ -396,7 +321,7 @@ namespace LoodsmanCommon
 
       var report = pluginCall.GetDataSet("GetReport", new object[] { "rep_VEDOMOST_SPECIFIKACIY", pluginCall.IdVersion, null });//"rep_VEDOMOST_MATERIALOV"
       var guid = typeof(ILoodsmanApplication).GUID;
-      var hr = Marshal.QueryInterface(pc, ref guid, out var pI); 
+      var hr = Marshal.QueryInterface(pluginCall, ref guid, out var pI); 
       var application = (ILoodsmanApplication)Marshal.GetTypedObjectForIUnknown(pI, typeof(ILoodsmanApplication));
       var fRDesigner = new FRDesigner();
       fRDesigner.ReportParams = null;// "Изделие (заказ №)=123;Программа=2";
@@ -419,7 +344,7 @@ namespace LoodsmanCommon
       _meta = loodsmanMeta;
     }
 
-    public INetPluginCall INetPC { get; private set; }
+    internal INetPluginCall INetPC { get; }
 
     public ILoodsmanMeta Meta => _meta;
 
@@ -429,14 +354,10 @@ namespace LoodsmanCommon
 
     public string CheckOutName => _checkOutName;
 
-    public void InitNetPluginCall(INetPluginCall iNetPC)
-    {
-      INetPC = iNetPC;
-    }
-
     private ILObject GetSelectedObject()
     {
-      return _selectedObject?.Id == INetPC.PluginCall.IdVersion ? _selectedObject : _selectedObject = new LObject(INetPC.PluginCall, this);
+      var pluginCall = _application.GetPluginCall();
+      return _selectedObject?.Id == pluginCall.IdVersion ? _selectedObject : _selectedObject = new LObject(pluginCall, this);
     }
 
     private IEnumerable<ILObject> GetSelectedObjects()
@@ -625,6 +546,14 @@ namespace LoodsmanCommon
     }
     #endregion
 
+    public CreationInfo GetCreationInfo(int objectId)
+    {
+      var dtCreationInfo = INetPC.Native_GetInfoAboutVersion(objectId, GetInfoAboutVersionMode.Mode13).Rows[0];
+      var creator = Meta.Users.TryGetValue(dtCreationInfo["_NAME"] as string, out var lUser) ? lUser : null;
+      var created = dtCreationInfo["_DATEOFCREATE"] as DateTime? ?? DateTime.MinValue;
+      return new CreationInfo { Creator = creator, Created = created };
+    }
+
     public IEnumerable<LAttribute> GetAttributes(ILObject loodsmanObject)
     {
       var attributesInfo = INetPC.Native_GetInfoAboutVersion(loodsmanObject.Id, GetInfoAboutVersionMode.Mode3).Select(x => x);
@@ -671,6 +600,11 @@ namespace LoodsmanCommon
     public static bool IsNullOrDefault<T>(T value)
     {
       return value == null || (value is string strValue && strValue == string.Empty);
+    }
+
+    public IEnumerable<LFile> GetFiles(ILObject lObject)
+    {
+      return lObject.IsDocument ? Enumerable.Empty<LFile>() : INetPC.Native_GetInfoAboutVersion(lObject.Id, GetInfoAboutVersionMode.Mode7).Select(x => new LFile(lObject, x));
     }
 
     public string RegistrationOfFile(int documentId, string fileName, string filePath)
@@ -794,11 +728,11 @@ namespace LoodsmanCommon
 
     public string SelectedObjectCheckOut(CheckOutMode mode = CheckOutMode.Default)
     {
-      var pc = INetPC.PluginCall;
-      var wasCheckout = pc.CheckOut != 0;
-      _checkOutName = wasCheckout ? pc.CheckOut.ToString() : CheckOut(pc.stType, pc.stProduct, pc.stVersion, mode);
+      var pluginCall = _application.GetPluginCall();
+      var wasCheckout = pluginCall.CheckOut != 0;
+      _checkOutName = wasCheckout ? pluginCall.CheckOut.ToString() : CheckOut(pluginCall.stType, pluginCall.stProduct, pluginCall.stVersion, mode);
       if (!wasCheckout)
-        ConnectToCheckOut(_checkOutName, pc.DBName);
+        ConnectToCheckOut(_checkOutName, pluginCall.DBName);
 
       return _checkOutName;
     }
@@ -809,7 +743,7 @@ namespace LoodsmanCommon
       if (string.IsNullOrEmpty(localCheckOutName))
         return;
 
-      INetPC.Native_ConnectToCheckOut(localCheckOutName, dBName ?? INetPC.PluginCall.DBName);
+      INetPC.Native_ConnectToCheckOut(localCheckOutName, dBName ?? _application.GetPluginCall().DBName);
     }
 
     public void AddToCheckOut(int objectId, bool isRoot = false)
@@ -820,7 +754,7 @@ namespace LoodsmanCommon
     public void CheckIn(string checkOutName = null, string dBName = null)
     {
       var localCheckOutName = checkOutName ?? _checkOutName;
-      var localDBName = dBName ?? INetPC.PluginCall.DBName;
+      var localDBName = dBName ?? _application.GetPluginCall().DBName;
       //INetPC.Native_DisconnectCheckOut(localCheckOutName, localDBName);
       INetPC.Native_CheckIn(localCheckOutName, localDBName);
       _checkOutName = string.Empty;
@@ -829,7 +763,7 @@ namespace LoodsmanCommon
     public void SaveChanges(string checkOutName = null, string dBName = null)
     {
       var localCheckOutName = checkOutName ?? _checkOutName;
-      var localDBName = dBName ?? INetPC.PluginCall.DBName;
+      var localDBName = dBName ?? _application.GetPluginCall().DBName;
       INetPC.Native_SaveChanges(localCheckOutName, localDBName);
     }
 
@@ -839,7 +773,7 @@ namespace LoodsmanCommon
       if (string.IsNullOrEmpty(localCheckOutName))
         return;
 
-      var localDBName = dBName ?? INetPC.PluginCall.DBName;
+      var localDBName = dBName ?? _application.GetPluginCall().DBName;
       //INetPC.Native_DisconnectCheckOut(localCheckOutName, localDBName);
       INetPC.Native_CancelCheckOut(localCheckOutName, localDBName);
       _checkOutName = string.Empty;

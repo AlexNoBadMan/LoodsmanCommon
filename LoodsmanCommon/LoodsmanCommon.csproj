@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="CreationInfo.cs" />
     <Compile Include="Entities\LFile.cs" />
     <Compile Include="Entities\LLink.cs" />
     <Compile Include="Collections\EntityCollection.cs" />
