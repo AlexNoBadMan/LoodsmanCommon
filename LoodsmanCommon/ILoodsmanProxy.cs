@@ -97,7 +97,7 @@ namespace LoodsmanCommon
     /// <param name="objectId"> Идентификатор версии объекта. </param>
     /// <param name="linkType"> Название типа связи. </param>
     /// <param name="inverse"> Направление (true - обратное, false - прямое). </param>
-    List<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
+    IEnumerable<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
 
     /// <summary> Получение атрибутов объекта, включая служебные. </summary>
     /// <param name="loodsmanObject"> Объект Лоцман. </param>
@@ -157,7 +157,7 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает объекты с заполнеными свойствами. </summary>
     /// <param name="objectsIds"> Список идентификаторов версий объектов. </param>
-    List<ILObject> GetPropObjects(IEnumerable<int> objectsIds);
+    IEnumerable<ILObject> GetPropObjects(IEnumerable<int> objectsIds);
 
     /// <summary> Проверка на существование бизнес объекта в базе Лоцман. </summary>
     /// <param name="typeName"> Название типа. </param>
@@ -168,7 +168,7 @@ namespace LoodsmanCommon
     ILObject PreviewBoObject(string typeName, string uniqueId);
 
     /// <summary> Возвращает список идентификаторов версий объектов, заблокированных в текущем чекауте. </summary>
-    List<int> GetLockedObjectsIds();
+    IEnumerable<int> GetLockedObjectsIds();
 
     /// <summary> Помечает объект, находящийся на изменении, как подлежащий удалению при возврате из работы. </summary>
     /// <param name="objectId"> Идентификатор версии объекта. </param>
@@ -243,44 +243,12 @@ namespace LoodsmanCommon
     private readonly ILoodsmanMeta _meta;
     private string _checkOutName;
     private ILObject _selectedObject;
-    private List<ILObject> _selectedObjects = new List<ILObject>();
+    private IEnumerable<ILObject> _selectedObjects = new ILObject[] { };
 
     public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
     {
       INetPC = iNetPC;
       _application = (ILoodsmanApplication)INetPC.PluginCall;
-      /*
-      var userInfo = (DataSet)pluginCall.GetDataSet("GetInfoAboutCurrentUser", new object[] { });
-      //CurrentUser = userInfo["_FULLNAME"] as string;
-      var userFileDir = userInfo.FieldValue["_FILEDIR"] as string;
-      var reportName = "Ведомость покупных.fp3";
-      var reports = pluginCall.GetDataSet("GetReportsAndFolders", new object[] { -1 });//"rep_VEDOMOST_SPECIFIKACIY"
-
-
-
-
-      var report = pluginCall.GetDataSet("GetReport", new object[] { "rep_VEDOMOST_SPECIFIKACIY", pluginCall.IdVersion, null });//"rep_VEDOMOST_MATERIALOV"
-      var guid = typeof(ILoodsmanApplication).GUID;
-      var hr = Marshal.QueryInterface(pluginCall, ref guid, out var pI); 
-      var application = (ILoodsmanApplication)Marshal.GetTypedObjectForIUnknown(pI, typeof(ILoodsmanApplication));
-      var fRDesigner = new FRDesigner();
-      fRDesigner.ReportParams = null;// "Изделие (заказ №)=123;Программа=2";
-      fRDesigner.ParentHWND = application.AppHandle;
-      fRDesigner.Connection = application.DataBase.Connection;
-      fRDesigner.Context = pluginCall.Selected;
-      fRDesigner.FileName = @"C:\Program Files (x86)\Common Files\ASCON Shared\COD\ReportTemplates\Конструкторские\Ведомость спецификаций ГОСТ 2.106-96.fr3";// "C:\Program Files (x86)\Common Files\ASCON Shared\COD\ReportTemplates\ПМЗ\tem_VEDOMOST_MATERIALOV.fr3";
-      fRDesigner.ExternalDataset = report;
-      var thread = new Thread(new ThreadStart(() =>
-      {
-          while (Thread.CurrentThread.ThreadState == ThreadState.Running)
-              if (User32.FindWindowsRaw(string.Empty, "TfrmReportsShow").FirstOrDefault() is IntPtr wnd)
-                  User32.SendMessage(wnd, (uint)CMD.WM_CLOSE, 0, 0);
-      }));
-      thread.Start();
-      fRDesigner.Open(frMode.mOpenReportExtData);
-      thread.Abort();
-      File.Copy(fRDesigner.FileName, $"{userFileDir}\\{reportName}", true);
-       */
       _meta = loodsmanMeta;
     }
 
@@ -304,7 +272,7 @@ namespace LoodsmanCommon
     {
       var ids = INetPC.Native_CGetTreeSelectedIDs().Split(new[] { Constants.ID_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
       if (!_selectedObjects.Select(x => x.Id).OrderBy(x => x).SequenceEqual(ids.OrderBy(x => x)))
-        _selectedObjects = GetPropObjects(ids);
+        _selectedObjects = GetPropObjects(ids).ToArray();
       return _selectedObjects;
     }
 
@@ -481,9 +449,9 @@ namespace LoodsmanCommon
     //  childVersion = tVersion;
     //}
 
-    public List<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
+    public IEnumerable<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
     {
-      return new List<ILObject>(INetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LObject(x, this)));
+      return INetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LObject(x, this));
     }
     #endregion
 
@@ -616,9 +584,9 @@ namespace LoodsmanCommon
       return INetPC.Native_GetReport(reportName, objectsIds, reportParams);
     }
 
-    public List<ILObject> GetPropObjects(IEnumerable<int> objectsIds)
+    public IEnumerable<ILObject> GetPropObjects(IEnumerable<int> objectsIds)
     {
-      return new List<ILObject>(INetPC.Native_GetPropObjects(objectsIds).Select(x => new LObject(x, this)));
+      return INetPC.Native_GetPropObjects(objectsIds).Select(x => new LObject(x, this));
     }
 
     public ILObject PreviewBoObject(string typeName, string uniqueId)
@@ -638,9 +606,9 @@ namespace LoodsmanCommon
       return loodsmanObject;
     }
 
-    public List<int> GetLockedObjectsIds()
+    public IEnumerable<int> GetLockedObjectsIds()
     {
-      return INetPC.Native_GetLockedObjects().Select(x => (int)x[0]).ToList();
+      return INetPC.Native_GetLockedObjects().Select(x => (int)x[0]);
     }
 
 
