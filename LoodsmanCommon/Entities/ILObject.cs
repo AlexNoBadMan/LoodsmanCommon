@@ -32,11 +32,11 @@ namespace LoodsmanCommon
 
     public LObject(DataRow dataRow, ILoodsmanProxy proxy) : this(proxy, dataRow["_TYPE"] as string, dataRow["_STATE"] as string)
     {
-      Id = (int)dataRow["_ID_VERSION"];
-      Product = dataRow["_PRODUCT"] as string;
-      Version = dataRow["_VERSION"] as string;
-      AccessLevel = (PDMAccessLevels)dataRow["_ACCESSLEVEL"];
-      LockLevel = (PDMLockLevels)dataRow.GetValueOrDefault<int>("_LOCKED");
+      Id = dataRow.ID_VERSION();
+      Product = dataRow.PRODUCT();
+      Version = dataRow.VERSION();
+      AccessLevel = dataRow.ACCESSLEVEL();
+      LockLevel = dataRow.LOCKED();
     }
 
     public LObject(IPluginCall pc, ILoodsmanProxy proxy) : this(proxy, pc.stType, pc.Selected.StateName)
