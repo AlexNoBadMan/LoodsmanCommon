@@ -3,7 +3,7 @@ using Ascon.Plm.Loodsman.PluginSDK;
 using Loodsman;
 using System.Data;
 
-namespace LoodsmanCommon.Extensions
+namespace LoodsmanCommon
 {
   /// <summary> Расширения для интерфейса <see cref="IPluginCall"/>. /summary>
   public static class PluginCallExtensions
