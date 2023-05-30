@@ -466,7 +466,7 @@
     /// <summary> Строка. </summary>
     String = 0,
     /// <summary> Целое. </summary>
-    Int = 1,
+    Integer = 1,
     /// <summary> Вещественное. </summary>
     Double = 2,
     /// <summary> Дата. </summary>

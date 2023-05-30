@@ -12,7 +12,7 @@ namespace LoodsmanCommon
     public IReadOnlyList<string> ListValue { get; }
     public bool OnlyIsItems { get; }
     public bool IsSystem { get; }
-    public bool IsMeasured => Type == AttributeType.Int || Type == AttributeType.Double;
+    public bool IsMeasured => Type == AttributeType.Integer || Type == AttributeType.Double;
 
     internal LAttributeInfo(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
     {
