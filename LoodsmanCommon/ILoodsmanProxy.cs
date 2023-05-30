@@ -271,6 +271,9 @@ namespace LoodsmanCommon
     private IEnumerable<ILObject> GetSelectedObjects()
     {
       var ids = INetPC.Native_CGetTreeSelectedIDs().Split(new[] { Constants.ID_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+      if (ids.Length < 2)
+        return Enumerable.Repeat(SelectedObject, 1);
+
       if (!_selectedObjects.Select(x => x.Id).OrderBy(x => x).SequenceEqual(ids.OrderBy(x => x)))
         _selectedObjects = GetPropObjects(ids).ToArray();
 
