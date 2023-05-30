@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace LoodsmanCommon
@@ -31,7 +32,8 @@ namespace LoodsmanCommon
           return null;
 
         if (_measureUnit is null && !string.IsNullOrEmpty(_measureId))
-          _measureUnit = _proxy.Meta.Measures[_measureId].Units[_unitId];
+          _measureUnit = _proxy.Meta.Measures.Values.FirstOrDefault(x => x.Guid == _measureId).Units.Values.FirstOrDefault(x => x.Guid == _unitId);
+        // _proxy.Meta.Measures[_measureId].Units[_unitId]; // Ключ для _proxy.Meta.Measures и Units, имя а не guid, необходимо переделать под guid.
         return _measureUnit;
       }
       set
@@ -45,7 +47,7 @@ namespace LoodsmanCommon
         _measureUnit = value;
         if (!isEmptyValue)
         {
-          _value = Type == AttributeType.Int ? (int)convertedValue : (object)convertedValue;
+          _value = Type == AttributeType.Integer ? (int)convertedValue : (object)convertedValue;
           UpdateAttribute();
         }
       }
