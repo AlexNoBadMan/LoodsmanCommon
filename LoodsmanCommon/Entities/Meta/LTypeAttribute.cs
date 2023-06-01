@@ -16,6 +16,8 @@ namespace LoodsmanCommon
     public bool IsObligatory { get; }
     public bool IsMeasured => _lAttribute.IsMeasured;
 
+    public IEnumerable<LAttributeMeasure> Measures => _lAttribute.Measures;
+
     internal LTypeAttribute(LAttributeInfo lAttribute, bool isObligatory)
     {
       _lAttribute = lAttribute;

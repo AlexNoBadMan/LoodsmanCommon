@@ -44,10 +44,14 @@ namespace LoodsmanCommon
     LMainDepartment CurrentMainDepartment { get; }
 
     /// <summary> Возвращает случай использования прокси. </summary>
-    /// <param name="parentType"></param>
-    /// <param name="childDocumentType"></param>
+    /// <param name="parentType"> Наименование типа объекта-родителя. </param>
+    /// <param name="childDocumentType"> Наименование типа документа-потомка. </param>
     /// <param name="extension">Расширение файла (наличие точки не обязательно).</param>
     LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension);
+
+    /// <summary> Возвращает список измеряемых сущностей атрибута. </summary>
+    /// <param name="name"> Название атрибута. </param>
+    IEnumerable<LAttributeMeasure> GetAttributeMeasures(string name);
 
     /// <summary> Очистить загруженные данные. </summary>
     void Clear();
@@ -66,12 +70,18 @@ namespace LoodsmanCommon
     private LUser _currentUser;
     private EntityCollection<LOrganisationUnit> _organisationUnits;
     private LMainDepartment _currentMainDepartment;
+    private Dictionary<int, List<LAttributeMeasure>> _attributeMeasures;
     private readonly INetPluginCall _iNetPC;
+
+    public LoodsmanMeta(INetPluginCall iNetPC)
+    {
+      _iNetPC = iNetPC;
+    }
 
     public NamedEntityCollection<LType> Types => _types ??= new NamedEntityCollection<LType>(() => _iNetPC.Native_GetTypeListEx().Select(x => new LType(_iNetPC, x, Attributes, States)), 300);
     public NamedEntityCollection<LLinkInfo> Links => _links ??= new NamedEntityCollection<LLinkInfo>(() => _iNetPC.Native_GetLinkList().Select(x => new LLinkInfo(x)), 100);
     public NamedEntityCollection<LStateInfo> States => _states ??= new NamedEntityCollection<LStateInfo>(() => _iNetPC.Native_GetStateList().Select(x => new LStateInfo(x)), 50);
-    public NamedEntityCollection<LAttributeInfo> Attributes => _attributes ??= new NamedEntityCollection<LAttributeInfo>(() => _iNetPC.Native_GetAttributeList().Select(x => new LAttributeInfo(x)), 500);
+    public NamedEntityCollection<LAttributeInfo> Attributes => _attributes ??= new NamedEntityCollection<LAttributeInfo>(() => _iNetPC.Native_GetAttributeList().Select(x => new LAttributeInfo(this, x)), 500);
     public IReadOnlyList<LProxyUseCase> ProxyUseCases => _proxyUseCases ??= _iNetPC.Native_GetProxyUseCases().Select(x => new LProxyUseCase(x)).ToReadOnlyList();
     public IReadOnlyList<LLinkInfoBetweenTypes> LinksInfoBetweenTypes => _linksInfoBetweenTypes ??= GetLinksInfoBetweenTypes(_iNetPC.Native_GetLinkListEx()).ToReadOnlyList();
     public NamedEntityCollection<LMeasure> Measures => _measures ??= new NamedEntityCollection<LMeasure>(() => _iNetPC.Native_GetFromBO_Nature().Select(x => new LMeasure(_iNetPC, x)), 45);
@@ -82,9 +92,52 @@ namespace LoodsmanCommon
         CurrentUser.Ancestors().FirstOrDefault(x => x is LMainDepartment) as LMainDepartment ??
         OrganisationUnits.Values.FirstOrDefault(x => x is LMainDepartment) as LMainDepartment;
 
-    public LoodsmanMeta(INetPluginCall iNetPC)
+    private Dictionary<int, List<LAttributeMeasure>> AttributeMeasures => _attributeMeasures ??= GetAttributeMeasures();
+
+    public IEnumerable<LAttributeMeasure> GetAttributeMeasures(string name)
     {
-      _iNetPC = iNetPC;
+      var id = Attributes[name].Id;
+      return AttributeMeasures.TryGetValue(id, out var value) ? value : Enumerable.Empty<LAttributeMeasure>();
+    }
+
+    public LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension)
+    {
+      return ProxyUseCases.FirstOrDefault(x => x.TypeName == parentType &&
+                                               x.DocumentType == childDocumentType &&
+                                               x.Extension.IndexOf(extension, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
+
+    public void Clear()
+    {
+      _attributes = null;
+      _types = null;
+      _states = null;
+      _links = null;
+      _proxyUseCases = null;
+      _linksInfoBetweenTypes = null;
+      _measures = null;
+      _users = null;
+      _currentUser = null;
+      _organisationUnits = null;
+      _currentMainDepartment = null;
+    }
+
+    private Dictionary<int, List<LAttributeMeasure>> GetAttributeMeasures()
+    {
+      var dictionary = new Dictionary<int, List<LAttributeMeasure>>();
+      foreach (DataRow item in _iNetPC.Native_GetInfoAboutAttribute().Rows)
+      {
+        var id = item.ID();
+        var guid = item.ID_MEASURE();
+        var measure = Measures.Values.FirstOrDefault(x => x.Guid == guid);
+
+        if (dictionary.TryGetValue(id, out var measures))
+          measures.Add(new LAttributeMeasure(measure, item.DEFAULT_BOOL()));
+        else
+          dictionary.Add(id, new List<LAttributeMeasure>() { new LAttributeMeasure(measure, item.DEFAULT_BOOL()) });
+      }
+
+      return dictionary;
     }
 
     private IEnumerable<LOrganisationUnit> InitOrganisationUnits()
@@ -184,28 +237,6 @@ namespace LoodsmanCommon
           yield return currentLinkInfo;
         }
       }
-    }
-
-    public LProxyUseCase GetProxyUseCase(string parentType, string childDocumentType, string extension)
-    {
-      return ProxyUseCases.FirstOrDefault(x => x.TypeName == parentType &&
-                                               x.DocumentType == childDocumentType &&
-                                               x.Extension.IndexOf(extension, StringComparison.OrdinalIgnoreCase) >= 0);
-    }
-
-    public void Clear()
-    {
-      _attributes = null;
-      _types = null;
-      _states = null;
-      _links = null;
-      _proxyUseCases = null;
-      _linksInfoBetweenTypes = null;
-      _measures = null;
-      _users = null;
-      _currentUser = null;
-      _organisationUnits = null;
-      _currentMainDepartment = null;
     }
   }
 }

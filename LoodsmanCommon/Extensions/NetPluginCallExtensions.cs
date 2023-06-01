@@ -65,7 +65,7 @@ namespace LoodsmanCommon
     /// <br/>[_SYSTEM] int - признак того, что атрибут является служебным (0 - Обычный, 1 - Служебный).
     /// </summary>
     /// <param name="mode"> Режим возврата списка атрибутов. </param>
-    public static DataTable Native_GetAttributeList(this INetPluginCall pc, GetAttributesMode mode = GetAttributesMode.All) =>
+    public static DataTable Native_GetAttributeList(this INetPluginCall pc, GetAttributeListMode mode = GetAttributeListMode.All) =>
         pc.GetDataTable("GetAttributeList2", mode);
 
     /// <summary> Возвращает информацию о текущем пользователе.
@@ -220,7 +220,7 @@ namespace LoodsmanCommon
     #region Редактирование объектов
 
     /// <summary> Приводит значение к заданной единице измерения. </summary>
-    /// <param name="value"> Значение</param>
+    /// <param name="value"> Значение. </param>
     /// <param name="sourceMeasureGuid"> Идентификатор исходной единицы измерения. </param>
     /// <param name="destMeasureGuid"> Идентификатор требуемой единицы измерения. </param>
     /// <returns> Возвращает преобразованное значение. </returns>
@@ -333,7 +333,7 @@ namespace LoodsmanCommon
     /// <summary> Добавляет, удаляет, обновляет значение атрибута. </summary>
     /// <inheritdoc cref="Native_KillVersion(INetPluginCall, int)"/>
     /// <param name="attributeName"> Название атрибута. </param>
-    /// <param name="attributeValue"> Значение атрибута</param>
+    /// <param name="attributeValue"> Значение атрибута. </param>
     /// <param name="unitId"> Уникальный идентификатор единицы измерения. </param>
     /// <param name="toDel"> Признак удаления атрибута (true - удалять, false - не удалять). </param>
     /// <remarks>
@@ -525,6 +525,13 @@ namespace LoodsmanCommon
     public static DataTable Native_GetLinkedObjectsForObjects(this INetPluginCall pc, IEnumerable<int> objectsIds, IEnumerable<int> linkTypeIds, bool inverse = false) =>
         pc.GetDataTable("GetLinkedObjectsForObjects", string.Join(Constants.ID_SEPARATOR, objectsIds), string.Join(Constants.ID_SEPARATOR, linkTypeIds), inverse);
 
+    /// <summary> Возвращает информацию об атрибуте. </summary>
+    /// <param name="name"> Название атрибута. </param>
+    /// <param name="mode"> Режим вывода. В зависимости от его значения выдается соответствующая информация. </param>
+    /// <returns> Зависит от режима <see cref="GetInfoAboutAttributeMode"/>. </returns>
+    public static DataTable Native_GetInfoAboutAttribute(this INetPluginCall pc, string name = null, GetInfoAboutAttributeMode mode = GetInfoAboutAttributeMode.Mode2) =>
+        pc.GetDataTable("GetInfoAboutAttribute", name, mode);
+
     /// <summary> Возвращает информацию об экземпляре связи. </summary>
     /// <param name="linkId"> Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>. </param>
     /// <param name="mode"> Режим вывода. В зависимости от его значения выдается соответствующая информация. </param>
@@ -688,15 +695,15 @@ namespace LoodsmanCommon
     /// <inheritdoc cref="GetInfoAboutVersionMode.Mode2"/>
     /// <param name="pc"> </param>
     /// <param name="linkId"> Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>. </param>
-    /// <returns>Возвращает значения атрибутов связи для данного экземпляра связи. Метод не возвращает служебные атрибуты связей. Для их получения воспользуйтесь методом <see cref="Native_GetLinkAttributes2(INetPluginCall, int, GetAttributesMode)">GetLinkAttributes2</see>. </returns>
+    /// <returns>Возвращает значения атрибутов связи для данного экземпляра связи. Метод не возвращает служебные атрибуты связей. Для их получения воспользуйтесь методом <see cref="Native_GetLinkAttributes2(INetPluginCall, int, GetAttributeListMode)">GetLinkAttributes2</see>. </returns>
     public static DataTable Native_GetLinkAttributes(this INetPluginCall pc, int linkId) =>
         pc.GetDataTable("GetLinkAttributes", linkId);
 
     /// <inheritdoc cref="GetInfoAboutVersionMode.Mode3"/>
-    /// <inheritdoc cref="Native_GetAttributeList(INetPluginCall, GetAttributesMode)"/>
+    /// <inheritdoc cref="Native_GetAttributeList(INetPluginCall, GetAttributeListMode)"/>
     /// <param name="linkId"> Идентификатор экземпляра связи. Может быть получен методом <see cref="Native_GetLinkedObjects(INetPluginCall, int, IEnumerable{string})">GetLinkedObjects</see>. </param>
     /// <returns> Возвращает значения атрибутов связи для данного экземпляра связи, включая служебные. </returns>
-    public static DataTable Native_GetLinkAttributes2(this INetPluginCall pc, int linkId, GetAttributesMode mode) =>
+    public static DataTable Native_GetLinkAttributes2(this INetPluginCall pc, int linkId, GetAttributeListMode mode) =>
         pc.GetDataTable("GetLinkAttributes2", linkId, mode);
     #endregion
 

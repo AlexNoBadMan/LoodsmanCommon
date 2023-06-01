@@ -23,6 +23,7 @@ namespace LoodsmanCommon
     public bool IsSystem => _lTypeAttribute.IsSystem;
     public bool IsObligatory => _lTypeAttribute.IsObligatory;
     public bool IsMeasured => _lTypeAttribute.IsMeasured;
+    public IEnumerable<LAttributeMeasure> Measures => _lTypeAttribute.Measures;
 
     public LMeasureUnit MeasureUnit
     {
@@ -41,15 +42,15 @@ namespace LoodsmanCommon
         if (!IsMeasured || _measureUnit == value)
           return;
 
-        var isEmptyValue = _value is null;
-        var valueToConvert = isEmptyValue ? 0 : (double)_value;
-        var convertedValue = _proxy.ConverseValue(valueToConvert, _measureUnit, value);//Пробуем произвести конвертацию, для проверки корректности операции
+        //var isEmptyValue = _value is null;
+        //var valueToConvert = isEmptyValue ? 0 : (double)_value;
+        //var convertedValue = _proxy.ConverseValue(valueToConvert, _measureUnit, value);//Пробуем произвести конвертацию, для проверки корректности операции
         _measureUnit = value;
-        if (!isEmptyValue)
-        {
-          _value = Type == AttributeType.Integer ? (int)convertedValue : (object)convertedValue;
-          UpdateAttribute();
-        }
+        //if (!isEmptyValue)
+        //{
+        //  _value = Type == AttributeType.Integer ? (int)convertedValue : (object)convertedValue;
+        //  UpdateAttribute();
+        //}
       }
     }
 
