@@ -15,11 +15,11 @@ namespace LoodsmanCommon
     internal LFile(ILObject owner, DataRow dataRow) : base((int)dataRow["_ID_FILE"], dataRow["_NAME"] as string)
     {
       Owner = owner;
-      RelativePath = dataRow["_LOCALNAME"] as string;
-      Size = (long)dataRow["_SIZE"];
-      CRC = (long)dataRow["_CRC"];
-      Created = dataRow["_DATEOFCREATE"] as DateTime? ?? DateTime.MaxValue;
-      Modified = dataRow["_MODIFIED"] as DateTime? ?? DateTime.MaxValue;
+      RelativePath = dataRow.LOCALNAME();
+      Size = dataRow.SIZE();
+      CRC = dataRow.CRC();
+      Created = dataRow.DATEOFCREATE();
+      Modified = dataRow.MODIFIED();
     }
   }
 }

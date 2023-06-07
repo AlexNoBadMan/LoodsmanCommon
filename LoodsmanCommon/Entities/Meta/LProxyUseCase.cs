@@ -10,9 +10,9 @@ namespace LoodsmanCommon
     public string Extension { get; }
     internal LProxyUseCase(DataRow dataRow, string nameField = "_PROXYNAME") : base(dataRow, nameField)
     {
-      TypeName = dataRow["_PARENTNAME"] as string;
-      DocumentType = dataRow["_DOCNAME"] as string;
-      Extension = $".{dataRow["_EXTENSION"]}";
+      TypeName = dataRow.PARENTNAME();
+      DocumentType = dataRow.DOCNAME();
+      Extension = $".{dataRow.EXTENSION()}";
     }
   }
 }

@@ -54,6 +54,12 @@ namespace LoodsmanCommon
     /// <summary> Возвращает результат DataRow["_ID_TYPE"]. </summary>
     public static int ID_TYPE(this DataRow row) => GetIntValue(row["_ID_TYPE"]);
 
+    /// <summary> Возвращает результат DataRow["_TYPE_ID_1"]. </summary>
+    public static int TYPE_ID_1(this DataRow row) => GetIntValue(row["_TYPE_ID_1"]);
+
+    /// <summary> Возвращает результат DataRow["_TYPE_ID_2"]. </summary>
+    public static int TYPE_ID_2(this DataRow row) => GetIntValue(row["_TYPE_ID_2"]);
+
     /// <summary> Возвращает результат DataRow["_ID_STATE"]. </summary>
     public static int ID_STATE(this DataRow row) => GetIntValue(row["_ID_STATE"]);
 
@@ -93,6 +99,23 @@ namespace LoodsmanCommon
     /// <summary> Возвращает результат DataRow["_SIZE"]. </summary>
     public static int SIZE(this DataRow row) => GetIntValue(row["_SIZE"]);
 
+    /// <summary> Возвращает результат DataRow["_MAINPOSITION_ID"]. </summary>
+    public static int MAINPOSITION_ID(this DataRow row) => GetIntValue(row["_MAINPOSITION_ID"]);
+
+    /// <summary> Возвращает результат DataRow["_ID_EFF_TYPE"]. </summary>
+    public static int ID_EFF_TYPE(this DataRow row) => GetIntValue(row["_ID_EFF_TYPE"]);
+    /// <summary> Возвращает результат DataRow["_ATTR_TYPE"]. </summary>
+    public static int ATTR_TYPE(this DataRow row) => GetIntValue(row["_ATTR_TYPE"]);
+    /// <summary> Возвращает результат DataRow["_ATTR_ID"]. </summary>
+    public static int ATTR_ID(this DataRow row) => GetIntValue(row["_ATTR_ID"]);
+    /// <summary> Возвращает результат DataRow["_EFF_ID"]. </summary>
+    public static int EFF_ID(this DataRow row) => GetIntValue(row["_EFF_ID"]);
+    /// <summary> Возвращает результат DataRow["_EFF_TYPE_ID"]. </summary>
+    public static int EFF_TYPE_ID(this DataRow row) => GetIntValue(row["_EFF_TYPE_ID"]);
+
+    
+      
+
     /// <summary> Возвращает результат DataRow["_CRC"]. </summary>
     public static int CRC(this DataRow row) => GetIntValue(row["_CRC"]);
 
@@ -110,6 +133,12 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает результат DataRow["_MAX_QUANTITY"]. </summary>
     public static double MAX_QUANTITY(this DataRow row) => row["_MAX_QUANTITY"] as double? ?? 0;
+
+    /// <summary> Возвращает результат DataRow["_ATTRNAME"]. </summary>
+    public static string ATTRNAME(this DataRow row) => row["_ATTRNAME"] as string;
+
+    /// <summary> Возвращает результат DataRow["_CODE"]. </summary>
+    public static string CODE(this DataRow row) => row["_CODE"] as string;
 
     /// <summary> Возвращает результат DataRow["_GUID"]. </summary>
     public static string GUID(this DataRow row) => row["_GUID"] as string;
@@ -145,6 +174,12 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает результат DataRow["_TYPENAME"]. </summary>
     public static string TYPENAME(this DataRow row) => row["_TYPENAME"] as string;
+
+    /// <summary> Возвращает результат DataRow["_TYPE_NAME_1"]. </summary>
+    public static string TYPE_NAME_1(this DataRow row) => row["_TYPE_NAME_1"] as string;
+
+    /// <summary> Возвращает результат DataRow["_TYPE_NAME_2"]. </summary>
+    public static string TYPE_NAME_2(this DataRow row) => row["_TYPE_NAME_2"] as string;
 
     /// <summary> Возвращает результат DataRow["_PARENTNAME"]. </summary>
     public static string PARENTNAME(this DataRow row) => row["_PARENTNAME"] as string;
@@ -269,6 +304,27 @@ namespace LoodsmanCommon
     /// <summary> Возвращает результат DataRow["_MAIL"]. </summary>
     public static string MAIL(this DataRow row) => row["_MAIL"] as string;
 
+    /// <summary> Возвращает результат DataRow["_PHONE"]. </summary>
+    public static string PHONE(this DataRow row) => row["_PHONE"] as string;
+
+    /// <summary> Возвращает результат DataRow["_SKYPE"]. </summary>
+    public static string SKYPE(this DataRow row) => row["_SKYPE"] as string;
+
+    /// <summary> Возвращает результат DataRow["_IM"]. </summary>
+    public static string IM(this DataRow row) => row["_IM"] as string;
+
+    /// <summary> Возвращает результат DataRow["_WEBPAGE"]. </summary>
+    public static string WEBPAGE(this DataRow row) => row["_WEBPAGE"] as string;
+
+    /// <summary> Возвращает результат DataRow["_WORKDIR"]. </summary>
+    public static string WORKDIR(this DataRow row) => row["_WORKDIR"] as string;
+
+    /// <summary> Возвращает результат DataRow["_FILEDIR"]. </summary>
+    public static string FILEDIR(this DataRow row) => row["_FILEDIR"] as string;
+
+    /// <summary> Возвращает результат DataRow["_NOTE"]. </summary>
+    public static string NOTE(this DataRow row) => row["_NOTE"] as string;
+
     /// <summary> Возвращает результат DataRow["_NODE"]. </summary>
     public static string NODE(this DataRow row) => row["_NODE"] as string;
 
@@ -280,6 +336,17 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает результат DataRow["_EXTENSION"]. </summary>
     public static string EXTENSION(this DataRow row) => row["_EXTENSION"] as string;
+
+    /// <summary> Возвращает результат DataRow["_EFF_TYPE_NAME"]. </summary>
+    public static string EFF_TYPE_NAME(this DataRow row) => row["_EFF_TYPE_NAME"] as string;
+
+    /// <summary> Возвращает результат DataRow["_ATTR_NAME"]. </summary>
+    public static string ATTR_NAME(this DataRow row) => row["_ATTR_NAME"] as string;
+    /// <summary> Возвращает результат DataRow["_EFFNAME"]. </summary>
+    public static string EFFNAME(this DataRow row) => row["_EFFNAME"] as string;
+
+    
+
 
     /// <summary> Возвращает результат DataRow["_DEFAULT_VALUE"]. </summary>
     public static string DEFAULT_VALUE(this DataRow row) => row["_DEFAULT_VALUE"] as string;
@@ -296,6 +363,12 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает результат DataRow["_IS_ADMIN"]. </summary>
     public static bool IS_ADMIN(this DataRow row) => GetIntValue(row["_IS_ADMIN"]) == 1;
+
+    /// <summary> Возвращает результат DataRow["_WINUSER"]. </summary>
+    public static bool WINUSER(this DataRow row) => GetIntValue(row["_WINUSER"]) == 1;
+
+    /// <summary> Возвращает результат DataRow["_LEADER"]. </summary>
+    public static bool LEADER(this DataRow row) => GetIntValue(row["_LEADER"])==1;
 
     /// <summary> Возвращает результат DataRow["_IS_FAVORITE"]. </summary>
     public static bool IS_FAVORITE(this DataRow row) => GetIntValue(row["_IS_FAVORITE"]) == 1;
@@ -324,11 +397,19 @@ namespace LoodsmanCommon
     /// <summary> Возвращает результат DataRow["_CANCREATE"]. </summary>
     public static bool CANCREATE(this DataRow row) => GetIntValue(row["_CANCREATE"]) == 1;
 
+    /// <summary> Возвращает результат DataRow["_CANBEPROJECT"]. </summary>
+    public static bool CANBEPROJECT(this DataRow row) => GetIntValue(row["_CANBEPROJECT"]) == 1;
+
     /// <summary> Возвращает результат DataRow["_NOVERSIONS"]. </summary>
     public static bool NOVERSIONS(this DataRow row) => GetIntValue(row["_NOVERSIONS"]) == 1;
 
     /// <summary> Возвращает результат DataRow["_TRANSSIGNROLES"]. </summary>
     public static bool TRANSSIGNROLES(this DataRow row) => GetIntValue(row["_TRANSSIGNROLES"]) == 1;
+
+    /// <summary> Возвращает результат DataRow["_TYPE"]. Использовать в случае когда поле содержит признак по умолчанию (int). 
+    /// <br/>** В случаях когда поле содержит значение по умолчанию (string), необходимо использовать метод расширения <see cref="TYPE(DataRow)">TYPE</see>.
+    /// </summary>
+    public static bool TYPE_BOOL(this DataRow row) => GetIntValue(row["_TYPE"]) == 0;
 
     /// <summary> Возвращает результат DataRow["_DATE"]. </summary>
     public static DateTime DATE(this DataRow row) => row["_DATE"] as DateTime? ?? DateTime.MaxValue;
@@ -376,5 +457,8 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает результат DataRow["_LOCKED"]. </summary>
     public static PDMLockLevels LOCKED(this DataRow row) => (PDMLockLevels)GetIntValue(row["_LOCKED"]);
+
+    /// <summary> Возвращает результат DataRow["_STATUS"]. </summary>
+    public static UserState STATUS(this DataRow row) => (UserState)GetIntValue(row["_STATUS"]);
   }
 }

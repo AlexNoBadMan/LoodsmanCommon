@@ -17,16 +17,16 @@ namespace LoodsmanCommon
 
     internal LLinkInfoBetweenTypes(DataRow dataRow)
     {
-      Id = (int)dataRow["_ID_LINKTYPE"];
-      Name = dataRow["_LINKTYPE"] as string;
-      InverseName = dataRow["_INVERSENAME"] as string;
-      TypeId1 = (int)dataRow["_TYPE_ID_1"];
-      TypeName1 = dataRow["_TYPE_NAME_1"] as string;
-      TypeId2 = (int)dataRow["_TYPE_ID_2"];
-      TypeName2 = dataRow["_TYPE_NAME_2"] as string;
-      IsVertical = (short)dataRow["_LINKKIND"] == 0;
-      Direction = (LinkDirection)dataRow["_DIRECTION"];
-      IsQuantity = (short)dataRow["_IS_QUANTITY"] == 1;
+      Id = dataRow.ID_LINKTYPE();
+      Name = dataRow.LINKTYPE();
+      InverseName = dataRow.INVERSENAME();
+      TypeId1 = dataRow.TYPE_ID_1();
+      TypeName1 = dataRow.TYPE_NAME_1();
+      TypeId2 = dataRow.TYPE_ID_2();
+      TypeName2 = dataRow.TYPE_NAME_2();
+      IsVertical = dataRow.LINKKIND() == 0;
+      Direction = dataRow.DIRECTION();
+      IsQuantity = dataRow.IS_QUANTITY() == LinkQuantityType.OnlyAsParent;
     }
     internal LLinkInfoBetweenTypes()
     {

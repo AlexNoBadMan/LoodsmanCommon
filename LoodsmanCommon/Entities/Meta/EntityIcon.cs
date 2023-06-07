@@ -36,7 +36,7 @@ namespace LoodsmanCommon
       { }
     }
 
-    internal EntityIcon(DataRow dataRow, string nameField = "_NAME") : this((int)dataRow["_ID"], dataRow[nameField] as string, dataRow["_ICON"] as byte[]) { }
+    internal EntityIcon(DataRow dataRow, string nameField = "_NAME") : this(dataRow.ID(), dataRow[nameField] as string, dataRow["_ICON"] as byte[]) { }
 
     [System.Runtime.InteropServices.DllImport("gdi32.dll")]
     private static extern bool DeleteObject(IntPtr hObject);

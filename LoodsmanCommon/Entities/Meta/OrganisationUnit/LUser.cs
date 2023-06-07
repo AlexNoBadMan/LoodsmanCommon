@@ -38,23 +38,23 @@ namespace LoodsmanCommon
     internal LUser(ILoodsmanMeta meta, DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
     {
       _meta = meta;
-      IsAdmin = (int)dataRow["_IS_ADMIN"] == 1;
-      IsWinUser = (short)dataRow["_WINUSER"] == 1;
-      FullName = dataRow["_FULLNAME"] as string;
-      Mail = dataRow["_MAIL"] as string;
-      Phone = dataRow["_PHONE"] as string;
-      Skype = dataRow["_SKYPE"] as string;
-      IM = dataRow["_IM"] as string;
-      WebPage = dataRow["_WEBPAGE"] as string;
-      Note = new ReadOnlyCollection<string>(dataRow["_NOTE"].ToString().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
-      State = (UserState)dataRow["_STATUS"];
-      WorkDir = dataRow["_WORKDIR"] as string;
-      FileDir = dataRow["_FILEDIR"] as string;
+      IsAdmin = dataRow.IS_ADMIN();
+      IsWinUser = dataRow.WINUSER();
+      FullName = dataRow.FULLNAME();
+      Mail = dataRow.MAIL();
+      Phone = dataRow.PHONE();
+      Skype = dataRow.SKYPE();
+      IM = dataRow.IM();
+      WebPage = dataRow.WEBPAGE();
+      Note = new ReadOnlyCollection<string>(dataRow.NOTE().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
+      State = dataRow.STATUS();
+      WorkDir = dataRow.WORKDIR();
+      FileDir = dataRow.FILEDIR();
       //_PROFILE_ID
       //_IS_MISSING_USER 
       //_PATH  
       //_PROFILE   
-      _mainpositionId = dataRow["_MAINPOSITION_ID"] as int? ?? 0;
+      _mainpositionId = dataRow.MAINPOSITION_ID();
     }
   }
 }

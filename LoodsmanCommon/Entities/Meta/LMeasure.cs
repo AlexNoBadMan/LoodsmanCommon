@@ -11,8 +11,8 @@ namespace LoodsmanCommon
     internal LMeasure(INetPluginCall iNetPC, DataRow dataRow)
     {
       _iNetPC = iNetPC;
-      Guid = dataRow["_GUID"] as string;
-      Name = dataRow["_DISPLAY"] as string;
+      Guid = dataRow.GUID();
+      Name = dataRow.DISPLAY();
     }
 
     public string Guid { get; }
