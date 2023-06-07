@@ -8,9 +8,9 @@ namespace LoodsmanCommon
   public static class DataRowExtensions
   {
     /// <summary> Возвращает значение по заданному ключу, в случае отсутствия значения, возвращает значение по умолчанию. </summary>
-    /// <typeparam name="T">Тип. </typeparam>
-    /// <param name="row">Строка данных. </param>
-    /// <param name="key">Наименование столбца. </param>
+    /// <typeparam name="T"> Тип. </typeparam>
+    /// <param name="row"> Строка данных. </param>
+    /// <param name="key"> Наименование столбца. </param>
     public static T GetValueOrDefault<T>(this DataRow row, string key) => row.GetValueOrDefault(key, default(T));
 
     /// <inheritdoc cref="GetValueOrDefault{T}(DataRow, string)"/>
@@ -104,17 +104,18 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает результат DataRow["_ID_EFF_TYPE"]. </summary>
     public static int ID_EFF_TYPE(this DataRow row) => GetIntValue(row["_ID_EFF_TYPE"]);
+
     /// <summary> Возвращает результат DataRow["_ATTR_TYPE"]. </summary>
     public static int ATTR_TYPE(this DataRow row) => GetIntValue(row["_ATTR_TYPE"]);
+
     /// <summary> Возвращает результат DataRow["_ATTR_ID"]. </summary>
     public static int ATTR_ID(this DataRow row) => GetIntValue(row["_ATTR_ID"]);
+
     /// <summary> Возвращает результат DataRow["_EFF_ID"]. </summary>
     public static int EFF_ID(this DataRow row) => GetIntValue(row["_EFF_ID"]);
-    /// <summary> Возвращает результат DataRow["_EFF_TYPE_ID"]. </summary>
-    public static int EFF_TYPE_ID(this DataRow row) => GetIntValue(row["_EFF_TYPE_ID"]);
 
-    
-      
+    /// <summary> Возвращает результат DataRow["_EFF_TYPE_ID"]. </summary>
+    public static int EFF_TYPE_ID(this DataRow row) => GetIntValue(row["_EFF_TYPE_ID"]);      
 
     /// <summary> Возвращает результат DataRow["_CRC"]. </summary>
     public static int CRC(this DataRow row) => GetIntValue(row["_CRC"]);
@@ -342,11 +343,9 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает результат DataRow["_ATTR_NAME"]. </summary>
     public static string ATTR_NAME(this DataRow row) => row["_ATTR_NAME"] as string;
+
     /// <summary> Возвращает результат DataRow["_EFFNAME"]. </summary>
     public static string EFFNAME(this DataRow row) => row["_EFFNAME"] as string;
-
-    
-
 
     /// <summary> Возвращает результат DataRow["_DEFAULT_VALUE"]. </summary>
     public static string DEFAULT_VALUE(this DataRow row) => row["_DEFAULT_VALUE"] as string;
