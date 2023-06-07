@@ -16,6 +16,6 @@ namespace LoodsmanCommon
       Name = name;
     }
 
-    internal Entity(DataRow dataRow, string nameField = "_NAME") : this((int)dataRow["_ID"], dataRow[nameField] as string) { }
+    internal Entity(DataRow dataRow, string nameField = "_NAME") : this(dataRow.ID(), dataRow[nameField] as string) { }
   }
 }

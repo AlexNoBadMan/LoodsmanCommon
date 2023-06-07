@@ -9,7 +9,7 @@ namespace LoodsmanCommon
 
     public LDepartment(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
     {
-      Code = dataRow["_CODE"] as string;
+      Code = dataRow.CODE();
     }
   }
 }

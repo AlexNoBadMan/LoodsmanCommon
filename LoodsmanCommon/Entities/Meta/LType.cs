@@ -43,19 +43,19 @@ namespace LoodsmanCommon
     /// Список возможных атрибутов типа, включая служебные.
     /// </summary>
     public NamedEntityCollection<LTypeAttribute> Attributes => _attributes ??= new NamedEntityCollection<LTypeAttribute>(
-        () => _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).Select(x => new LTypeAttribute(_lAttributes[x["_NAME"] as string], (short)x["_OBLIGATORY"] == 1)),
+        () => _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).Select(x => new LTypeAttribute(_lAttributes[x.NAME()], x.OBLIGATORY())),
         10);
 
     internal LType(INetPluginCall iNetPC, DataRow dataRow, NamedEntityCollection<LAttributeInfo> lAttributes, NamedEntityCollection<LStateInfo> lStates, string nameField = "_TYPENAME") : base(dataRow, nameField)
     {
       _iNetPC = iNetPC;
       _lAttributes = lAttributes;
-      KeyAttribute = _lAttributes[dataRow["_ATTRNAME"] as string];
-      IsDocument = (int)dataRow["_DOCUMENT"] == 1;
-      IsVersioned = (int)dataRow["_NOVERSIONS"] == 0;
-      DefaultState = lStates[dataRow["_DEFAULTSTATE"] as string];
-      CanBeProject = (int)dataRow["_CANBEPROJECT"] == 1;
-      CanCreate = (int)dataRow["_CANCREATE"] == 1;
+      KeyAttribute = _lAttributes[dataRow.ATTRNAME()];
+      IsDocument = dataRow.DOCUMENT();
+      IsVersioned = !dataRow.NOVERSIONS();
+      DefaultState = lStates[dataRow.DEFAULTSTATE()];
+      CanBeProject = dataRow.CANBEPROJECT();
+      CanCreate = dataRow.CANCREATE();
     }
   }
 }

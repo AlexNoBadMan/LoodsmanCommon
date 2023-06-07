@@ -71,7 +71,7 @@ namespace LoodsmanCommon
     /// <param name="sender"> Источник события. </param>
     /// <param name="args"> Параметры события. </param>
     /// <returns> Найденную сборку или <c>null</c>. </returns>
-    protected Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+    protected static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
     {
       try
       {

@@ -13,9 +13,9 @@ namespace LoodsmanCommon
     {
       ParentMeasure = measure;
 
-      Guid = dataRow["_ID_UNIT"] as string;
-      Name = dataRow["_NAME"] as string;
-      IsBase = (int)dataRow["_BASICUNIT"] == 1;
+      Guid = dataRow.ID_UNIT();
+      Name = dataRow.NAME();
+      IsBase = dataRow.BASICUNIT();
     }
   }
 }

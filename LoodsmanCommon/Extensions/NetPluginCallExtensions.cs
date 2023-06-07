@@ -1080,7 +1080,7 @@ namespace LoodsmanCommon
 
     /// <summary> Сохраняет изменения в базе данных. </summary>
     /// <inheritdoc cref="Native_ConnectToCheckOut(INetPluginCall, string, string)"/>
-    /// <remarks> <br/>После выполнения этой операции все изменения, произведенные в чекауте, сохраняются в базе данных. Объект по-прежнему остается на изменении. </remarks>
+
     public static void Native_SaveChanges(this INetPluginCall pc, string checkOutName, string dBName) =>
         pc.RunMethod("SaveChanges", checkOutName, dBName);
 
@@ -1088,6 +1088,80 @@ namespace LoodsmanCommon
     /// <inheritdoc cref="Native_ConnectToCheckOut(INetPluginCall, string, string)"/>
     public static void Native_CancelCheckOut(this INetPluginCall pc, string checkOutName, string dBName) =>
         pc.RunMethod("CancelCheckOut", checkOutName, dBName);
+
+    #endregion
+
+    #region Применяемость
+
+    /// <summary> Получить типы применяемости, допустимые для указанного типа объекта ЛОЦМАН.
+    /// <br/>
+    /// <br/>Возвращает набор данных с полями:
+    /// <br/>[_ID] 		             integer 
+    /// <br/>[_ID_EFF_TYPE]        integer
+    /// <br/>[_EFF_TYPE_NAME]      string
+    /// <br/>[_INHERITED]          integer
+    /// <br/>[_ON_CREATE_DO_COPY]  short
+    /// <br/>[_ACCESS]             integer
+    /// <br/> 
+    /// <param name="idType">Идентификатор типа объекта ЛОЦМАН</param>/>
+    /// </summary>
+    public static DataTable Native_GetTypesEffectivityOfType(this INetPluginCall pc, int idType) =>
+        pc.GetDataTable("GetTypesEffectivityOfType", idType);
+
+    /// <summary> Получить атрибуты применяемости, допустимые для указанного типа применяемости.
+    /// <br/>
+    /// <br/>Возвращает набор данных с полями:
+    /// <br/>[_ATTR_ID]  	integer
+    /// <br/>[_ATTR_NAME] string
+    /// <br/>[_ATTR_TYPE] integer
+    /// <br/>[_SYSTEM]    integer
+    /// <param name="effIdType">Идентификатор типа применяемости</param>/>
+    /// </summary>
+    public static DataTable Native_GetEffTypeAttributes(this INetPluginCall pc, int effIdType) =>
+        pc.GetDataTable("GetEffTypeAttributes", effIdType);
+
+    /// <summary> Получить типы применяемости, уже существующие у объекта.
+    /// <br/>
+    /// <br/>Возвращает набор данных с полями:
+    /// <br/>[_EFF_ID] 		    integer
+    /// <br/>[_EFF_TYPE_ID]   integer
+    /// <br/>[_EFFNAME]       string
+    /// <br/>[_CONTEXT_ID]    integer
+    /// <br/>[_HAS_ALL_ATTRS] integer
+    /// <param name="objId">Идентификатор объекта ЛОЦМАН</param>/>
+    /// </summary>
+    public static DataTable Native_GetVersionEff(this INetPluginCall pc, int objId) =>
+        pc.GetDataTable("GetVersionEff", objId);
+
+    /// <summary> Получить существующие атрибуты типов применяемости объекта ЛОЦМАН.
+    /// <br/>
+    /// <br/>Возвращает набор данных с полями:
+    /// <br/>[_EFF_ID] 		    integer
+    /// <br/>[_EFF_TYPE_ID]   integer
+    /// <br/>[_EFF_TYPE_NAME] string
+    /// <br/>[_ATTR_ID]       integer
+    /// <br/>[_ATTR_NAME]     string
+    /// <br/>[_ATTR_TYPE]     integer
+    /// <br/>[_ATTR_VALUE]    string
+    /// <param name="objId">Идентификатор объекта ЛОЦМАН</param>/>
+    /// </summary>
+    public static DataTable Native_GetVersionEffAttrValues(this INetPluginCall pc, int objId) =>
+        pc.GetDataTable("GetVersionEffAttrValues", objId);
+
+    /// <summary> Добавить к объекту ЛОЦМАН применяемость.
+    /// <param name="objId">Идентификатор объекта ЛОЦМАН</param>/>
+    /// <param name="effIdType">Идентификатор типа применяемости</param>/>
+    /// </summary>
+    public static int Native_AddVersionEff(this INetPluginCall pc, int objId,int effIdType) =>
+        (int)pc.RunMethod("AddVersionEff", objId,effIdType);
+
+    /// <summary> Добавить к объекту ЛОЦМАН применяемость.
+    /// <param name="effTypeId">Идентификатор экземпляра типа применяемости </param>/>
+    /// <param name="attributeName">Имя атрибута</param>/>
+    /// <param name="attributeValue">Значение атрибута</param>/>
+    /// </summary>
+    public static void Native_SetVersionEffAttrValue(this INetPluginCall pc, int effTypeId,string attributeName, object attributeValue) =>
+        pc.RunMethod("SetVersionEffAttrValue", effTypeId,attributeName,attributeValue);
 
     #endregion
   }

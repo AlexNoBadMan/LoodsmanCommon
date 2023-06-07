@@ -9,8 +9,8 @@ namespace LoodsmanCommon
 
     internal LLinkInfo(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
     {
-      InverseName = dataRow["_INVERSENAME"] as string;
-      VerticalLink = (short)dataRow["_TYPE"] == 0; //Приведение к int вызвало ошибку с short проблем не возникло
+      InverseName = dataRow.INVERSENAME();
+      VerticalLink = dataRow.TYPE_BOOL(); //Приведение к int вызвало ошибку с short проблем не возникло
                                                    //Order = (int)dataRow["_ORDER"];
     }
   }

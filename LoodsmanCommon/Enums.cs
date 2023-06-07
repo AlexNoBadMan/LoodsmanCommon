@@ -499,7 +499,9 @@
     /// <summary> Текст. </summary>
     Text = 5,
     /// <summary> Изображение. </summary>
-    Image = 6
+    Image = 6,
+    /// <summary> Ссыллка на версию объекта. </summary>
+    LinkToObjectVersion = 7
   }
 
   /// <summary> Состояния пользователей. </summary>
