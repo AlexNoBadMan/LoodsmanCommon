@@ -18,7 +18,7 @@ namespace LoodsmanCommon
     public static T GetValueOrDefault<T>(this DataRow row, string key, T defaultValue) => row.IsNull(key) ? defaultValue : (T)row[key];
 
     /// <summary> Некоторые методы сервера приложений возвращают значения типа object {short}, привидение такого типа к int будет ошибочным, так как вместо привидения будет использоваться операция распаковки. </summary>
-    /// <param name="rowValue"> Объект System.Object, содержащий данные, полученный из System.Data.DataRow. </param>
+    /// <param name="rowValue"> Объект <see cref="Object"/>, содержащий данные, полученный из <see cref="DataRow"/>. </param>
     private static int GetIntValue(object rowValue) => rowValue as int? ?? rowValue as short? ?? 0;
 
     /// <summary> Возвращает результат DataRow["_ID"]. </summary>
