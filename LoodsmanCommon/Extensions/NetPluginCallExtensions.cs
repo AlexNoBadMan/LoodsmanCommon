@@ -1080,7 +1080,7 @@ namespace LoodsmanCommon
 
     /// <summary> Сохраняет изменения в базе данных. </summary>
     /// <inheritdoc cref="Native_ConnectToCheckOut(INetPluginCall, string, string)"/>
-
+    /// <remarks> <br/>После выполнения этой операции все изменения, произведенные в чекауте, сохраняются в базе данных. Объект по-прежнему остается на изменении. </remarks>
     public static void Native_SaveChanges(this INetPluginCall pc, string checkOutName, string dBName) =>
         pc.RunMethod("SaveChanges", checkOutName, dBName);
 
