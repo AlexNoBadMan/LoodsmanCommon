@@ -14,6 +14,16 @@ namespace LoodsmanCommon
     private LMeasureUnit _measureUnit;
     private object _value;
 
+    internal LAttribute(ILoodsmanProxy proxy, ILObject owner, LTypeAttribute lTypeAttribute, object value, string measureId, string unitId)
+    {
+      _proxy = proxy;
+      _owner = owner;
+      _lTypeAttribute = lTypeAttribute;
+      _value = _lTypeAttribute.Type == AttributeType.DateTime && DateTime.TryParse(value as string, out var dateTime) ? dateTime : value;
+      _measureId = measureId;
+      _unitId = unitId;
+    }
+
     public int Id => _lTypeAttribute.Id;
     public string Name => _lTypeAttribute.Name;
     public AttributeType Type => _lTypeAttribute.Type;
@@ -27,54 +37,43 @@ namespace LoodsmanCommon
 
     public LMeasureUnit MeasureUnit
     {
-      get
-      {
-        if (!IsMeasured)
-          return null;
-
-        if (_measureUnit is null && !string.IsNullOrEmpty(_measureId))
-          _measureUnit = _proxy.Meta.Measures.Values.FirstOrDefault(x => x.Guid == _measureId).Units.Values.FirstOrDefault(x => x.Guid == _unitId);
-        // _proxy.Meta.Measures[_measureId].Units[_unitId]; // Ключ для _proxy.Meta.Measures и Units, имя а не guid, необходимо переделать под guid.
-        return _measureUnit;
-      }
-      set
-      {
-        if (!IsMeasured || _measureUnit == value)
-          return;
-
-        //var isEmptyValue = _value is null;
-        //var valueToConvert = isEmptyValue ? 0 : (double)_value;
-        //var convertedValue = _proxy.ConverseValue(valueToConvert, _measureUnit, value);//Пробуем произвести конвертацию, для проверки корректности операции
-        _measureUnit = value;
-        //if (!isEmptyValue)
-        //{
-        //  _value = Type == AttributeType.Integer ? (int)convertedValue : (object)convertedValue;
-        //  UpdateAttribute();
-        //}
-      }
+      get => GetMeasureUnit();
+      set => SetMeasureUnit(value, true);
     }
 
     public object Value
     {
       get => _value;
-      set
-      {
-        _value = value;
-        UpdateAttribute();
-      }
+      set => SetValue(value, true);
     }
 
-    internal LAttribute(ILoodsmanProxy proxy, ILObject owner, LTypeAttribute lTypeAttribute, object value, string measureId, string unitId)
+    public bool SetValue(object value, bool update)
     {
-      _proxy = proxy;
-      _owner = owner;
-      _lTypeAttribute = lTypeAttribute;
-      _value = _lTypeAttribute.Type == AttributeType.DateTime && DateTime.TryParse(value as string, out var dateTime) ? dateTime : value;
-      _measureId = measureId;
-      _unitId = unitId;
+      if ($"{_value}" != $"{value}")
+        return false;
+
+      _value = value;
+
+      if (update)
+        UpdateAttribute();
+
+      return true;
     }
 
-    private void UpdateAttribute()
+    public bool SetMeasureUnit(LMeasureUnit measureUnit, bool update)
+    {
+      if (_measureUnit == measureUnit || !IsMeasured || !Measures.Any(x => x.Units.Values.Contains(measureUnit)))
+        return false;
+
+      _measureUnit = measureUnit;
+
+      if (update)
+        UpdateAttribute();
+
+      return true;
+    }
+
+    public void UpdateAttribute()
     {
       var value = Value;
       if (Type == AttributeType.DateTime && Value is DateTime dateTime && dateTime.TimeOfDay == TimeSpan.Zero)
@@ -83,6 +82,17 @@ namespace LoodsmanCommon
       }
 
       _proxy.UpAttrValueById(_owner.Id, Name, value, MeasureUnit);
+    }
+
+    private LMeasureUnit GetMeasureUnit()
+    {
+      if (!IsMeasured)
+        return null;
+
+      if (_measureUnit is null && !string.IsNullOrEmpty(_measureId))
+        _measureUnit = _proxy.Meta.Measures.Values.FirstOrDefault(x => x.Guid == _measureId).Units.Values.FirstOrDefault(x => x.Guid == _unitId);
+      // _proxy.Meta.Measures[_measureId].Units[_unitId]; // Ключ для _proxy.Meta.Measures и Units, имя а не guid, необходимо переделать под guid.
+      return _measureUnit;
     }
   }
 }
