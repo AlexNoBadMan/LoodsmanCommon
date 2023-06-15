@@ -243,7 +243,7 @@ namespace LoodsmanCommon
     private readonly ILoodsmanMeta _meta;
     private string _checkOutName;
     private ILObject _selectedObject;
-    private IEnumerable<ILObject> _selectedObjects = new ILObject[] { };
+    private ILObject[] _selectedObjects = new ILObject[] { };
 
     public LoodsmanProxy(INetPluginCall iNetPC, ILoodsmanMeta loodsmanMeta)
     {
@@ -260,7 +260,18 @@ namespace LoodsmanCommon
 
     public IEnumerable<ILObject> SelectedObjects => GetSelectedObjects();
 
-    public string CheckOutName => _checkOutName;
+    public string CheckOutName => GetCheckOutName();
+
+    private string GetCheckOutName()
+    {
+      if (string.IsNullOrEmpty(_checkOutName))
+      {
+        var pluginCall = _application.GetPluginCall();
+        _checkOutName = pluginCall.CheckOut != 0 ? pluginCall.CheckOut.ToString() : string.Empty;
+      }
+
+      return _checkOutName;
+    }
 
     private ILObject GetSelectedObject()
     {
@@ -275,7 +286,13 @@ namespace LoodsmanCommon
         return Enumerable.Repeat(SelectedObject, 1);
 
       if (!_selectedObjects.Select(x => x.Id).OrderBy(x => x).SequenceEqual(ids.OrderBy(x => x)))
-        _selectedObjects = GetPropObjects(ids).ToArray();
+      {
+        var selectedObjects = GetPropObjects(ids).ToArray();
+        var selectedObject = SelectedObject;
+        var index = Array.FindIndex(selectedObjects, x => x.Id == selectedObject.Id);
+        selectedObjects[index] = selectedObject;
+        _selectedObjects = selectedObjects;
+      }
 
       return _selectedObjects;
     }
