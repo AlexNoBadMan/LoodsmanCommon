@@ -324,7 +324,7 @@ namespace LoodsmanCommon
     public static string FILEDIR(this DataRow row) => row["_FILEDIR"] as string;
 
     /// <summary> Возвращает результат DataRow["_NOTE"]. </summary>
-    public static string NOTE(this DataRow row) => row["_NOTE"] as string;
+    public static string NOTE(this DataRow row) => row["_NOTE"] as string ?? string.Empty;
 
     /// <summary> Возвращает результат DataRow["_NODE"]. </summary>
     public static string NODE(this DataRow row) => row["_NODE"] as string;
