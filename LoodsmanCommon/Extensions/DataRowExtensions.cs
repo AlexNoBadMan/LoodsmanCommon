@@ -120,6 +120,9 @@ namespace LoodsmanCommon
     /// <summary> Возвращает результат DataRow["_CRC"]. </summary>
     public static int CRC(this DataRow row) => GetIntValue(row["_CRC"]);
 
+    /// <summary> Возвращает результат DataRow["_ORDER"]. </summary>
+    public static int ORDER(this DataRow row) => GetIntValue(row["_ORDER"]);
+
     /// <summary> Возвращает результат DataRow["_ID_LOCK"]. </summary>
     public static int? ID_LOCK(this DataRow row) => row["_ID_LOCK"] as int?;
 

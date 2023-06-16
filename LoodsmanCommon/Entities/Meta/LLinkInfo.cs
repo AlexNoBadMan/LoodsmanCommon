@@ -6,12 +6,13 @@ namespace LoodsmanCommon
   {
     public string InverseName { get; }
     public bool VerticalLink { get; }
+    public int Order { get; }
 
     internal LLinkInfo(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
     {
       InverseName = dataRow.INVERSENAME();
-      VerticalLink = dataRow.TYPE_BOOL(); //Приведение к int вызвало ошибку с short проблем не возникло
-                                                   //Order = (int)dataRow["_ORDER"];
+      VerticalLink = dataRow.TYPE_BOOL();
+      Order = dataRow.ORDER();
     }
   }
 }
