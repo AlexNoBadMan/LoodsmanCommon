@@ -49,7 +49,7 @@ namespace LoodsmanCommon
 
     public bool SetValue(object value, bool update)
     {
-      if ($"{_value}" != $"{value}")
+      if ($"{_value}" == $"{value}")
         return false;
 
       _value = value;
