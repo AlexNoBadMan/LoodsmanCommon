@@ -285,16 +285,19 @@ namespace LoodsmanCommon
       if (ids.Length < 2)
         return Enumerable.Repeat(SelectedObject, 1);
 
-      if (!_selectedObjects.Select(x => x.Id).OrderBy(x => x).SequenceEqual(ids.OrderBy(x => x)))
+      if (_selectedObjects.Select(x => x.Id).OrderBy(x => x).SequenceEqual(ids.OrderBy(x => x)))
+        return _selectedObjects;
+      
+      var selectedObjects = GetPropObjects(ids).ToArray();
+      var selectedObject = SelectedObject;
+      if (selectedObject != null)
       {
-        var selectedObjects = GetPropObjects(ids).ToArray();
-        var selectedObject = SelectedObject;
         var index = Array.FindIndex(selectedObjects, x => x.Id == selectedObject.Id);
-        selectedObjects[index] = selectedObject;
-        _selectedObjects = selectedObjects;
+        if (index >= 0)
+          selectedObjects[index] = selectedObject;
       }
 
-      return _selectedObjects;
+      return _selectedObjects = selectedObjects; ;
     }
 
     #region NewObject
