@@ -87,6 +87,9 @@ namespace LoodsmanCommon
     /// <summary> Возвращает результат DataRow["_PARENT_ID"]. </summary>
     public static int PARENT_ID(this DataRow row) => GetIntValue(row["_PARENT_ID"]);
 
+    /// <summary> Возвращает результат DataRow["_PARENT"]. </summary>
+    public static int PARENT(this DataRow row) => GetIntValue(row["_PARENT"]);
+
     /// <summary> Возвращает результат DataRow["_SIGNROLE_ID"]. </summary>
     public static int SIGNROLE_ID(this DataRow row) => GetIntValue(row["_SIGNROLE_ID"]);
 
@@ -172,7 +175,9 @@ namespace LoodsmanCommon
     public static string INVERSENAME(this DataRow row) => row["_INVERSENAME"] as string;
 
     /// <summary> Возвращает результат DataRow["_TYPE"].
-    /// <br/>** В случаях когда поле содержит тип субъекта, необходимо использовать метод расширения <see cref="TYPE_SUBJECT(DataRow)">TYPE_SUBJECT</see>.
+    /// <br/>** В случаях когда поле содержит тип субъекта, необходимо использовать метод расширения <see cref="TYPE_SUBJECT(DataRow)"></see>.
+    /// <br/>** В случаях когда поле содержит тип организационной единицы, необходимо использовать метод расширения <see cref="TYPE_ORG_UNIT(DataRow)"></see>.
+    /// <br/>** В случаях когда поле содержит признак по умолчанию (int), необходимо использовать метод расширения <see cref="TYPE_BOOL(DataRow)"></see>.
     /// </summary>
     public static string TYPE(this DataRow row) => row["_TYPE"] as string;
 
@@ -244,6 +249,9 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает результат DataRow["_USERNAME"]. </summary>
     public static string USERNAME(this DataRow row) => row["_USERNAME"] as string;
+
+    /// <summary> Возвращает результат DataRow["_USERDIR"]. </summary>
+    public static string USERDIR(this DataRow row) => row["_USERDIR"] as string;
 
     /// <summary> Возвращает результат DataRow["_USERFULLNAME"]. </summary>
     public static string USERFULLNAME(this DataRow row) => row["_USERFULLNAME"] as string;
@@ -357,12 +365,12 @@ namespace LoodsmanCommon
     public static string DEFAULT_VALUE(this DataRow row) => row["_DEFAULT_VALUE"] as string;
 
     /// <summary> Возвращает результат DataRow["_DEFAULT"]. Использовать в случае когда поле содержит значение по умолчанию (string). 
-    /// <br/>** В случаях когда поле содержит признак по умолчанию (int), необходимо использовать метод расширения <see cref="DEFAULT_BOOL(DataRow)">DEFAULT_BOOL</see>.
+    /// <br/>** В случаях когда поле содержит признак по умолчанию (int), необходимо использовать метод расширения <see cref="DEFAULT_BOOL(DataRow)"></see>.
     /// </summary>
     public static string DEFAULT(this DataRow row) => row["_DEFAULT"] as string;
 
     /// <summary> Возвращает результат DataRow["_DEFAULT"]. Использовать в случае когда поле содержит признак по умолчанию (int). 
-    /// <br/>** В случаях когда поле содержит значение по умолчанию (string), необходимо использовать метод расширения <see cref="DEFAULT(DataRow)">DEFAULT</see>.
+    /// <br/>** В случаях когда поле содержит значение по умолчанию (string), необходимо использовать метод расширения <see cref="DEFAULT(DataRow)"></see>.
     /// </summary>
     public static bool DEFAULT_BOOL(this DataRow row) => GetIntValue(row["_DEFAULT"]) == 1;
 
@@ -412,9 +420,14 @@ namespace LoodsmanCommon
     public static bool TRANSSIGNROLES(this DataRow row) => GetIntValue(row["_TRANSSIGNROLES"]) == 1;
 
     /// <summary> Возвращает результат DataRow["_TYPE"]. Использовать в случае когда поле содержит признак по умолчанию (int). 
-    /// <br/>** В случаях когда поле содержит значение по умолчанию (string), необходимо использовать метод расширения <see cref="TYPE(DataRow)">TYPE</see>.
+    /// <br/>** В случаях когда поле содержит значение по умолчанию (string), необходимо использовать метод расширения <see cref="TYPE(DataRow)"></see>.
     /// </summary>
     public static bool TYPE_BOOL(this DataRow row) => GetIntValue(row["_TYPE"]) == 0;
+
+    /// <summary> Возвращает результат DataRow["_IS_QUANTITY"].Использовать в случае когда поле содержит признак по умолчанию (int). 
+    /// <br/>** В случаях когда поле содержит тип количественной связи, необходимо использовать метод расширения <see cref="IS_QUANTITY_TYPE(DataRow)"></see>.
+    /// </summary>
+    public static bool IS_QUANTITY(this DataRow row) => GetIntValue(row["_IS_QUANTITY"]) == 1;
 
     /// <summary> Возвращает результат DataRow["_DATE"]. </summary>
     public static DateTime DATE(this DataRow row) => row["_DATE"] as DateTime? ?? DateTime.MaxValue;
@@ -429,9 +442,14 @@ namespace LoodsmanCommon
     public static LinkKind LINKKIND(this DataRow row) => (LinkKind)GetIntValue(row["_LINKKIND"]);
 
     /// <summary> Возвращает результат DataRow["_TYPE"].
-    /// <br/>** В случаях когда поле содержит тип (string), необходимо использовать метод расширения <see cref="TYPE(DataRow)">TYPE</see>.
+    /// <br/>** В случаях когда поле содержит тип (string), необходимо использовать метод расширения <see cref="TYPE(DataRow)"></see>.
     /// </summary>
     public static SubjectType TYPE_SUBJECT(this DataRow row) => (SubjectType)GetIntValue(row["_TYPE"]);
+
+    /// <summary> Возвращает результат DataRow["_TYPE"].
+    /// <br/>** В случаях когда поле содержит тип (string), необходимо использовать метод расширения <see cref="TYPE(DataRow)"></see>.
+    /// </summary>
+    public static OrganisationUnitKind TYPE_ORG_UNIT(this DataRow row) => (OrganisationUnitKind)GetIntValue(row["_TYPE"]);
 
     /// <summary> Возвращает результат DataRow["_DIRECTION"]. </summary>
     public static LinkDirection DIRECTION(this DataRow row) => (LinkDirection)GetIntValue(row["_DIRECTION"]);
@@ -440,7 +458,7 @@ namespace LoodsmanCommon
     public static AttributeType ATTRTYPE(this DataRow row) => (AttributeType)GetIntValue(row["_ATTRTYPE"]);
 
     /// <summary> Возвращает результат DataRow["_IS_QUANTITY"]. </summary>
-    public static LinkQuantityType IS_QUANTITY(this DataRow row) => (LinkQuantityType)GetIntValue(row["_IS_QUANTITY"]);
+    public static LinkQuantityType IS_QUANTITY_TYPE(this DataRow row) => (LinkQuantityType)GetIntValue(row["_IS_QUANTITY"]);
 
     /// <summary> Возвращает результат DataRow["_OBJECT_TYPE"]. </summary>
     public static ReportRecordType OBJECT_TYPE(this DataRow row) => (ReportRecordType)GetIntValue(row["_OBJECT_TYPE"]);
