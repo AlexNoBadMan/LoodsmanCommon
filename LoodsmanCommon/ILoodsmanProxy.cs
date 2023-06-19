@@ -102,7 +102,7 @@ namespace LoodsmanCommon
     /// <summary> Получение атрибутов объекта, включая служебные. </summary>
     /// <param name="loodsmanObject"> Объект Лоцман. </param>
     /// <returns> Возвращает атрибуты объекта, включая служебные. </returns>
-    IEnumerable<LAttribute> GetAttributes(ILObject loodsmanObject);
+    IEnumerable<LObjectAttribute> GetAttributes(ILObject loodsmanObject);
 
     /// <summary> Приводит значение к заданной единице измерения. </summary>
     /// <param name="value"> Значение. </param>
@@ -487,7 +487,7 @@ namespace LoodsmanCommon
       return new CreationInfo { Creator = creator, Created = created };
     }
 
-    public IEnumerable<LAttribute> GetAttributes(ILObject loodsmanObject)
+    public IEnumerable<LObjectAttribute> GetAttributes(ILObject loodsmanObject)
     {
       var attributesInfo = INetPC.Native_GetInfoAboutVersion(loodsmanObject.Id, GetInfoAboutVersionMode.Mode3).Select(x => x);
       foreach (var lTypeAttribute in loodsmanObject.Type.Attributes)
@@ -502,7 +502,7 @@ namespace LoodsmanCommon
           unitId = attribute["_ID_UNIT"] as string;
         }
 
-        yield return new LAttribute(this, loodsmanObject, lTypeAttribute, value, measureId, unitId);
+        yield return new LObjectAttribute(this, loodsmanObject, lTypeAttribute, value, measureId, unitId);
       }
     }
 

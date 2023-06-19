@@ -2,7 +2,7 @@
 
 namespace LoodsmanCommon
 {
-  public class LTypeAttribute : IEntity, INamedEntity
+  public class LTypeAttributeInfo : IEntity, INamedEntity
   {
     private readonly LAttributeInfo _lAttribute;
 
@@ -18,7 +18,7 @@ namespace LoodsmanCommon
 
     public IEnumerable<LAttributeMeasure> Measures => _lAttribute.Measures;
 
-    internal LTypeAttribute(LAttributeInfo lAttribute, bool isObligatory)
+    internal LTypeAttributeInfo(LAttributeInfo lAttribute, bool isObligatory)
     {
       _lAttribute = lAttribute;
       IsObligatory = isObligatory;

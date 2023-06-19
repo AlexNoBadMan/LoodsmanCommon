@@ -9,14 +9,14 @@ namespace LoodsmanCommon
   {
     ILObject Parent { get; set; }
     int Id { get; set; }
-    LType Type { get; set; }
+    LTypeInfo Type { get; set; }
     string Product { get; set; }
     string Version { get; set; }
     LStateInfo State { get; set; }
     bool IsDocument { get; }
     PDMAccessLevels AccessLevel { get; set; }
     PDMLockLevels LockLevel { get; set; }
-    NamedEntityCollection<LAttribute> Attributes { get; }
+    NamedEntityCollection<LObjectAttribute> Attributes { get; }
     EntityCollection<LFile> Files { get; }
     LUser Creator { get; }
     DateTime Created { get; }
@@ -24,7 +24,7 @@ namespace LoodsmanCommon
 
   public class LObject : ILObject
   {
-    private NamedEntityCollection<LAttribute> _attributes;
+    private NamedEntityCollection<LObjectAttribute> _attributes;
     private LStateInfo _state;
     private readonly ILoodsmanProxy _proxy;
     private EntityCollection<LFile> _files;
@@ -59,7 +59,7 @@ namespace LoodsmanCommon
       Parent = obj.Parent is IPDMLink link ? new LObject(link.ParentObject, proxy) : null;
     }
 
-    internal LObject(ILoodsmanProxy proxy, LType type, LStateInfo state)
+    internal LObject(ILoodsmanProxy proxy, LTypeInfo type, LStateInfo state)
     {
       _proxy = proxy;
       Type = type;
@@ -75,7 +75,7 @@ namespace LoodsmanCommon
 
     public int Id { get; set; }
 
-    public LType Type { get; set; }
+    public LTypeInfo Type { get; set; }
 
     public string Product { get; set; }
 
@@ -100,7 +100,7 @@ namespace LoodsmanCommon
 
     public PDMLockLevels LockLevel { get; set; }
 
-    public NamedEntityCollection<LAttribute> Attributes => _attributes ??= new NamedEntityCollection<LAttribute>(() => _proxy.GetAttributes(this), 10);
+    public NamedEntityCollection<LObjectAttribute> Attributes => _attributes ??= new NamedEntityCollection<LObjectAttribute>(() => _proxy.GetAttributes(this), 10);
 
     public EntityCollection<LFile> Files => _files ??= new EntityCollection<LFile>(() => _proxy.GetFiles(this));
 

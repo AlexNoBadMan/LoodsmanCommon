@@ -3,11 +3,11 @@ using System.Data;
 
 namespace LoodsmanCommon
 {
-  public class LType : EntityIcon
+  public class LTypeInfo : EntityIcon
   {
     private readonly INetPluginCall _iNetPC;
     private readonly NamedEntityCollection<LAttributeInfo> _lAttributes;
-    private NamedEntityCollection<LTypeAttribute> _attributes;
+    private NamedEntityCollection<LTypeAttributeInfo> _attributes;
 
     /// <summary>
     /// Ключевой атрибут типа.
@@ -42,11 +42,11 @@ namespace LoodsmanCommon
     /// <summary>
     /// Список возможных атрибутов типа, включая служебные.
     /// </summary>
-    public NamedEntityCollection<LTypeAttribute> Attributes => _attributes ??= new NamedEntityCollection<LTypeAttribute>(
-        () => _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).Select(x => new LTypeAttribute(_lAttributes[x.NAME()], x.OBLIGATORY())),
+    public NamedEntityCollection<LTypeAttributeInfo> Attributes => _attributes ??= new NamedEntityCollection<LTypeAttributeInfo>(
+        () => _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).Select(x => new LTypeAttributeInfo(_lAttributes[x.NAME()], x.OBLIGATORY())),
         10);
 
-    internal LType(INetPluginCall iNetPC, DataRow dataRow, NamedEntityCollection<LAttributeInfo> lAttributes, NamedEntityCollection<LStateInfo> lStates, string nameField = "_TYPENAME") : base(dataRow, nameField)
+    internal LTypeInfo(INetPluginCall iNetPC, DataRow dataRow, NamedEntityCollection<LAttributeInfo> lAttributes, NamedEntityCollection<LStateInfo> lStates, string nameField = "_TYPENAME") : base(dataRow, nameField)
     {
       _iNetPC = iNetPC;
       _lAttributes = lAttributes;

@@ -79,7 +79,7 @@
     <Compile Include="Entities\Meta\OrganisationUnit\LMainDepartment.cs" />
     <Compile Include="Entities\Meta\OrganisationUnit\LOrganisationUnit.cs" />
     <Compile Include="Entities\Meta\OrganisationUnit\LPosition.cs" />
-    <Compile Include="Entities\Meta\LTypeAttribute.cs" />
+    <Compile Include="Entities\Meta\LTypeAttributeInfo.cs" />
     <Compile Include="Entities\Meta\OrganisationUnit\LUser.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions\DataTableExtensions.cs" />
@@ -95,7 +95,7 @@
     <Compile Include="LoodsmanWPFNetPluginBase.cs" />
     <Compile Include="Entities\Meta\LProxyUseCase.cs" />
     <Compile Include="Entities\Meta\LStateInfo.cs" />
-    <Compile Include="Entities\Meta\LType.cs" />
+    <Compile Include="Entities\Meta\LTypeInfo.cs" />
     <Compile Include="Extensions\NetPluginCallExtensions.cs" />
     <Compile Include="MetaBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -4,17 +4,17 @@ using System.Collections.Generic;
 
 namespace LoodsmanCommon
 {
-  public class LAttribute : IEntity, INamedEntity
+  public class LObjectAttribute : IEntity, INamedEntity
   {
     private readonly ILoodsmanProxy _proxy;
     private readonly ILObject _owner;
-    private readonly LTypeAttribute _lTypeAttribute;
+    private readonly LTypeAttributeInfo _lTypeAttribute;
     private readonly string _measureId;
     private readonly string _unitId;
     private LMeasureUnit _measureUnit;
     private object _value;
 
-    internal LAttribute(ILoodsmanProxy proxy, ILObject owner, LTypeAttribute lTypeAttribute, object value, string measureId, string unitId)
+    internal LObjectAttribute(ILoodsmanProxy proxy, ILObject owner, LTypeAttributeInfo lTypeAttribute, object value, string measureId, string unitId)
     {
       _proxy = proxy;
       _owner = owner;

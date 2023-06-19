@@ -10,7 +10,7 @@ namespace LoodsmanCommon
   public interface ILoodsmanMeta
   {
     /// <summary> Возвращает список типов. </summary>
-    NamedEntityCollection<LType> Types { get; }
+    NamedEntityCollection<LTypeInfo> Types { get; }
 
     /// <summary> Возвращает список связей. </summary>
     NamedEntityCollection<LLinkInfo> Links { get; }
@@ -59,7 +59,7 @@ namespace LoodsmanCommon
 
   internal class LoodsmanMeta : ILoodsmanMeta
   {
-    private NamedEntityCollection<LType> _types;
+    private NamedEntityCollection<LTypeInfo> _types;
     private NamedEntityCollection<LLinkInfo> _links;
     private NamedEntityCollection<LStateInfo> _states;
     private NamedEntityCollection<LAttributeInfo> _attributes;
@@ -78,7 +78,7 @@ namespace LoodsmanCommon
       _iNetPC = iNetPC;
     }
 
-    public NamedEntityCollection<LType> Types => _types ??= new NamedEntityCollection<LType>(() => _iNetPC.Native_GetTypeListEx().Select(x => new LType(_iNetPC, x, Attributes, States)), 300);
+    public NamedEntityCollection<LTypeInfo> Types => _types ??= new NamedEntityCollection<LTypeInfo>(() => _iNetPC.Native_GetTypeListEx().Select(x => new LTypeInfo(_iNetPC, x, Attributes, States)), 300);
     public NamedEntityCollection<LLinkInfo> Links => _links ??= new NamedEntityCollection<LLinkInfo>(() => _iNetPC.Native_GetLinkList().Select(x => new LLinkInfo(x)), 100);
     public NamedEntityCollection<LStateInfo> States => _states ??= new NamedEntityCollection<LStateInfo>(() => _iNetPC.Native_GetStateList().Select(x => new LStateInfo(x)), 50);
     public NamedEntityCollection<LAttributeInfo> Attributes => _attributes ??= new NamedEntityCollection<LAttributeInfo>(() => _iNetPC.Native_GetAttributeList().Select(x => new LAttributeInfo(this, x)), 500);
