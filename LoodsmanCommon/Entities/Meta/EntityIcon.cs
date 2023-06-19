@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -10,7 +9,7 @@ namespace LoodsmanCommon
   {
     private readonly byte[] _iconField;
     private Image _icon;
-    private ImageSource _bitmapSource;
+    private ImageSource _iconSource;
 
     internal EntityIcon(int id, string name, byte[] iconField) : base(id, name)
     {
@@ -18,7 +17,7 @@ namespace LoodsmanCommon
     }
 
     public Image Icon => _icon ??= GetIcon(_iconField);
-    public ImageSource BitmapSource => _bitmapSource ??= GetIconSource(Icon);
+    public ImageSource IconSource => _iconSource ??= GetIconSource(Icon);
 
     private static Image GetIcon(byte[] iconField)
     {
