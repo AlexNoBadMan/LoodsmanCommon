@@ -11,7 +11,7 @@ namespace LoodsmanCommon
     private LStateInfo _defaultState;
     private NamedEntityCollection<LTypeAttributeInfo> _attributes;
 
-    internal LTypeInfo(ILoodsmanMeta meta, DataRow dataRow) : base(dataRow.ID(), dataRow.NAME(), dataRow.ICON())
+    internal LTypeInfo(ILoodsmanMeta meta, DataRow dataRow) : base(dataRow.ID(), dataRow.TYPENAME(), dataRow.ICON())
     {
       _meta = meta;
       _keyAttributeName = dataRow.ATTRNAME();
