@@ -1,21 +1,17 @@
-﻿using System.Data;
-
-namespace LoodsmanCommon
+﻿namespace LoodsmanCommon
 {
   public abstract class Entity : IEntity, INamedEntity
   {
-    /// <summary>
-    /// Индентификатор
-    /// </summary>
-    public int Id { get; }
-    public string Name { get; }
-
     internal Entity(int id, string name)
     {
       Id = id;
       Name = name;
     }
 
-    internal Entity(DataRow dataRow, string nameField = "_NAME") : this(dataRow.ID(), dataRow[nameField] as string) { }
+    /// <summary> Индентификатор. </summary>
+    public int Id { get; }
+
+    /// <summary> Наименование. </summary>
+    public string Name { get; }
   }
 }

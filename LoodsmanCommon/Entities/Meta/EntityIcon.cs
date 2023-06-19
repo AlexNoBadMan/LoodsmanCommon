@@ -8,21 +8,19 @@ namespace LoodsmanCommon
 {
   public abstract class EntityIcon : Entity
   {
-    private readonly byte[]? _iconField;
+    private readonly byte[] _iconField;
     private Image _icon;
     private ImageSource _bitmapSource;
 
-    public Image Icon => _icon ??= GetIcon(_iconField);
-    public ImageSource BitmapSource => _bitmapSource ??= GetIconSource(Icon);
-    internal EntityIcon(int id, string name, byte[]? iconField) : base(id, name)
+    internal EntityIcon(int id, string name, byte[] iconField) : base(id, name)
     {
       _iconField = iconField;
     }
 
-    internal EntityIcon(DataRow dataRow, string nameField = "_NAME") : this(dataRow.ID(), dataRow[nameField] as string, dataRow["_ICON"] as byte[]) { }
+    public Image Icon => _icon ??= GetIcon(_iconField);
+    public ImageSource BitmapSource => _bitmapSource ??= GetIconSource(Icon);
 
-
-    private static Image GetIcon(byte[]? iconField)
+    private static Image GetIcon(byte[] iconField)
     {
       if (iconField is null)
         return new Bitmap(16, 16);
@@ -39,15 +37,15 @@ namespace LoodsmanCommon
     public static BitmapImage GetIconSource(Image image)
     {
       var bitmapImage = new BitmapImage();
-      using (var ms = new MemoryStream())
+      using (var memoryStream = new MemoryStream())
       {
-        image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-        ms.Position = 0;
+        image.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+        memoryStream.Position = 0;
         bitmapImage.BeginInit();
         bitmapImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
         bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
         bitmapImage.UriSource = null;
-        bitmapImage.StreamSource = ms;
+        bitmapImage.StreamSource = memoryStream;
         bitmapImage.EndInit();
       }
       bitmapImage.Freeze();

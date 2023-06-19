@@ -17,9 +17,9 @@ namespace LoodsmanCommon
     /// <param name="defaultValue">Значение по умолчанию. </param>
     public static T GetValueOrDefault<T>(this DataRow row, string key, T defaultValue) => row.IsNull(key) ? defaultValue : (T)row[key];
 
-    /// <summary> Некоторые методы сервера приложений возвращают значения типа object {short}, привидение такого типа к int будет ошибочным, так как вместо привидения будет использоваться операция распаковки. </summary>
+    /// <summary> Некоторые методы сервера приложений возвращают значения типа object {short}, привидение такого типа к int будет ошибочным, так как вместо приведения будет использоваться операция распаковки. </summary>
     /// <param name="rowValue"> Объект <see cref="Object"/>, содержащий данные, полученный из <see cref="DataRow"/>. </param>
-    private static int GetIntValue(object rowValue) => rowValue as int? ?? rowValue as short? ?? 0;
+    public static int GetIntValue(object rowValue) => rowValue as int? ?? rowValue as short? ?? 0;
 
     /// <summary> Возвращает результат DataRow["_ID"]. </summary>
     public static int ID(this DataRow row) => GetIntValue(row["_ID"]);
@@ -133,10 +133,10 @@ namespace LoodsmanCommon
     public static byte[] LINKICON(this DataRow row) => row["_LINKICON"] as byte[];
 
     /// <summary> Возвращает результат DataRow["_MIN_QUANTITY"]. </summary>
-    public static double MIN_QUANTITY(this DataRow row) => row["_MIN_QUANTITY"] as double? ?? 0;
+    public static double MIN_QUANTITY(this DataRow row) => double.TryParse(row["_MIN_QUANTITY"] as string, out var value) ? value : 0d;
 
     /// <summary> Возвращает результат DataRow["_MAX_QUANTITY"]. </summary>
-    public static double MAX_QUANTITY(this DataRow row) => row["_MAX_QUANTITY"] as double? ?? 0;
+    public static double MAX_QUANTITY(this DataRow row) => double.TryParse(row["_MAX_QUANTITY"] as string, out var value) ? value : 0d;
 
     /// <summary> Возвращает результат DataRow["_ATTRNAME"]. </summary>
     public static string ATTRNAME(this DataRow row) => row["_ATTRNAME"] as string;
@@ -178,6 +178,9 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает результат DataRow["_TYPENAME"]. </summary>
     public static string TYPENAME(this DataRow row) => row["_TYPENAME"] as string;
+
+    /// <summary> Возвращает результат DataRow["_PROXYNAME"]. </summary>
+    public static string PROXYNAME(this DataRow row) => row["_PROXYNAME"] as string;
 
     /// <summary> Возвращает результат DataRow["_TYPE_NAME_1"]. </summary>
     public static string TYPE_NAME_1(this DataRow row) => row["_TYPE_NAME_1"] as string;

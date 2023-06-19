@@ -4,11 +4,6 @@ namespace LoodsmanCommon
 {
   public class LMeasureUnit : INamedEntity
   {
-    public LMeasure ParentMeasure { get; }
-    public string Guid { get; }
-    public string Name { get; }
-    public bool IsBase { get; }
-
     internal LMeasureUnit(LMeasure measure, DataRow dataRow)
     {
       ParentMeasure = measure;
@@ -17,5 +12,10 @@ namespace LoodsmanCommon
       Name = dataRow.NAME();
       IsBase = dataRow.BASICUNIT();
     }
+
+    public LMeasure ParentMeasure { get; }
+    public string Guid { get; }
+    public string Name { get; }
+    public bool IsBase { get; }
   }
 }

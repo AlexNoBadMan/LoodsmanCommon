@@ -5,7 +5,7 @@ namespace LoodsmanCommon
 {
   public class LStateInfo : EntityIcon
   {
-    internal LStateInfo(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
+    internal LStateInfo(DataRow dataRow) : base(dataRow.ID(), dataRow.NAME(), dataRow.ICON())
     {
 
     }

@@ -2,19 +2,18 @@
 
 namespace LoodsmanCommon
 {
-
   public class LPosition : LOrganisationUnit
   {
-    //private readonly int _parentId;
-    public string Code { get; }
-    public bool IsChief { get; }
-    public override OrganisationUnitKind Kind => OrganisationUnitKind.Position;
-
-    public LPosition(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
+    internal LPosition(DataRow dataRow) : base(dataRow)
     {
       //_parentId = (int)dataRow["_PARENT"];
       Code = dataRow.CODE();
       IsChief = dataRow.LEADER();
     }
+
+    //private readonly int _parentId;
+    public string Code { get; }
+    public bool IsChief { get; }
+    public override OrganisationUnitKind Kind => OrganisationUnitKind.Position;
   }
 }

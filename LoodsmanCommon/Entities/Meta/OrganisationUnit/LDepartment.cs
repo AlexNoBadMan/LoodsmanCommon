@@ -4,12 +4,12 @@ namespace LoodsmanCommon
 {
   public class LDepartment : LOrganisationUnit
   {
-    public string Code { get; }
-    public override OrganisationUnitKind Kind => OrganisationUnitKind.Department;
-
-    public LDepartment(DataRow dataRow, string nameField = "_NAME") : base(dataRow, nameField)
+    internal LDepartment(DataRow dataRow) : base(dataRow)
     {
       Code = dataRow.CODE();
     }
+
+    public string Code { get; }
+    public override OrganisationUnitKind Kind => OrganisationUnitKind.Department;
   }
 }

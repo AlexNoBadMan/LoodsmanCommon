@@ -1,61 +1,46 @@
-﻿using Ascon.Plm.Loodsman.PluginSDK;
-using System.Data;
+﻿using System.Data;
 
 namespace LoodsmanCommon
 {
   public class LTypeInfo : EntityIcon
   {
-    private readonly INetPluginCall _iNetPC;
-    private readonly NamedEntityCollection<LAttributeInfo> _lAttributes;
+    private readonly string _keyAttributeName;
+    private readonly string _defaultStateName;
+    private readonly ILoodsmanMeta _meta;
+    private LAttributeInfo _keyAttribute;
+    private LStateInfo _defaultState;
     private NamedEntityCollection<LTypeAttributeInfo> _attributes;
 
-    /// <summary>
-    /// Ключевой атрибут типа.
-    /// </summary>
-    public LAttributeInfo KeyAttribute { get; }
-
-    /// <summary>
-    /// Является ли документом.
-    /// </summary>
-    public bool IsDocument { get; }
-
-    /// <summary>
-    /// Является ли версионным.
-    /// </summary>
-    public bool IsVersioned { get; }
-
-    /// <summary>
-    /// Состояние по умолчанию.
-    /// </summary>
-    public LStateInfo DefaultState { get; }
-
-    /// <summary>
-    /// Может ли быть проектом.
-    /// </summary>
-    public bool CanBeProject { get; }
-
-    /// <summary>
-    /// Может ли текущий пользователь создавать объекты данного типа.
-    /// </summary>
-    public bool CanCreate { get; }
-
-    /// <summary>
-    /// Список возможных атрибутов типа, включая служебные.
-    /// </summary>
-    public NamedEntityCollection<LTypeAttributeInfo> Attributes => _attributes ??= new NamedEntityCollection<LTypeAttributeInfo>(
-        () => _iNetPC.Native_GetInfoAboutType(Name, GetInfoAboutTypeMode.Mode12).Select(x => new LTypeAttributeInfo(_lAttributes[x.NAME()], x.OBLIGATORY())),
-        10);
-
-    internal LTypeInfo(INetPluginCall iNetPC, DataRow dataRow, NamedEntityCollection<LAttributeInfo> lAttributes, NamedEntityCollection<LStateInfo> lStates, string nameField = "_TYPENAME") : base(dataRow, nameField)
+    internal LTypeInfo(ILoodsmanMeta meta, DataRow dataRow) : base(dataRow.ID(), dataRow.NAME(), dataRow.ICON())
     {
-      _iNetPC = iNetPC;
-      _lAttributes = lAttributes;
-      KeyAttribute = _lAttributes[dataRow.ATTRNAME()];
+      _meta = meta;
+      _keyAttributeName = dataRow.ATTRNAME();
       IsDocument = dataRow.DOCUMENT();
       IsVersioned = !dataRow.NOVERSIONS();
-      DefaultState = lStates[dataRow.DEFAULTSTATE()];
+      _defaultStateName = dataRow.DEFAULTSTATE();
       CanBeProject = dataRow.CANBEPROJECT();
       CanCreate = dataRow.CANCREATE();
     }
+
+    /// <summary> Ключевой атрибут типа. </summary>
+    public LAttributeInfo KeyAttribute => _keyAttribute ??= _meta.Attributes[_keyAttributeName];
+
+    /// <summary> Является ли документом. </summary>
+    public bool IsDocument { get; }
+
+    /// <summary> Является ли версионным. </summary>
+    public bool IsVersioned { get; }
+
+    /// <summary> Состояние по умолчанию. </summary>
+    public LStateInfo DefaultState => _defaultState ??= _meta.States[_defaultStateName];
+
+    /// <summary> Может ли быть проектом. </summary>
+    public bool CanBeProject { get; }
+
+    /// <summary> Может ли текущий пользователь создавать объекты данного типа. </summary>
+    public bool CanCreate { get; }
+
+    /// <summary> Список возможных атрибутов типа, включая служебные. </summary>
+    public NamedEntityCollection<LTypeAttributeInfo> Attributes => _attributes ??= _meta.GetTypeAttrbiutes(Name);
   }
 }
