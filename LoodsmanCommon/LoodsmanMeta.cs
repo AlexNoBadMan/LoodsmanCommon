@@ -105,7 +105,7 @@ namespace LoodsmanCommon
       var orgUnits = new Dictionary<int, LOrganisationUnit>(dataRows.Count);
       foreach (DataRow dataRow1 in dataRows)
       {
-        var unitKind = (OrganisationUnitKind)dataRow1["_TYPE"];
+        var unitKind = dataRow1.TYPE_ORG_UNIT();
         LOrganisationUnit orgUnit = unitKind switch
         {
           OrganisationUnitKind.Department => new LDepartment(dataRow1),
@@ -123,14 +123,14 @@ namespace LoodsmanCommon
 
       foreach (DataRow dataRow2 in dataRows)
       {
-        var parentId = dataRow2["_PARENT"] as int? ?? 0;
+        var parentId = dataRow2.PARENT();
         if (parentId <= 0)
           continue;
 
         var parent = orgUnits[parentId];
-        if ((OrganisationUnitKind)dataRow2["_TYPE"] != OrganisationUnitKind.User)
+        if (dataRow2.TYPE_ORG_UNIT() != OrganisationUnitKind.User)
         {
-          var treeObject = orgUnits[(int)dataRow2["_ID"]];
+          var treeObject = orgUnits[dataRow2.ID()];
           parent.Children = parent.Children.Append(treeObject);
           treeObject.Parent = parent;
         }
@@ -138,7 +138,7 @@ namespace LoodsmanCommon
         {
           //Для пользователей не заполняем Parent(родителем будет основная долность) и не добавляем в список т.к. есть список Users
           //Берём пользователей из готового списка Users
-          parent.Children = parent.Children.Append(Users[dataRow2["_USERNAME"] as string]);
+          parent.Children = parent.Children.Append(Users[dataRow2.USERNAME()]);
         }
       }
     }
@@ -146,9 +146,9 @@ namespace LoodsmanCommon
     private LUser InitCurrentUser()
     {
       var userInfo = _iNetPC.Native_GetInfoAboutCurrentUser().Rows[0];
-      var user = _users is null ? new LUser(this, _iNetPC.Native_WFGetUserProperties((int)userInfo["_ID"]).Rows[0]) : _users[userInfo["_NAME"] as string];
-      user.WorkDir = userInfo["_USERDIR"] as string;
-      user.FileDir = userInfo["_FILEDIR"] as string;
+      var user = _users is null ? new LUser(this, _iNetPC.Native_WFGetUserProperties(userInfo.ID()).Rows[0]) : _users[userInfo.NAME()];
+      user.WorkDir = userInfo.USERDIR();
+      user.FileDir = userInfo.FILEDIR();
       return user;
     }
 
@@ -161,7 +161,7 @@ namespace LoodsmanCommon
       return users;
     }
 
-    private static IEnumerable<LLinkInfoBetweenTypes> GetLinksInfoBetweenTypes(DataTable dataTable)
+    private IEnumerable<LLinkInfoBetweenTypes> GetLinksInfoBetweenTypes(DataTable dataTable)
     {
       /* Метод GetLinkListEx возвращает данные в которых есть дубликаты
          Например Если связь горизонтальная
@@ -179,18 +179,20 @@ namespace LoodsmanCommon
           Для исключения дубликатов, если Id, TypeId1 и TypeId2 такие как у предыдущей добавленной строки, 
           то присваиваем пердыдущей позиции (уже добавленной) Direction = LinkDirection.ForwardAndBackward, не добавляя текущуюю 
       */
-      var previousLinkInfo = new LLinkInfoBetweenTypes();
+      LLinkInfoBetweenTypes previousLinkInfo = null;
       foreach (DataRow dataRow in dataTable.Rows)
       {
-        var currentLinkInfo = new LLinkInfoBetweenTypes(dataRow);
-        if (previousLinkInfo.Id == currentLinkInfo.Id && previousLinkInfo.TypeId1 == currentLinkInfo.TypeId1 && previousLinkInfo.TypeId2 == currentLinkInfo.TypeId2)
+        var currentLinkInfo = new LLinkInfoBetweenTypes(this, dataRow);
+        if (previousLinkInfo != null &&
+            previousLinkInfo.Id == currentLinkInfo.Id && 
+            previousLinkInfo.TypeId1 == currentLinkInfo.TypeId1 && 
+            previousLinkInfo.TypeId2 == currentLinkInfo.TypeId2)
         {
           previousLinkInfo.Direction = LinkDirection.ForwardAndBackward;
         }
         else
         {
-          previousLinkInfo = currentLinkInfo;
-          yield return currentLinkInfo;
+          yield return previousLinkInfo = currentLinkInfo;
         }
       }
     }
