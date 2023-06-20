@@ -82,10 +82,7 @@ namespace LoodsmanCommon
       _proxy.UpAttrValueById(Id, name, value, unit);
     }
 
-    protected override NamedEntityCollection<ILAttribute> GetAttributes()
-    {
-      return new NamedEntityCollection<ILAttribute>(() => _proxy.GetAttributes(this), 10);
-    }
+    protected override NamedEntityCollection<ILAttribute> GetAttributes() => new NamedEntityCollection<ILAttribute>(() => _proxy.GetAttributes(this), 10);
     #endregion
   }
 }

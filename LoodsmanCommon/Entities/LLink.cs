@@ -32,9 +32,6 @@ namespace LoodsmanCommon
       _proxy.UpLinkAttrValueById(Id, name, value, unit);
     }
 
-    protected override NamedEntityCollection<ILAttribute> GetAttributes()
-    {
-      return null;
-    }
+    protected override NamedEntityCollection<ILAttribute> GetAttributes() => new NamedEntityCollection<ILAttribute>(() => _proxy.GetLinkAttributes(this), 10);
   }
 }

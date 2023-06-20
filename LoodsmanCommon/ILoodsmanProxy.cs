@@ -95,7 +95,12 @@ namespace LoodsmanCommon
     /// <summary> Получение атрибутов объекта, включая служебные. </summary>
     /// <param name="loodsmanObject"> Объект Лоцман. </param>
     /// <returns> Возвращает атрибуты объекта, включая служебные. </returns>
-    IEnumerable<LAttribute> GetAttributes(ILObject loodsmanObject);
+    IEnumerable<ILAttribute> GetAttributes(ILObject loodsmanObject);
+
+    /// <summary> Получение атрибутов связи, включая служебные. </summary>
+    /// <param name="link"> Связь Лоцман. </param>
+    /// <returns> Возвращает атрибуты связи, включая служебные. </returns>
+    IEnumerable<ILAttribute> GetLinkAttributes(LLink link);
 
     /// <summary> Приводит значение к заданной единице измерения. </summary>
     /// <param name="value"> Значение. </param>

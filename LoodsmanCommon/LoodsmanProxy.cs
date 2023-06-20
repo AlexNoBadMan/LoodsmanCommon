@@ -267,23 +267,38 @@ namespace LoodsmanCommon
       return new CreationInfo { Creator = creator, Created = created };
     }
 
-    public IEnumerable<LAttribute> GetAttributes(ILObject loodsmanObject)
+    public IEnumerable<ILAttribute> GetAttributes(ILObject loodsmanObject)
     {
       var attributesInfo = INetPC.Native_GetInfoAboutVersion(loodsmanObject.Id, GetInfoAboutVersionMode.Mode3).Select(x => x);
-      foreach (var lTypeAttribute in loodsmanObject.Type.Attributes)
+      foreach (var item in loodsmanObject.Type.Attributes)
       {
-        var attribute = attributesInfo.FirstOrDefault(x => x["_NAME"] as string == lTypeAttribute.Name);
-        var measureId = string.Empty;
-        var unitId = string.Empty;
-        var value = attribute?["_VALUE"];
-        if (lTypeAttribute.IsMeasured && !(value is null))
-        {
-          measureId = attribute["_ID_MEASURE"] as string;
-          unitId = attribute["_ID_UNIT"] as string;
-        }
-
-        yield return new LAttribute(this, loodsmanObject, lTypeAttribute, value, measureId, unitId);
+        yield return GetAttribute(loodsmanObject, attributesInfo, item);
       }
+    }
+
+    public IEnumerable<ILAttribute> GetLinkAttributes(LLink link)
+    {
+      var attributesInfo = INetPC.Native_GetLinkAttributes2(link.Id, GetAttributeMode.All).Select(x => x);
+      foreach (var item in link.LinkInfo.Attributes)
+      {
+        yield return GetAttribute(link, attributesInfo, item);
+      }
+    }
+
+    private ILAttribute GetAttribute(ILAttributeOwner owner, IEnumerable<DataRow> attributesInfo, ILAttributeInfo item)
+    {
+      var attribute = attributesInfo.FirstOrDefault(x => x.NAME() == item.Name);
+      var measureId = string.Empty;
+      var unitId = string.Empty;
+      var value = attribute.VALUE();
+      if (item.IsMeasured)
+      {
+        measureId = attribute.ID_MEASURE();
+        unitId = attribute.ID_UNIT();
+      }
+
+      var lAttribute = new LAttribute(this, owner, item, value, measureId, unitId);
+      return lAttribute;
     }
 
     public double ConverseValue(double value, LMeasureUnit sourceMeasureUnit, LMeasureUnit destMeasureUnit)

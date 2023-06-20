@@ -271,6 +271,9 @@ namespace LoodsmanCommon
     /// <summary> Возвращает результат DataRow["_LIST"]. </summary>
     public static string LIST(this DataRow row) => row["_LIST"] as string ?? string.Empty;
 
+    /// <summary> Возвращает результат DataRow["_VALUE"]. </summary>
+    public static string VALUE(this DataRow row) => row["_VALUE"] as string ?? string.Empty;
+
     /// <summary> Возвращает результат DataRow["_VALUE_LIST"]. </summary>
     public static string VALUE_LIST(this DataRow row) => row["_VALUE_LIST"] as string ?? string.Empty;
 
