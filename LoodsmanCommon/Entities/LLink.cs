@@ -9,13 +9,13 @@ namespace LoodsmanCommon
     private readonly string _measureId;
     private readonly string _unitId;
 
-    public LLink(ILoodsmanProxy proxy, int id, string name, ILObject parent, ILObject child, double maxQuantity, double minQuantity, string measureId, string unitId) : base(id, name)
+    public LLink(ILoodsmanProxy proxy, int id, string name, ILObject parent, ILObject child, double minQuantity, double maxQuantity, string measureId, string unitId) : base(id, name)
     {
       _proxy = proxy;
       Parent = parent;
       Child = child;
-      MaxQuantity = maxQuantity;
       MinQuantity = minQuantity;
+      MaxQuantity = maxQuantity;
       _measureId = measureId;
       _unitId = unitId;
     }

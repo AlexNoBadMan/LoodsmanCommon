@@ -56,8 +56,8 @@ namespace LoodsmanCommon
     /// <param name="minQuantity"> Нижняя граница количества. </param>
     /// <param name="maxQuantity"> Верхняя граница количества. </param>
     /// <param name="unitId"> Уникальный идентификатор единицы измерения. </param>
-    /// <returns> Возвращает идентификатор созданной связи. </returns>
-    int NewLink(ILObject parent, ILObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
+    /// <returns> Возвращает новую связь. </returns>
+    LLink NewLink(ILObject parent, ILObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null);
 
     /// <summary> Добавляет связь между объектами. </summary>
     /// <param name="parentId"> Идентификатор версии объекта-родителя. </param>

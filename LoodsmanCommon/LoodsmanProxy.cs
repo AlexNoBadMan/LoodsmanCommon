@@ -120,7 +120,7 @@ namespace LoodsmanCommon
       return INetPC.Native_InsertObject(parentTypeName, parentProduct, parentVersion, linkType, childTypeName, childProduct, childVersion, stateName, reuse);
     }
 
-    public int NewLink(ILObject parent, ILObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
+    public LLink NewLink(ILObject parent, ILObject child, string linkType, double minQuantity = 0, double maxQuantity = 0, string unitId = null)
     {
       CheckLoodsmanObjectsForError(parent, child);
       if (parent.Id <= 0 && child.Id <= 0)
@@ -136,7 +136,10 @@ namespace LoodsmanCommon
         if (child.Id <= 0)
           NewObject(child.Type.Name, child.Name);
       }
-      return NewLink(parent.Id, parent.Type.Name, parent.Name, parent.Version, child.Id, child.Type.Name, child.Name, child.Version, linkType, minQuantity, maxQuantity, unitId);
+      
+      var id = NewLink(parent.Id, parent.Type.Name, parent.Name, parent.Version, child.Id, child.Type.Name, child.Name, child.Version, linkType, minQuantity, maxQuantity, unitId);
+      
+      return new LLink(this, id, linkType, parent, child, minQuantity, maxQuantity, null, unitId);
     }
 
 
