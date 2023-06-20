@@ -7,7 +7,6 @@ namespace LoodsmanCommon
   /// <summary> Расширения для интерфейса <see cref="INetPluginCall"/>. /summary>
   public static class NetPluginCallExtensions
   {
-
     /// <summary> Возвращает список идентификаторов объектов, выделенных в дереве «ЛОЦМАН Клиент». </summary>
     /// <returns> Список идентификаторов выделенных в дереве объектов с разделителем «,». </returns>
     public static string Native_CGetTreeSelectedIDs(this INetPluginCall pc) =>
@@ -17,7 +16,6 @@ namespace LoodsmanCommon
     /// <returns> true - пользователь является администратором, false - пользователь не является администратором. </returns>
     public static bool Native_IsAdmin(this INetPluginCall pc) =>
         pc.RunMethod("IsAdmin") as int? == 1;
-
 
     /// <summary> Возвращает случаи использования прокси, типа объекта и типа документа.
     /// <br/>
@@ -43,7 +41,6 @@ namespace LoodsmanCommon
     public static DataTable Native_GetProxyUseCases(this INetPluginCall pc, int proxyId = 0, int typeId = 0, int documentId = 0) =>
         pc.GetDataTable("GetProxyUseCases", proxyId, typeId, documentId);
 
-
     #region Справочная информация
 
     /// <summary> Возвращает возможные атрибуты связей для связки типов, включая служебные.
@@ -67,7 +64,6 @@ namespace LoodsmanCommon
     /// <param name="mode"> Режим возврата списка атрибутов. </param>
     public static DataTable Native_GetLinkAttrForTypes2(this INetPluginCall pc, string parentTypeName, string childTypeName, string linkName, GetAttributeMode mode = GetAttributeMode.All) =>
         pc.GetDataTable("GetLinkAttrForTypes2", parentTypeName, childTypeName, linkName, mode);
-
 
     /// <summary> Возвращает полный список атрибутов базы данных.
     /// <br/>
@@ -1119,14 +1115,14 @@ namespace LoodsmanCommon
     /// <summary> Получить типы применяемости, допустимые для указанного типа объекта ЛОЦМАН.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
-    /// <br/>[_ID] 		             integer 
-    /// <br/>[_ID_EFF_TYPE]        integer
-    /// <br/>[_EFF_TYPE_NAME]      string
-    /// <br/>[_INHERITED]          integer
-    /// <br/>[_ON_CREATE_DO_COPY]  short
-    /// <br/>[_ACCESS]             integer
+    /// <br/>[_ID] integer 
+    /// <br/>[_ID_EFF_TYPE] integer
+    /// <br/>[_EFF_TYPE_NAME] string
+    /// <br/>[_INHERITED] integer
+    /// <br/>[_ON_CREATE_DO_COPY] short
+    /// <br/>[_ACCESS] integer
     /// <br/> 
-    /// <param name="idType">Идентификатор типа объекта ЛОЦМАН</param>/>
+    /// <param name="idType"> Идентификатор типа объекта ЛОЦМАН. </param>
     /// </summary>
     public static DataTable Native_GetTypesEffectivityOfType(this INetPluginCall pc, int idType) =>
         pc.GetDataTable("GetTypesEffectivityOfType", idType);
@@ -1134,11 +1130,11 @@ namespace LoodsmanCommon
     /// <summary> Получить атрибуты применяемости, допустимые для указанного типа применяемости.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
-    /// <br/>[_ATTR_ID]  	integer
+    /// <br/>[_ATTR_ID] integer
     /// <br/>[_ATTR_NAME] string
     /// <br/>[_ATTR_TYPE] integer
-    /// <br/>[_SYSTEM]    integer
-    /// <param name="effIdType">Идентификатор типа применяемости</param>/>
+    /// <br/>[_SYSTEM] integer
+    /// <param name="effIdType"> Идентификатор типа применяемости. </param>
     /// </summary>
     public static DataTable Native_GetEffTypeAttributes(this INetPluginCall pc, int effIdType) =>
         pc.GetDataTable("GetEffTypeAttributes", effIdType);
@@ -1146,12 +1142,12 @@ namespace LoodsmanCommon
     /// <summary> Получить типы применяемости, уже существующие у объекта.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
-    /// <br/>[_EFF_ID] 		    integer
-    /// <br/>[_EFF_TYPE_ID]   integer
-    /// <br/>[_EFFNAME]       string
-    /// <br/>[_CONTEXT_ID]    integer
+    /// <br/>[_EFF_ID] integer
+    /// <br/>[_EFF_TYPE_ID] integer
+    /// <br/>[_EFFNAME] string
+    /// <br/>[_CONTEXT_ID] integer
     /// <br/>[_HAS_ALL_ATTRS] integer
-    /// <param name="objId">Идентификатор объекта ЛОЦМАН</param>/>
+    /// <param name="objId"> Идентификатор объекта ЛОЦМАН. </param>
     /// </summary>
     public static DataTable Native_GetVersionEff(this INetPluginCall pc, int objId) =>
         pc.GetDataTable("GetVersionEff", objId);
@@ -1159,29 +1155,29 @@ namespace LoodsmanCommon
     /// <summary> Получить существующие атрибуты типов применяемости объекта ЛОЦМАН.
     /// <br/>
     /// <br/>Возвращает набор данных с полями:
-    /// <br/>[_EFF_ID] 		    integer
-    /// <br/>[_EFF_TYPE_ID]   integer
+    /// <br/>[_EFF_ID] integer
+    /// <br/>[_EFF_TYPE_ID] integer
     /// <br/>[_EFF_TYPE_NAME] string
-    /// <br/>[_ATTR_ID]       integer
-    /// <br/>[_ATTR_NAME]     string
-    /// <br/>[_ATTR_TYPE]     integer
-    /// <br/>[_ATTR_VALUE]    string
-    /// <param name="objId">Идентификатор объекта ЛОЦМАН</param>/>
+    /// <br/>[_ATTR_ID] integer
+    /// <br/>[_ATTR_NAME] string
+    /// <br/>[_ATTR_TYPE] integer
+    /// <br/>[_ATTR_VALUE] string
+    /// <param name="objId"> Идентификатор объекта ЛОЦМАН. </param>
     /// </summary>
     public static DataTable Native_GetVersionEffAttrValues(this INetPluginCall pc, int objId) =>
         pc.GetDataTable("GetVersionEffAttrValues", objId);
 
     /// <summary> Добавить к объекту ЛОЦМАН применяемость.
-    /// <param name="objId">Идентификатор объекта ЛОЦМАН</param>/>
-    /// <param name="effIdType">Идентификатор типа применяемости</param>/>
+    /// <param name="objId"> Идентификатор объекта ЛОЦМАН. </param>
+    /// <param name="effIdType"> Идентификатор типа применяемости. </param>
     /// </summary>
     public static int Native_AddVersionEff(this INetPluginCall pc, int objId,int effIdType) =>
         (int)pc.RunMethod("AddVersionEff", objId,effIdType);
 
     /// <summary> Добавить к объекту ЛОЦМАН применяемость.
-    /// <param name="effTypeId">Идентификатор экземпляра типа применяемости </param>/>
-    /// <param name="attributeName">Имя атрибута</param>/>
-    /// <param name="attributeValue">Значение атрибута</param>/>
+    /// <param name="effTypeId"> Идентификатор экземпляра типа применяемости. </param>
+    /// <param name="attributeName"> Имя атрибута. </param>
+    /// <param name="attributeValue"> Значение атрибута. </param>
     /// </summary>
     public static void Native_SetVersionEffAttrValue(this INetPluginCall pc, int effTypeId,string attributeName, object attributeValue) =>
         pc.RunMethod("SetVersionEffAttrValue", effTypeId,attributeName,attributeValue);
