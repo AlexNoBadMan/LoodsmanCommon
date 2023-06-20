@@ -2,34 +2,38 @@
 
 namespace LoodsmanCommon
 {
-  public class LLinkInfoBetweenTypes
+  public class LLinkInfoBetweenTypes : ILAttributeInfoOwner<ILAttributeInfo>
   {
     private readonly ILoodsmanMeta _meta;
+    private readonly string _parentTypeName;
+    private readonly string _childTypeName;
     private readonly string _name;
+    private NamedEntityCollection<ILAttributeInfo> _attributes;
     private LLinkInfo _link;
+    private LTypeInfo _parentType;
+    private LTypeInfo _childType;
 
     internal LLinkInfoBetweenTypes(ILoodsmanMeta meta, DataRow dataRow)
     {
       _meta = meta;
       _name = dataRow.LINKTYPE();
-      TypeId1 = dataRow.TYPE_ID_1();
-      TypeName1 = dataRow.TYPE_NAME_1();
-      TypeId2 = dataRow.TYPE_ID_2();
-      TypeName2 = dataRow.TYPE_NAME_2();
+      Id = dataRow.ID_LINKTYPE();
+      ParentTypeId = dataRow.TYPE_ID_1();
+      _parentTypeName = dataRow.TYPE_NAME_1();
+      _childTypeName = dataRow.TYPE_NAME_2();
+      ChildTypeId = dataRow.TYPE_ID_2();
       Direction = dataRow.DIRECTION();
       IsQuantity = dataRow.IS_QUANTITY();
     }
 
-    private LLinkInfo Link => _link ??= _meta.Links[_name];
-    public int Id => Link.Id;
-    public string Name => Link.Name;
-    public string InverseName => Link.InverseName;
-    public bool IsVertical => Link.VerticalLink;
-    public int TypeId1 { get; }
-    public string TypeName1 { get; }
-    public int TypeId2 { get; }
-    public string TypeName2 { get; }
+    public int Id { get; }
+    public LTypeInfo ParentType => _parentType ??= _meta.Types[_parentTypeName];
+    public LTypeInfo ChildType => _childType ??= _meta.Types[_childTypeName];
+    internal int ParentTypeId { get; }
+    internal int ChildTypeId { get; }
     public LinkDirection Direction { get; internal set; }
     public bool IsQuantity { get; }
+    public LLinkInfo Link => _link ??= _meta.Links[_name];
+    public NamedEntityCollection<ILAttributeInfo> Attributes => _attributes ??= _meta.GetLinkAttrbiutesForTypes(ParentType.Name, ChildType.Name, _name);
   }
 }

@@ -371,7 +371,7 @@
   }
 
   /// <summary> Режим возврата списка атрибутов. </summary>
-  public enum GetAttributeListMode
+  public enum GetAttributeMode
   {
     /// <summary> Возвращать все атрибуты (обычные и служебные). </summary>
     All = 0,

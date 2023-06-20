@@ -51,7 +51,13 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает список атрибутов типа. </summary>
     /// <param name="name"> Название типа. </param>
-    NamedEntityCollection<LTypeAttributeInfo> GetTypeAttrbiutes(string name);
+    NamedEntityCollection<ILAttributeInfo> GetTypeAttrbiutes(string name);
+
+    /// <summary> Возвращает возможные атрибуты связей для связки типов, включая служебные. </summary>
+    /// <param name="parentTypeName"> Название типа родителя. </param>
+    /// <param name="childTypeName"> Название типа потомка. </param>
+    /// <param name="linkName"> Название типа связи. </param>
+    NamedEntityCollection<ILAttributeInfo> GetLinkAttrbiutesForTypes(string parentTypeName, string childTypeName, string linkName);
 
     /// <summary> Очистить загруженные данные. </summary>
     void Clear();

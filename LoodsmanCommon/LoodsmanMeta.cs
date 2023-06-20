@@ -56,10 +56,17 @@ namespace LoodsmanCommon
                                                x.Extension.IndexOf(extension, StringComparison.OrdinalIgnoreCase) >= 0);
     }
 
-    public NamedEntityCollection<LTypeAttributeInfo> GetTypeAttrbiutes(string name)
+    public NamedEntityCollection<ILAttributeInfo> GetTypeAttrbiutes(string name)
     {
-      return new NamedEntityCollection<LTypeAttributeInfo>(
+      return new NamedEntityCollection<ILAttributeInfo>(
               () => _iNetPC.Native_GetInfoAboutType(name, GetInfoAboutTypeMode.Mode12).Select(x => new LTypeAttributeInfo(Attributes[x.NAME()], x.OBLIGATORY())),
+              10);
+    }
+
+    public NamedEntityCollection<ILAttributeInfo> GetLinkAttrbiutesForTypes(string parentTypeName, string childTypeName, string linkName)
+    {
+      return new NamedEntityCollection<ILAttributeInfo>(
+              () => _iNetPC.Native_GetLinkAttrForTypes2(parentTypeName, childTypeName, linkName).Select(x => Attributes[x.NAME()]),
               10);
     }
 
@@ -176,7 +183,7 @@ namespace LoodsmanCommon
          |    59    |Сборочная единица|    59    |Сборочная единица|     8      |Изготавливается из ...|Для изготовления|    0    |   1      |     0      |
          |    59    |Сборочная единица|    59    |Сборочная единица|     8      |Изготавливается из ...|Для изготовления|    0    |   -1     |     0      |
 
-          Для исключения дубликатов, если Id, TypeId1 и TypeId2 такие как у предыдущей добавленной строки, 
+          Для исключения дубликатов, если Id, ParentTypeId и ChildTypeId такие как у предыдущей добавленной строки, 
           то присваиваем пердыдущей позиции (уже добавленной) Direction = LinkDirection.ForwardAndBackward, не добавляя текущуюю 
       */
       LLinkInfoBetweenTypes previousLinkInfo = null;
@@ -185,8 +192,8 @@ namespace LoodsmanCommon
         var currentLinkInfo = new LLinkInfoBetweenTypes(this, dataRow);
         if (previousLinkInfo != null &&
             previousLinkInfo.Id == currentLinkInfo.Id && 
-            previousLinkInfo.TypeId1 == currentLinkInfo.TypeId1 && 
-            previousLinkInfo.TypeId2 == currentLinkInfo.TypeId2)
+            previousLinkInfo.ParentTypeId == currentLinkInfo.ParentTypeId && 
+            previousLinkInfo.ChildTypeId == currentLinkInfo.ChildTypeId)
         {
           previousLinkInfo.Direction = LinkDirection.ForwardAndBackward;
         }
