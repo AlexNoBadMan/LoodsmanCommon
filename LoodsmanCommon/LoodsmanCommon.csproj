@@ -101,9 +101,9 @@
     <Compile Include="Entities\Meta\LLinkInfo.cs" />
     <Compile Include="Entities\Meta\LLinkInfoBetweenTypes.cs" />
     <Compile Include="LoodsmanMeta.cs" />
-    <Compile Include="Plugin\LoodsmanNetPluginBase.cs" />
+    <Compile Include="PluginBase\LoodsmanNetPluginBase.cs" />
     <Compile Include="LoodsmanProxy.cs" />
-    <Compile Include="Plugin\LoodsmanWPFNetPluginBase.cs" />
+    <Compile Include="PluginBase\LoodsmanWPFNetPluginBase.cs" />
     <Compile Include="Entities\Meta\LProxyUseCase.cs" />
     <Compile Include="Entities\Meta\LStateInfo.cs" />
     <Compile Include="Entities\Meta\LTypeInfo.cs" />
