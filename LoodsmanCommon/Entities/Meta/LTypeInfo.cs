@@ -2,14 +2,15 @@
 
 namespace LoodsmanCommon
 {
-  public class LTypeInfo : EntityIcon
+
+  public class LTypeInfo : EntityIcon, ILAttributeInfoOwner<ILAttributeInfo>
   {
     private readonly string _keyAttributeName;
     private readonly string _defaultStateName;
     private readonly ILoodsmanMeta _meta;
     private LAttributeInfo _keyAttribute;
     private LStateInfo _defaultState;
-    private NamedEntityCollection<LTypeAttributeInfo> _attributes;
+    private NamedEntityCollection<ILAttributeInfo> _attributes;
 
     internal LTypeInfo(ILoodsmanMeta meta, DataRow dataRow) : base(dataRow.ID(), dataRow.TYPENAME(), dataRow.ICON())
     {
@@ -21,6 +22,8 @@ namespace LoodsmanCommon
       CanBeProject = dataRow.CANBEPROJECT();
       CanCreate = dataRow.CANCREATE();
     }
+
+    //public IReadOnlyList<LEffectivityTypeInfo> EffTypes { get; } 
 
     /// <summary> Ключевой атрибут типа. </summary>
     public LAttributeInfo KeyAttribute => _keyAttribute ??= _meta.Attributes[_keyAttributeName];
@@ -41,6 +44,6 @@ namespace LoodsmanCommon
     public bool CanCreate { get; }
 
     /// <summary> Список возможных атрибутов типа, включая служебные. </summary>
-    public NamedEntityCollection<LTypeAttributeInfo> Attributes => _attributes ??= _meta.GetTypeAttrbiutes(Name);
+    public NamedEntityCollection<ILAttributeInfo> Attributes => _attributes ??= _meta.GetTypeAttrbiutes(Name);
   }
 }

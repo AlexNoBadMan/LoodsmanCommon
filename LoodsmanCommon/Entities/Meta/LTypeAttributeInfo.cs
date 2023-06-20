@@ -2,7 +2,7 @@
 
 namespace LoodsmanCommon
 {
-  public class LTypeAttributeInfo : IEntity, INamedEntity
+  public class LTypeAttributeInfo : ILAttributeInfo
   {
     private readonly LAttributeInfo _lAttribute;
 
@@ -16,7 +16,7 @@ namespace LoodsmanCommon
     public string Name => _lAttribute.Name;
     public AttributeType Type => _lAttribute.Type;
     public string DefaultValue => _lAttribute.DefaultValue;
-    public IReadOnlyList<string> ListValue => _lAttribute.ListValues;
+    public IReadOnlyList<string> ListValues => _lAttribute.ListValues;
     public bool OnlyIsItems => _lAttribute.OnlyIsItems;
     public bool IsSystem => _lAttribute.IsSystem;
     public bool IsObligatory { get; }

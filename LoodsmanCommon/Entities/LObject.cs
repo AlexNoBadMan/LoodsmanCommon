@@ -5,44 +5,40 @@ using System.Data;
 
 namespace LoodsmanCommon
 {
-  public class LObject : ILObject
+  public class LObject : LAttributeOwner, ILObject
   {
-    private NamedEntityCollection<LObjectAttribute> _attributes;
+    #region Поля
     private LStateInfo _state;
     private readonly ILoodsmanProxy _proxy;
     private EntityCollection<LFile> _files;
     private CreationInfo _creationInfo;
+    #endregion
 
-    public LObject(DataRow dataRow, ILoodsmanProxy proxy) : this(proxy, dataRow.TYPE(), dataRow.STATE())
+    #region Конструкторы
+    public LObject(DataRow dataRow, ILoodsmanProxy proxy) : this(proxy, dataRow.ID_VERSION(), dataRow.PRODUCT(), dataRow.TYPE(), dataRow.STATE())
     {
-      Id = dataRow.ID_VERSION();
-      Product = dataRow.PRODUCT();
       Version = dataRow.VERSION();
       AccessLevel = dataRow.ACCESSLEVEL();
       LockLevel = dataRow.LOCKED();
     }
 
-    public LObject(IPluginCall pc, ILoodsmanProxy proxy) : this(proxy, pc.stType, pc.Selected.StateName)
+    public LObject(IPluginCall pc, ILoodsmanProxy proxy) : this(proxy, pc.IdVersion, pc.stProduct, pc.stType, pc.Selected.StateName)
     {
-      Id = pc.IdVersion;
-      Product = pc.stProduct;
       Version = pc.stVersion;
       AccessLevel = pc.Selected.AccessLevel;
       LockLevel = pc.Selected.LockLevel;
       Parent = pc.ParentObject is IPDMObject ? new LObject(pc.ParentObject, proxy) : null;
     }
 
-    public LObject(IPDMObject obj, ILoodsmanProxy proxy) : this(proxy, obj.TypeName, obj.StateName)
+    public LObject(IPDMObject obj, ILoodsmanProxy proxy) : this(proxy, obj.ID, obj.Name, obj.TypeName, obj.StateName)
     {
-      Id = obj.ID;
-      Product = obj.Name;
       Version = obj.Version;
       AccessLevel = obj.AccessLevel;
       LockLevel = obj.LockLevel;
       Parent = obj.Parent is IPDMLink link ? new LObject(link.ParentObject, proxy) : null;
     }
 
-    internal LObject(ILoodsmanProxy proxy, LTypeInfo type, LStateInfo state)
+    internal LObject(ILoodsmanProxy proxy, int id, string name, LTypeInfo type, LStateInfo state) : base(id, name)
     {
       _proxy = proxy;
       Type = type;
@@ -50,20 +46,15 @@ namespace LoodsmanCommon
       _state = state;
     }
 
-    private LObject(ILoodsmanProxy proxy, string typeName, string stateName) :
-        this(proxy, proxy.Meta.Types[typeName], proxy.Meta.States[stateName])
+    private LObject(ILoodsmanProxy proxy, int id, string name, string typeName, string stateName) :
+        this(proxy, id, name, proxy.Meta.Types[typeName], proxy.Meta.States[stateName])
     { }
+    #endregion
 
+    #region Свойства
     public ILObject Parent { get; set; }
-
-    public int Id { get; set; }
-
     public LTypeInfo Type { get; set; }
-
-    public string Product { get; set; }
-
     public string Version { get; set; }
-
     public LStateInfo State
     {
       get => _state;
@@ -78,18 +69,23 @@ namespace LoodsmanCommon
     }
 
     public bool IsDocument => Type.IsDocument;
-
     public PDMAccessLevels AccessLevel { get; set; }
-
     public PDMLockLevels LockLevel { get; set; }
-
-    public NamedEntityCollection<LObjectAttribute> Attributes => _attributes ??= new NamedEntityCollection<LObjectAttribute>(() => _proxy.GetAttributes(this), 10);
-
     public EntityCollection<LFile> Files => _files ??= new EntityCollection<LFile>(() => _proxy.GetFiles(this));
-
     public LUser Creator => (_creationInfo ??= _proxy.GetCreationInfo(Id)).Creator;
-
     public DateTime Created => (_creationInfo ??= _proxy.GetCreationInfo(Id)).Created;
+    #endregion
 
+    #region Методы
+    public override void UpdateAttribute(string name, object value, LMeasureUnit unit)
+    {
+      _proxy.UpAttrValueById(Id, name, value, unit);
+    }
+
+    protected override NamedEntityCollection<ILAttribute> GetAttributes()
+    {
+      return new NamedEntityCollection<ILAttribute>(() => _proxy.GetAttributes(this), 10);
+    }
+    #endregion
   }
 }

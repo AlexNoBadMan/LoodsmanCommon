@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace LoodsmanCommon
 {
-  public class LAttributeInfo : Entity
+  public class LAttributeInfo : Entity, ILAttributeInfo
   {
     private readonly ILoodsmanMeta _meta;
     private readonly string _list;
@@ -25,9 +25,10 @@ namespace LoodsmanCommon
 
     public AttributeType Type { get; }
     public string DefaultValue { get; }
-    public IReadOnlyList<string> ListValues => _listValues ??= new ReadOnlyCollection<string>(_list.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)); 
+    public IReadOnlyList<string> ListValues => _listValues ??= new ReadOnlyCollection<string>(_list.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
     public bool OnlyIsItems { get; }
     public bool IsSystem { get; }
+    public bool IsObligatory { get; }
     public bool IsMeasured => Measures.Any();
     public IEnumerable<LAttributeMeasure> Measures => _measures ??= _meta.GetAttributeMeasures(Name).ToArray();
   }
