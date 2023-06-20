@@ -60,7 +60,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Entities\ILAttribute.cs" />
+    <Compile Include="Entities\ILAttributeInfoOwner.cs" />
+    <Compile Include="Entities\ILAttributeOwner.cs" />
+    <Compile Include="Entities\LAttributeOwner.cs" />
+    <Compile Include="Entities\LEffectivity.cs" />
     <Compile Include="Entities\Meta\CreationInfo.cs" />
+    <Compile Include="Entities\Meta\ILAttributeInfo.cs" />
+    <Compile Include="Entities\Meta\LEffectivityTypeInfo.cs" />
     <Compile Include="Helpers\CultureHelper.cs" />
     <Compile Include="Entities\LFile.cs" />
     <Compile Include="Entities\LLink.cs" />
@@ -75,7 +82,7 @@
     <Compile Include="Entities\Meta\LMeasure.cs" />
     <Compile Include="Entities\Meta\LMeasureUnit.cs" />
     <Compile Include="Extensions\DataRowExtensions.cs" />
-    <Compile Include="Entities\LObjectAttribute.cs" />
+    <Compile Include="Entities\LAttribute.cs" />
     <Compile Include="Entities\Meta\Entity.cs" />
     <Compile Include="Entities\Meta\EntityIcon.cs" />
     <Compile Include="Entities\Meta\OrganisationUnit\LMainDepartment.cs" />

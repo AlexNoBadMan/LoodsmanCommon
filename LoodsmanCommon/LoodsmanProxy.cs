@@ -78,12 +78,7 @@ namespace LoodsmanCommon
     {
       var type = _meta.Types[typeName];
       var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States[stateName];
-      var loodsmanObject = new LObject(this, type, state)
-      {
-        Id = INetPC.Native_NewObject(type.Name, state.Name, product, isProject),
-        Product = product,
-      };
-      return loodsmanObject;
+      return new LObject(this, INetPC.Native_NewObject(type.Name, state.Name, product, isProject), product, type, state);
     }
 
     private string StateIfNullGetDefault(string typeName, string stateName = null)
@@ -103,7 +98,7 @@ namespace LoodsmanCommon
       CheckLoodsmanObjectsForError(parent, child);
       CheckInsertedObject(parent);
       CheckInsertedObject(child);
-      return InsertObject(parent.Type.Name, parent.Product, parent.Version, linkType, child.Type.Name, child.Product, child.Version, stateName, reuse);
+      return InsertObject(parent.Type.Name, parent.Name, parent.Version, linkType, child.Type.Name, child.Name, child.Version, stateName, reuse);
     }
 
     private void CheckInsertedObject(ILObject loodsmanObject)
@@ -130,18 +125,18 @@ namespace LoodsmanCommon
       CheckLoodsmanObjectsForError(parent, child);
       if (parent.Id <= 0 && child.Id <= 0)
       {
-        if (string.IsNullOrEmpty(parent.Product) && string.IsNullOrEmpty(child.Product))
+        if (string.IsNullOrEmpty(parent.Name) && string.IsNullOrEmpty(child.Name))
           throw new InvalidOperationException("Не заданы ключевые атрибуты объектов для формирования связи");
       }
       else
       {
         if (parent.Id <= 0)
-          NewObject(parent.Type.Name, parent.Product);
+          NewObject(parent.Type.Name, parent.Name);
 
         if (child.Id <= 0)
-          NewObject(child.Type.Name, child.Product);
+          NewObject(child.Type.Name, child.Name);
       }
-      return NewLink(parent.Id, parent.Type.Name, parent.Product, parent.Version, child.Id, child.Type.Name, child.Product, child.Version, linkType, minQuantity, maxQuantity, unitId);
+      return NewLink(parent.Id, parent.Type.Name, parent.Name, parent.Version, child.Id, child.Type.Name, child.Name, child.Version, linkType, minQuantity, maxQuantity, unitId);
     }
 
 
@@ -175,7 +170,7 @@ namespace LoodsmanCommon
     private int NewLink(int parentId, string parentTypeName, string parentProduct, string parentVersion, int childId, string childTypeName, string childProduct, string childVersion, string linkType, double minQuantity, double maxQuantity, string unitId)
     {
       //if (string.IsNullOrEmpty(linkType))
-      //linkInfo = _meta.LinksInfoBetweenTypes.SingleOrDefault(x => (x.TypeName1 == parentTypeName && x.TypeName2 == childTypeName) || (x.TypeName1 == childTypeName && x.TypeName2 == parentTypeName));
+      //linkInfo = _meta.LinksInfoBetweenTypes.SingleOrDefault(x => (x.ParentTypeName == parentTypeName && x.ChildTypeName == childTypeName) || (x.ParentTypeName == childTypeName && x.ChildTypeName == parentTypeName));
       //Способ автоматически найти подходящий тип связи, но он будет не стабильным если пользователь произведёт изменение конфигурации бд
       if (string.IsNullOrEmpty(linkType))
         throw new ArgumentException($"{nameof(linkType)} не может быть пустым, не указан тип связи", nameof(linkType));
@@ -218,7 +213,7 @@ namespace LoodsmanCommon
 
     //private LLinkInfoBetweenTypes GetLinkInfo(string parentTypeName, string childTypeName, string linkType)
     //{
-    //  var linkInfo = _meta.LinksInfoBetweenTypes.FirstOrDefault(x => x.TypeName1 == parentTypeName && x.TypeName2 == childTypeName && x.Name == linkType);
+    //  var linkInfo = _meta.LinksInfoBetweenTypes.FirstOrDefault(x => x.ParentTypeName == parentTypeName && x.ChildTypeName == childTypeName && x.Name == linkType);
     //  if (linkInfo is null)
     //    throw new InvalidOperationException($"Не удалось найти информацию о связи типов {nameof(parentTypeName)}: \"{parentTypeName}\" - {nameof(childTypeName)}: \"{childTypeName}\", по связи: \"{linkType}\"");
     //  return linkInfo;
@@ -248,6 +243,16 @@ namespace LoodsmanCommon
     public IEnumerable<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
     {
       return INetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LObject(x, this));
+
+      //return INetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LLink(this, x.ID_LINK(), linkType, ));
+    }
+
+    public IEnumerable<LLink> GetLinkedFast(ILObject lObject, string linkType, bool inverse = false)
+    {
+      //return INetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LObject(x, this));
+
+      return INetPC.Native_GetLinkedFast(lObject.Id, linkType, inverse)
+        .Select(x => new LLink(this, x.ID_LINK(), linkType, lObject, new LObject(x, this), x.MAX_QUANTITY(), x.MIN_QUANTITY(), x.ID_UNIT(), x.ID_MEASURE()));
     }
     #endregion
 
@@ -259,7 +264,7 @@ namespace LoodsmanCommon
       return new CreationInfo { Creator = creator, Created = created };
     }
 
-    public IEnumerable<LObjectAttribute> GetAttributes(ILObject loodsmanObject)
+    public IEnumerable<LAttribute> GetAttributes(ILObject loodsmanObject)
     {
       var attributesInfo = INetPC.Native_GetInfoAboutVersion(loodsmanObject.Id, GetInfoAboutVersionMode.Mode3).Select(x => x);
       foreach (var lTypeAttribute in loodsmanObject.Type.Attributes)
@@ -274,7 +279,7 @@ namespace LoodsmanCommon
           unitId = attribute["_ID_UNIT"] as string;
         }
 
-        yield return new LObjectAttribute(this, loodsmanObject, lTypeAttribute, value, measureId, unitId);
+        yield return new LAttribute(this, loodsmanObject, lTypeAttribute, value, measureId, unitId);
       }
     }
 
@@ -297,6 +302,11 @@ namespace LoodsmanCommon
       INetPC.Native_UpdateStateOnObject(objectId, state.Name);
     }
 
+    public void UpLinkAttrValueById(int objectId, string attributeName, object attributeValue, LMeasureUnit measureUnit = null)
+    {
+      INetPC.Native_UpLinkAttrValue(objectId, attributeName, attributeValue, measureUnit?.Guid, IsNullOrDefault(attributeValue));
+    }
+
     public void UpAttrValueById(int objectId, string attributeName, object attributeValue, LMeasureUnit measureUnit = null)
     {
       INetPC.Native_UpAttrValueById(objectId, attributeName, attributeValue, measureUnit?.Guid, IsNullOrDefault(attributeValue));
@@ -316,11 +326,11 @@ namespace LoodsmanCommon
     {
       try
       {
-        //var floderPath = string.Join("\\", Ancestors().OrderBy(x => x.Level).Cast<LoodsmanObjectVM>().Where(x => x.TypeName == _settingImport.FolderTypeName).Select(x => x.Product));
+        //var floderPath = string.Join("\\", Ancestors().OrderBy(x => x.Level).Cast<LoodsmanObjectVM>().Where(x => x.TypeName == _settingImport.FolderTypeName).Select(x => x.Name));
         //var workDirPath = $"{proxy.UserFileDir}\\{floderPath}";
         //if (!Directory.Exists(workDirPath))
         //    Directory.CreateDirectory(workDirPath);
-        //var newPath = $"{workDirPath}\\{Product} - {Name} ({TypeName}){FileNode.Info.Extension}";
+        //var newPath = $"{workDirPath}\\{Name} - {Name} ({TypeName}){FileNode.Info.Extension}";
         //Лоцман не чистит за собой папки, поэтому пока без структуры папок и ложим всё в корень W:\
 
         filePath = CopyIfNeddedOnWorkDir(filePath);
@@ -393,13 +403,9 @@ namespace LoodsmanCommon
       var type = _meta.Types[typeName];
       var stateName = elements.FirstOrDefault(x => x.Name == "State")?.Value;
       var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States[stateName];
-      var loodsmanObject = new LObject(this, type, state)
-      {
-        Id = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0,
-        Product = elements.FirstOrDefault(x => x.Name == "Product").Value,
-        //Version = elements.FirstOrDefault(x => x.Name == "Version")?.Value
-      };
-      return loodsmanObject;
+      var idVersion = int.TryParse(elements.FirstOrDefault(x => x.Name == "VersionId")?.Value, out var id) ? id : 0;
+      var product = elements.FirstOrDefault(x => x.Name == "Product").Value;
+      return new LObject(this, idVersion, product, type, state);
     }
 
     public IEnumerable<int> GetLockedObjectsIds()

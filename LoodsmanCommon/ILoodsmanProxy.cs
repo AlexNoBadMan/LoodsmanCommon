@@ -95,7 +95,7 @@ namespace LoodsmanCommon
     /// <summary> Получение атрибутов объекта, включая служебные. </summary>
     /// <param name="loodsmanObject"> Объект Лоцман. </param>
     /// <returns> Возвращает атрибуты объекта, включая служебные. </returns>
-    IEnumerable<LObjectAttribute> GetAttributes(ILObject loodsmanObject);
+    IEnumerable<LAttribute> GetAttributes(ILObject loodsmanObject);
 
     /// <summary> Приводит значение к заданной единице измерения. </summary>
     /// <param name="value"> Значение. </param>
@@ -114,7 +114,14 @@ namespace LoodsmanCommon
     /// <param name="attributeName"> Название атрибута. </param>
     /// <param name="attributeValue"> Значение атрибута. Если null или string.Empty то атрибут будет помечен на удаление. </param>
     /// <param name="measureUnit"> Единица измерения. </param>
-    void UpAttrValueById(int objectId, string attributeName, object attributeValue, LMeasureUnit measureUnit = null);
+    void UpAttrValueById(int objectId, string attributeName, object attributeValue, LMeasureUnit measureUnit);
+
+    /// <summary> Добавляет, удаляет, обновляет значение атрибута связи. </summary>
+    /// <param name="idLink"> Идентификатор связи. </param>
+    /// <param name="attributeName"> Название атрибута. </param>
+    /// <param name="attributeValue"> Значение атрибута. Если null или string.Empty то атрибут будет помечен на удаление. </param>
+    /// <param name="measureUnit"> Единица измерения. </param>
+    void UpLinkAttrValueById(int idLink, string attributeName, object attributeValue, LMeasureUnit measureUnit);
 
     /// <summary> Регистрирует в базе данных файл, находящийся на рабочем диске пользователя. </summary>
     /// <param name="documentId"> Идентификатор версии объекта. </param>

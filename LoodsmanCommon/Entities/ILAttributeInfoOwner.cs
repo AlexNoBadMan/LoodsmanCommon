@@ -1,6 +1,6 @@
 ﻿namespace LoodsmanCommon
 {
-  public interface ILAttributeInfoOwner<T> : IEntity, INamedEntity where T : ILAttributeInfo
+  public interface ILAttributeInfoOwner<T> : IEntity where T : ILAttributeInfo
   {
     NamedEntityCollection<T> Attributes { get; }
   }
