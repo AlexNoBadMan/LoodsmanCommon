@@ -53,6 +53,7 @@ namespace LoodsmanCommon
 
     #region Свойства
     public ILObject Parent { get; set; }
+    public LLink Link { get; set; }
     public LTypeInfo Type { get; set; }
     public string Version { get; set; }
     public LStateInfo State
