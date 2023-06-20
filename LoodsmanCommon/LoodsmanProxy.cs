@@ -285,20 +285,23 @@ namespace LoodsmanCommon
       }
     }
 
-    private ILAttribute GetAttribute(ILAttributeOwner owner, IEnumerable<DataRow> attributesInfo, ILAttributeInfo item)
+    private ILAttribute GetAttribute(ILAttributeOwner owner, IEnumerable<DataRow> attributesValues, ILAttributeInfo item)
     {
-      var attribute = attributesInfo.FirstOrDefault(x => x.NAME() == item.Name);
+      var attribute = attributesValues.FirstOrDefault(x => x.NAME() == item.Name);
       var measureId = string.Empty;
       var unitId = string.Empty;
-      var value = attribute.VALUE();
-      if (item.IsMeasured)
+      var value = string.Empty;
+      if (attribute != null)
       {
-        measureId = attribute.ID_MEASURE();
-        unitId = attribute.ID_UNIT();
+        value = attribute.VALUE();
+        if (item.IsMeasured)
+        {
+          measureId = attribute.ID_MEASURE();
+          unitId = attribute.ID_UNIT();
+        }
       }
 
-      var lAttribute = new LAttribute(this, owner, item, value, measureId, unitId);
-      return lAttribute;
+      return new LAttribute(this, owner, item, value, measureId, unitId);
     }
 
     public double ConverseValue(double value, LMeasureUnit sourceMeasureUnit, LMeasureUnit destMeasureUnit)
