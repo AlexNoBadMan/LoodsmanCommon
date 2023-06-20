@@ -92,10 +92,16 @@ namespace LoodsmanCommon
     /// <param name="inverse"> Направление (true - обратное, false - прямое). </param>
     IEnumerable<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
 
+    /// <summary> Возвращает список связей, по заданной связи. </summary>
+    /// <param name="lObject"> Объект Лоцман. </param>
+    /// <param name="linkType"> Название типа связи. </param>
+    /// <param name="inverse"> Направление (true - обратное, false - прямое). </param>
+    IEnumerable<LLink> GetLinkedFast(ILObject lObject, string linkType, bool inverse = false);
+
     /// <summary> Получение атрибутов объекта, включая служебные. </summary>
-    /// <param name="loodsmanObject"> Объект Лоцман. </param>
+    /// <param name="lObject"> Объект Лоцман. </param>
     /// <returns> Возвращает атрибуты объекта, включая служебные. </returns>
-    IEnumerable<ILAttribute> GetAttributes(ILObject loodsmanObject);
+    IEnumerable<ILAttribute> GetAttributes(ILObject lObject);
 
     /// <summary> Получение атрибутов связи, включая служебные. </summary>
     /// <param name="link"> Связь Лоцман. </param>
@@ -167,7 +173,7 @@ namespace LoodsmanCommon
     /// <summary> Проверка на существование бизнес объекта в базе Лоцман. </summary>
     /// <param name="typeName"> Название типа. </param>
     /// <param name="uniqueId"> Ключевой атрибут формата ***BOSimple. </param>
-    /// <remarks> Если объект не существует то свойство возвращаемого объекта ILoodsmanObject.Id будет равен 0.
+    /// <remarks> Если объект не существует то свойство возвращаемого объекта ILObject.Id будет равен 0.
     /// <br/>** Для создания бизнес объекта необходимо чтобы product был в формате ***BOSimple
     /// </remarks>
     ILObject PreviewBoObject(string typeName, string uniqueId);
