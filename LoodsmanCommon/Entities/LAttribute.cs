@@ -16,6 +16,7 @@ namespace LoodsmanCommon
     //private bool _isLoaded;
     private object _originalValue;
     private object _value;
+    public event EventHandler AttributeChanged;
     #endregion
 
     #region Конструктор
@@ -59,6 +60,8 @@ namespace LoodsmanCommon
       if (update)
         UpdateAttribute();
 
+      AttributeChanged?.Invoke(this, EventArgs.Empty);
+
       return true;
     }
 
@@ -71,6 +74,8 @@ namespace LoodsmanCommon
 
       if (update)
         UpdateAttribute();
+
+      AttributeChanged?.Invoke(this, EventArgs.Empty);
 
       return true;
     }

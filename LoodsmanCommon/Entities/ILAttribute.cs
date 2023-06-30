@@ -1,4 +1,6 @@
-﻿namespace LoodsmanCommon
+﻿using System;
+
+namespace LoodsmanCommon
 {
   public interface ILAttribute : ILAttributeInfo
   {
@@ -9,5 +11,7 @@
     bool SetMeasureUnit(LMeasureUnit measureUnit, bool update);
     bool SetValue(object value, bool update);
     void UpdateAttribute();
+
+    event EventHandler AttributeChanged;
   }
 }
