@@ -48,11 +48,17 @@ namespace LoodsmanCommon
     private ILObject GetSelectedObject()
     {
       var pluginCall = _application.GetPluginCall();
+      if (pluginCall.IdVersion == 0)
+        return null;
+
       return _selectedObject?.Id == pluginCall.IdVersion ? _selectedObject : _selectedObject = new LObject(pluginCall, this);
     }
 
     private IEnumerable<ILObject> GetSelectedObjects()
     {
+      if (SelectedObject is null)
+        return Enumerable.Empty<ILObject>();
+
       var ids = INetPC.Native_CGetTreeSelectedIDs().Split(new[] { Constants.ID_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
       if (ids.Length < 2)
         return Enumerable.Repeat(SelectedObject, 1);
