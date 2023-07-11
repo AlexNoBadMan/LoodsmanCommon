@@ -10,9 +10,11 @@ namespace LoodsmanCommon
       var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
       culture.NumberFormat.NumberDecimalSeparator = ".";
       culture.DateTimeFormat.DateSeparator = ".";
+      culture.DateTimeFormat.LongDatePattern = "dd.MM.yyyy";
       culture.DateTimeFormat.ShortDatePattern = "dd.MM.yyyy";
+      culture.DateTimeFormat.LongTimePattern = "HH:mm:ss";
       culture.DateTimeFormat.ShortTimePattern = "HH:mm";
-      culture.DateTimeFormat.LongDatePattern = "HH:mm:ss";
+      culture.DateTimeFormat.FullDateTimePattern = "dd.MM.yyyy HH:mm:ss";
       Thread.CurrentThread.CurrentCulture = culture;
       Thread.CurrentThread.CurrentUICulture = culture;
     }
