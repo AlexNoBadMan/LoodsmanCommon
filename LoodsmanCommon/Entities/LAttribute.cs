@@ -11,7 +11,7 @@ namespace LoodsmanCommon
     private readonly ILAttributeOwner _owner;
     private readonly ILAttributeInfo _attribute;
     private readonly string _measureId;
-    private readonly string _unitId;
+    private string _unitId;
     private LMeasureUnit _measureUnit;
     //private bool _isLoaded;
     private object _originalValue;
@@ -40,7 +40,7 @@ namespace LoodsmanCommon
     public string DefaultValue => _attribute.DefaultValue;
     public IReadOnlyList<string> ListValues => _attribute.ListValues;
     public bool OnlyIsItems => _attribute.OnlyIsItems;
-    public bool IsChanged => GetIsChanged();
+    public bool IsChanged => $"{_originalValue}" != $"{_value}" || $"{_measureUnit?.Guid}" != _unitId;
     public bool IsSystem => _attribute.IsSystem;
     public bool IsObligatory => _attribute.IsObligatory;
     public bool IsMeasured => _attribute.IsMeasured;
@@ -67,7 +67,7 @@ namespace LoodsmanCommon
 
     public bool SetMeasureUnit(LMeasureUnit measureUnit, bool update)
     {
-      if (_measureUnit == measureUnit || !IsMeasured || !Measures.Any(x => x.Units.Values.Contains(measureUnit)))
+      if (!CanSetMeasureUnit(measureUnit))
         return false;
 
       _measureUnit = measureUnit;
@@ -80,6 +80,15 @@ namespace LoodsmanCommon
       return true;
     }
 
+    public void SetDefaultMeasureUnit(LMeasureUnit measureUnit)
+    {
+      if (!CanSetMeasureUnit(measureUnit))
+        return;
+
+      _measureUnit = measureUnit;
+      _unitId = _measureUnit?.Guid;
+    }
+
     public void UpdateAttribute()
     {
       var value = Value;
@@ -89,6 +98,11 @@ namespace LoodsmanCommon
       }
 
       _owner.UpdateAttribute(Name, value, MeasureUnit);
+    }
+
+    private bool CanSetMeasureUnit(LMeasureUnit measureUnit)
+    {
+      return _measureUnit != measureUnit && IsMeasured && Measures.Any(x => x.Units.Values.Contains(measureUnit));
     }
 
     private LMeasureUnit GetMeasureUnit()
@@ -118,11 +132,6 @@ namespace LoodsmanCommon
       //}
 
       return _value;
-    }
-
-    private bool GetIsChanged()
-    {
-      return $"{_originalValue}" != $"{_value}" || $"{_measureUnit?.Guid}" != _unitId;
     }
     #endregion
   }

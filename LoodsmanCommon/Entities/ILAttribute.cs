@@ -9,6 +9,7 @@ namespace LoodsmanCommon
     object Value { get; set; }
 
     bool SetMeasureUnit(LMeasureUnit measureUnit, bool update);
+    void SetDefaultMeasureUnit(LMeasureUnit measureUnit);
     bool SetValue(object value, bool update);
     void UpdateAttribute();
 
