@@ -13,5 +13,10 @@
 
     /// <summary> Наименование. </summary>
     public string Name { get; }
+
+    public override string ToString()
+    {
+      return $"{Id} {Name}";
+    }
   }
 }

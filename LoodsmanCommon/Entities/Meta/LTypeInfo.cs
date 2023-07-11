@@ -2,7 +2,6 @@
 
 namespace LoodsmanCommon
 {
-
   public class LTypeInfo : EntityIcon, ILAttributeInfoOwner<ILAttributeInfo>
   {
     private readonly string _keyAttributeName;
