@@ -40,7 +40,7 @@ namespace LoodsmanCommon
     public string DefaultValue => _attribute.DefaultValue;
     public IReadOnlyList<string> ListValues => _attribute.ListValues;
     public bool OnlyIsItems => _attribute.OnlyIsItems;
-    public bool IsChanged => $"{_originalValue}" != $"{_value}" || $"{_measureUnit?.Guid}" != _unitId;
+    public bool IsChanged => $"{_originalValue}" != $"{_value}" || $"{MeasureUnit?.Guid}" != _unitId;
     public bool IsSystem => _attribute.IsSystem;
     public bool IsObligatory => _attribute.IsObligatory;
     public bool IsMeasured => _attribute.IsMeasured;
