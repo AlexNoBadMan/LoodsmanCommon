@@ -30,6 +30,6 @@ namespace LoodsmanCommon
     public bool IsSystem { get; }
     public bool IsObligatory { get; }
     public bool IsMeasured => Measures.Any();
-    public IEnumerable<LAttributeMeasure> Measures => _measures ??= _meta.GetAttributeMeasures(Name).ToArray();
+    public IEnumerable<LAttributeMeasure> Measures => _measures ??= _meta.GetAttributeMeasures(Name).OrderBy(x => x.Name).ToArray();
   }
 }

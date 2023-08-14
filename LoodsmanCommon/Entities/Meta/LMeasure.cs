@@ -1,5 +1,6 @@
 ﻿using Ascon.Plm.Loodsman.PluginSDK;
 using System.Data;
+using System.Linq;
 
 namespace LoodsmanCommon
 {
@@ -17,6 +18,7 @@ namespace LoodsmanCommon
 
     public string Guid { get; }
     public string Name { get; }
-    public NamedEntityCollection<LMeasureUnit> Units => _units ??= new NamedEntityCollection<LMeasureUnit>(() => _iNetPC.Native_GetMUnitList(Guid).Select(x => new LMeasureUnit(this, x)));
+    public NamedEntityCollection<LMeasureUnit> Units => _units ??= 
+      new NamedEntityCollection<LMeasureUnit>(() => _iNetPC.Native_GetMUnitList(Guid).Select(x => new LMeasureUnit(this, x)).OrderBy(x => x.Name));
   }
 }
