@@ -246,6 +246,13 @@ namespace LoodsmanCommon
     public static double Native_ConverseValue(this INetPluginCall pc, double value, string sourceMeasureGuid, string destMeasureGuid) =>
         (double)pc.RunMethod("ConverseValue", value, sourceMeasureGuid, destMeasureGuid);
 
+    /// <summary> Возвращает значение ключевого атрибута по идентификатору бизнес-объекта в соответствии с настройками ЛОЦМАН:PLM. </summary>
+    /// <param name="typeName"> Название типа, объекты которого могут быть внешними (наличие заполненных полей [_NATIVENAME] и [_SERVERNAME] методом <see cref="Native_GetTypeListEx(INetPluginCall)"/>). </param>
+    /// <param name="location"> Идентификатор бизнес-объекта. </param>
+    /// <returns> Возвращает значение ключевого атрибута, которое будет сформировано согласно правилу, установленному в ЛОЦМАН:PLM. </returns>
+    public static string Native_GetProductFromBO(this INetPluginCall pc, string typeName, string location) =>
+        (string)pc.RunMethod("GetProductFromBO", typeName, location);
+
     /// <summary> Создает новый объект. </summary>
     /// <inheritdoc cref="Native_UpdateStateOnObject(INetPluginCall, string, string, string, string)"/>
     /// <param name="isProject"> Признак того, что объект будет являться проектом (true - будет проектом, false - не будет проектом). </param>

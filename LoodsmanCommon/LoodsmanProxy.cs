@@ -75,16 +75,23 @@ namespace LoodsmanCommon
           selectedObjects[index] = selectedObject;
       }
 
-      return _selectedObjects = selectedObjects; ;
+      return _selectedObjects = selectedObjects;
     }
 
     #region NewObject
 
     public ILObject NewObject(string typeName, string product, string stateName = null, bool isProject = false)
     {
+      if (string.IsNullOrEmpty(typeName))
+        throw new ArgumentException($"{nameof(typeName)} - тип не может быть пустым", nameof(typeName));
+
       var type = _meta.Types[typeName];
       var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States[stateName];
-      return new LObject(this, INetPC.Native_NewObject(type.Name, state.Name, product, isProject), product, type, state);
+      var id = INetPC.Native_NewObject(type.Name, state.Name, product, isProject);
+      if (type.IsBO)
+        product = INetPC.Native_GetProductFromBO(type.Name, product);
+
+      return new LObject(this, id, product, type, state);
     }
 
     private string StateIfNullGetDefault(string typeName, string stateName = null)
@@ -94,6 +101,7 @@ namespace LoodsmanCommon
 
       if (string.IsNullOrEmpty(stateName))
         stateName = _meta.Types[typeName].DefaultState.Name;
+
       return stateName;
     }
     #endregion

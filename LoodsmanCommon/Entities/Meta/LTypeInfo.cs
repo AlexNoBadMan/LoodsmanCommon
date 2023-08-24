@@ -20,29 +20,41 @@ namespace LoodsmanCommon
       _defaultStateName = dataRow.DEFAULTSTATE();
       CanBeProject = dataRow.CANBEPROJECT();
       CanCreate = dataRow.CANCREATE();
+      NativeName = dataRow.NATIVENAME();
+      ServerName = dataRow.SERVERNAME();
+      IsBO = !string.IsNullOrEmpty(NativeName);
     }
 
     //public IReadOnlyList<LEffectivityTypeInfo> EffTypes { get; } 
 
-    /// <summary> Ключевой атрибут типа. </summary>
+    /// <summary> Возвращает ключевой атрибут типа. </summary>
     public LAttributeInfo KeyAttribute => _keyAttribute ??= _meta.Attributes[_keyAttributeName];
 
-    /// <summary> Является ли документом. </summary>
+    /// <summary> Возвращает признак того что тип Является документом. </summary>
     public bool IsDocument { get; }
 
-    /// <summary> Является ли версионным. </summary>
+    /// <summary> Возвращает признак того что тип Является версионным. </summary>
     public bool IsVersioned { get; }
 
-    /// <summary> Состояние по умолчанию. </summary>
+    /// <summary> Возвращает состояние по умолчанию. </summary>
     public LStateInfo DefaultState => _defaultState ??= _meta.States[_defaultStateName];
 
-    /// <summary> Может ли быть проектом. </summary>
+    /// <summary> Возвращает признак того что тип может быть проектом. </summary>
     public bool CanBeProject { get; }
 
-    /// <summary> Может ли текущий пользователь создавать объекты данного типа. </summary>
+    /// <summary> Возвращает признак того что текущий пользователь может создавать объекты данного типа. </summary>
     public bool CanCreate { get; }
 
-    /// <summary> Список возможных атрибутов типа, включая служебные. </summary>
+    /// <summary> Возвращает имя бизнес-объекта. </summary>
+    public string NativeName { get; }
+
+    /// <summary> Возвращает COM-сервер бизнес-объекта. </summary>
+    public string ServerName { get; }
+
+    /// <summary> Возвращает признак того что тип является бизнес-объектом. </summary>
+    public bool IsBO { get; }
+
+    /// <summary> Возвращает список возможных атрибутов типа, включая служебные. </summary>
     public NamedEntityCollection<ILAttributeInfo> Attributes => _attributes ??= _meta.GetTypeAttrbiutes(Name);
   }
 }
