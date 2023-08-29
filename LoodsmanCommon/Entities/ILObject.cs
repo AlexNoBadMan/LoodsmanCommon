@@ -5,8 +5,6 @@ namespace LoodsmanCommon
 {
   public interface ILObject : IEntity, INamedEntity, ILAttributeOwner
   {
-    ILObject Parent { get; set; }
-    LLink Link { get; set; }
     LTypeInfo Type { get; set; }
     string Version { get; set; }
     LStateInfo State { get; set; }
