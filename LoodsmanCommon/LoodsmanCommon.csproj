@@ -63,6 +63,7 @@
     <Compile Include="Entities\ILAttribute.cs" />
     <Compile Include="Entities\ILAttributeInfoOwner.cs" />
     <Compile Include="Entities\ILAttributeOwner.cs" />
+    <Compile Include="Entities\ILLink.cs" />
     <Compile Include="Entities\LAttributeOwner.cs" />
     <Compile Include="Entities\LEffectivity.cs" />
     <Compile Include="Entities\Meta\CreationInfo.cs" />

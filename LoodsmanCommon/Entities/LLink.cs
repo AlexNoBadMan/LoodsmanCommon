@@ -2,7 +2,7 @@
 
 namespace LoodsmanCommon
 {
-  public class LLink : LAttributeOwner
+  public class LLink : LAttributeOwner, ILLink
   {
     private readonly ILoodsmanProxy _proxy;
     private LLinkInfoBetweenTypes _linkInfo;
@@ -24,7 +24,7 @@ namespace LoodsmanCommon
     public ILObject Child { get; }
     public double MaxQuantity { get; }
     public double MinQuantity { get; }
-    public LLinkInfoBetweenTypes LinkInfo => _linkInfo ??= 
+    public LLinkInfoBetweenTypes LinkInfo => _linkInfo ??=
       _proxy.Meta.LinksInfoBetweenTypes.First(x => Name == x.Link.Name && x.ParentType.Id == Parent.Type.Id && x.ChildType.Id == Child.Type.Id);
 
     public override void UpdateAttribute(string name, object value, LMeasureUnit unit)
