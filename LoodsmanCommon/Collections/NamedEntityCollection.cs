@@ -6,7 +6,8 @@ namespace LoodsmanCommon
   public class NamedEntityCollection<TValue> : MetaItemCollection<string, TValue> where TValue : INamedEntity
   {
     private readonly Func<IEnumerable<TValue>> _dataFactory;
-    internal NamedEntityCollection(Func<IEnumerable<TValue>> dataFactory, int capacity = 0) : base(capacity)
+
+    public NamedEntityCollection(Func<IEnumerable<TValue>> dataFactory, int capacity = 0) : base(capacity)
     {
       _dataFactory = dataFactory;
       Init();

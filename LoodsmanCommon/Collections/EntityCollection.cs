@@ -7,7 +7,7 @@ namespace LoodsmanCommon
   {
     private readonly Func<IEnumerable<TValue>> _dataFactory;
 
-    internal EntityCollection(Func<IEnumerable<TValue>> dataFactory, int capacity = 0) : base(capacity)
+    public EntityCollection(Func<IEnumerable<TValue>> dataFactory, int capacity = 0) : base(capacity)
     {
       _dataFactory = dataFactory;
       Init();
