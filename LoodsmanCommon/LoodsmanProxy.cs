@@ -89,7 +89,11 @@ namespace LoodsmanCommon
       var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States[stateName];
       var id = INetPC.Native_NewObject(type.Name, state.Name, product, isProject);
       if (type.IsBO)
+      {
+        var location = product;
         product = INetPC.Native_GetProductFromBO(type.Name, product);
+        return new LObject(this, id, product, type, state) { BOLocation = location };
+      }
 
       return new LObject(this, id, product, type, state);
     }
@@ -225,11 +229,16 @@ namespace LoodsmanCommon
     }
     #endregion
 
+    public string GetBOLocation(int objectId)
+    {
+      return INetPC.Native_GetInfoAboutVersion(objectId, GetInfoAboutVersionMode.Mode16).Rows?[0].NAME();
+    }
+
     public CreationInfo GetCreationInfo(int objectId)
     {
       var dtCreationInfo = INetPC.Native_GetInfoAboutVersion(objectId, GetInfoAboutVersionMode.Mode13).Rows[0];
-      var creator = Meta.Users.TryGetValue(dtCreationInfo["_NAME"] as string, out var lUser) ? lUser : null;
-      var created = dtCreationInfo["_DATEOFCREATE"] as DateTime? ?? DateTime.MinValue;
+      var creator = Meta.Users.TryGetValue(dtCreationInfo.NAME(), out var lUser) ? lUser : null;
+      var created = dtCreationInfo.DATEOFCREATE();
       return new CreationInfo { Creator = creator, Created = created };
     }
 

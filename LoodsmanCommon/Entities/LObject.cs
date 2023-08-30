@@ -12,6 +12,7 @@ namespace LoodsmanCommon
     private readonly ILoodsmanProxy _proxy;
     private EntityCollection<LFile> _files;
     private CreationInfo _creationInfo;
+    private string _bOLocation;
     #endregion
 
     #region Конструкторы
@@ -53,9 +54,9 @@ namespace LoodsmanCommon
 
     #region Свойства
     public ILObject Parent { get; set; }
-    public LLink Link { get; set; }
     public LTypeInfo Type { get; set; }
     public string Version { get; set; }
+    public string BOLocation { get => GetLocation(); set => _bOLocation = value; }
     public LStateInfo State
     {
       get => _state;
@@ -68,7 +69,6 @@ namespace LoodsmanCommon
         _state = value;
       }
     }
-
     public bool IsDocument => Type.IsDocument;
     public PDMAccessLevels AccessLevel { get; set; }
     public PDMLockLevels LockLevel { get; set; }
@@ -84,6 +84,15 @@ namespace LoodsmanCommon
     }
 
     protected override NamedEntityCollection<ILAttribute> GetAttributes() => new NamedEntityCollection<ILAttribute>(() => _proxy.GetAttributes(this), 10);
+
+    private string GetLocation()
+    {
+      if (string.IsNullOrEmpty(_bOLocation) && Type.IsBO)
+      {
+        _bOLocation = _proxy.GetBOLocation(Id);
+      }
+      return _bOLocation;
+    }
     #endregion
   }
 }
