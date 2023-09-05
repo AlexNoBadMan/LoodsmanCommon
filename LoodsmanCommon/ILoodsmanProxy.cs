@@ -96,7 +96,7 @@ namespace LoodsmanCommon
     /// <param name="lObject"> Объект Лоцман. </param>
     /// <param name="linkType"> Название типа связи. </param>
     /// <param name="inverse"> Направление (true - обратное, false - прямое). </param>
-    IEnumerable<LLink> GetLinkedFast(ILObject lObject, string linkType, bool inverse = false);
+    IEnumerable<ILLink> GetLinkedFast(ILObject lObject, string linkType, bool inverse = false);
 
     /// <summary> Получение атрибутов объекта, включая служебные. </summary>
     /// <param name="lObject"> Объект Лоцман. </param>
