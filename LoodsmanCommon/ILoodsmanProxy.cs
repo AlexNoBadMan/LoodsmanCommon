@@ -238,6 +238,10 @@ namespace LoodsmanCommon
     /// <inheritdoc cref="ConnectToCheckOut(string, string)"/>
     void CancelCheckOut(string checkOutName = null, string dBName = null);
 
+    /// <summary> Возвращает ссылку бизнес-объекта в справочнике. </summary>
+    /// <param name="objectId"> Идентификатор версии. </param>
+    string GetBOLocation(int objectId);
+
     /// <summary> Возвращает имя владельца и дату создания версии. </summary>
     /// <param name="objectId"> Идентификатор версии. </param>
     CreationInfo GetCreationInfo(int objectId);

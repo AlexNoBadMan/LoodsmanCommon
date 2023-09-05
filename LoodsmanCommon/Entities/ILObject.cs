@@ -8,6 +8,7 @@ namespace LoodsmanCommon
     LTypeInfo Type { get; set; }
     string Version { get; set; }
     LStateInfo State { get; set; }
+    string BOLocation { get; }
     bool IsDocument { get; }
     PDMAccessLevels AccessLevel { get; set; }
     PDMLockLevels LockLevel { get; set; }
