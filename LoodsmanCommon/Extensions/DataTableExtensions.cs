@@ -30,6 +30,17 @@ namespace LoodsmanCommon
           yield return dataTable.Rows[i];
     }
 
+    /// <summary> Возвращает первый элемент последовательности или значение по умолчанию, если последовательность не содержит элементов. </summary>
+    /// <param name="dataTable"> Таблица данных. </param>
+    /// <returns> Возвращает первый <see cref="DataRow"/> или значение по умолчанию. </returns>
+    public static DataRow FirstOrDefault(this DataTable dataTable)
+    {
+      if (dataTable.Rows.Count > 0)
+        return dataTable.Rows[0];
+
+      return null;
+    }
+
     /// <summary> Возвращает первый элемент последовательности, удовлетворяющий указанному условию, или значение по умолчанию, если ни одного такого элемента не найдено. </summary>
     /// <param name="dataTable"> Таблица данных. </param>
     /// <param name="predicate"> Функция для проверки каждого элемента исходной последовательности условие. </param>
