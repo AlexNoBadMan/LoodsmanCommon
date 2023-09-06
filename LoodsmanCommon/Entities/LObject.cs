@@ -12,7 +12,7 @@ namespace LoodsmanCommon
     private readonly ILoodsmanProxy _proxy;
     private EntityCollection<LFile> _files;
     private CreationInfo _creationInfo;
-    private string _bOLocation;
+    private string _bOLocation = null;
     #endregion
 
     #region Конструкторы
@@ -87,10 +87,9 @@ namespace LoodsmanCommon
 
     private string GetLocation()
     {
-      if (string.IsNullOrEmpty(_bOLocation) && Type.IsBO)
-      {
-        _bOLocation = _proxy.GetBOLocation(Id);
-      }
+      if (_bOLocation == null && Type.IsBO)
+        _bOLocation = _proxy.GetBOLocation(Id) ?? string.Empty;
+      
       return _bOLocation;
     }
     #endregion

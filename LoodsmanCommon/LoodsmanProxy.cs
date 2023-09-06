@@ -231,7 +231,7 @@ namespace LoodsmanCommon
 
     public string GetBOLocation(int objectId)
     {
-      return INetPC.Native_GetInfoAboutVersion(objectId, GetInfoAboutVersionMode.Mode16).Rows?[0].NAME();
+      return INetPC.Native_GetInfoAboutVersion(objectId, GetInfoAboutVersionMode.Mode16).FirstOrDefault()?.NAME();
     }
 
     public CreationInfo GetCreationInfo(int objectId)
