@@ -38,7 +38,7 @@ namespace LoodsmanCommon
     public string Name => _attribute.Name;
     public AttributeType Type => _attribute.Type;
     public string DefaultValue => _attribute.DefaultValue;
-    public IReadOnlyList<string> ListValues => _attribute.ListValues;
+    public IEnumerable<string> ListValues => _attribute.ListValues;
     public bool OnlyIsItems => _attribute.OnlyIsItems;
     public bool IsChanged => $"{_originalValue}" != $"{_value}" || $"{MeasureUnit?.Guid}" != _unitId;
     public bool IsSystem => _attribute.IsSystem;

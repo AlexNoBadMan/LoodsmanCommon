@@ -16,7 +16,7 @@ namespace LoodsmanCommon
     public string Name => _lAttribute.Name;
     public AttributeType Type => _lAttribute.Type;
     public string DefaultValue => _lAttribute.DefaultValue;
-    public IReadOnlyList<string> ListValues => _lAttribute.ListValues;
+    public IEnumerable<string> ListValues => _lAttribute.ListValues;
     public bool OnlyIsItems => _lAttribute.OnlyIsItems;
     public bool IsSystem => _lAttribute.IsSystem;
     public bool IsObligatory { get; }

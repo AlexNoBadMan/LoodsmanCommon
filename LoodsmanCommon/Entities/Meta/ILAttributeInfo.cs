@@ -8,7 +8,7 @@ namespace LoodsmanCommon
     bool IsMeasured { get; }
     bool IsObligatory { get; }
     bool IsSystem { get; }
-    IReadOnlyList<string> ListValues { get; }
+    IEnumerable<string> ListValues { get; }
     IEnumerable<LAttributeMeasure> Measures { get; }
     bool OnlyIsItems { get; }
     AttributeType Type { get; }

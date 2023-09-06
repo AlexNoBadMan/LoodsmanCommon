@@ -12,6 +12,7 @@ namespace LoodsmanCommon
     private readonly string _list;
     private IReadOnlyList<string> _listValues;
     private LAttributeMeasure[] _measures;
+    private static readonly char[] _separator = new[] { '\r', '\n' };
 
     internal LAttributeInfo(ILoodsmanMeta meta, DataRow dataRow) : base(dataRow.ID(), dataRow.NAME())
     {
@@ -25,7 +26,7 @@ namespace LoodsmanCommon
 
     public AttributeType Type { get; }
     public string DefaultValue { get; }
-    public IReadOnlyList<string> ListValues => _listValues ??= new ReadOnlyCollection<string>(_list.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
+    public IEnumerable<string> ListValues => _listValues ??= _list.Split(_separator, StringSplitOptions.RemoveEmptyEntries);
     public bool OnlyIsItems { get; }
     public bool IsSystem { get; }
     public bool IsObligatory { get; }
