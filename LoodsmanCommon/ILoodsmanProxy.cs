@@ -106,7 +106,7 @@ namespace LoodsmanCommon
     /// <summary> Получение атрибутов связи, включая служебные. </summary>
     /// <param name="link"> Связь Лоцман. </param>
     /// <returns> Возвращает атрибуты связи, включая служебные. </returns>
-    IEnumerable<ILAttribute> GetLinkAttributes(LLink link);
+    IEnumerable<ILAttribute> GetLinkAttributes(ILLink link);
 
     /// <summary> Приводит значение к заданной единице измерения. </summary>
     /// <param name="value"> Значение. </param>

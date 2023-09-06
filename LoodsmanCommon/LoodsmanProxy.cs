@@ -251,7 +251,7 @@ namespace LoodsmanCommon
       }
     }
 
-    public IEnumerable<ILAttribute> GetLinkAttributes(LLink link)
+    public IEnumerable<ILAttribute> GetLinkAttributes(ILLink link)
     {
       var attributesInfo = INetPC.Native_GetLinkAttributes2(link.Id, GetAttributeMode.All).Select(x => x);
       foreach (var item in link.LinkInfo.Attributes)
