@@ -36,13 +36,8 @@ namespace LoodsmanCommon
 
     private string GetCheckOutName()
     {
-      if (string.IsNullOrEmpty(_checkOutName))
-      {
-        var pluginCall = _application.GetPluginCall();
-        _checkOutName = pluginCall.CheckOut != 0 ? pluginCall.CheckOut.ToString() : string.Empty;
-      }
-
-      return _checkOutName;
+      var pluginCall = _application.GetPluginCall();
+      return _checkOutName = pluginCall.CheckOut != 0 ? pluginCall.CheckOut.ToString() : string.Empty; ;
     }
 
     private ILObject GetSelectedObject()
