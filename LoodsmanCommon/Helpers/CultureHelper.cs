@@ -3,8 +3,10 @@ using System.Threading;
 
 namespace LoodsmanCommon
 {
+  /// <summary> Помогает инициализировать стандартные настройки культуры Лоцман. </summary>
   public static class CultureHelper
   {
+    /// <summary> Применяет стандартные настройки культуры Лоцман. </summary>
     public static void ApplyLoodsmanCulture()
     {
       var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
