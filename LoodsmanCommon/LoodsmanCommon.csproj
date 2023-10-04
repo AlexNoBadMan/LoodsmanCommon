@@ -69,6 +69,7 @@
     <Compile Include="Entities\Meta\CreationInfo.cs" />
     <Compile Include="Entities\Meta\ILAttributeInfo.cs" />
     <Compile Include="Entities\Meta\LEffectivityTypeInfo.cs" />
+    <Compile Include="Helpers\AssemblyResolver.cs" />
     <Compile Include="Helpers\CultureHelper.cs" />
     <Compile Include="Entities\LFile.cs" />
     <Compile Include="Entities\LLink.cs" />
