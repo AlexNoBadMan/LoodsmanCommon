@@ -221,7 +221,7 @@ namespace LoodsmanCommon
       var items = INetPC.Native_GetLinkedFast(lObject.Id, linkType, inverse);
       return !inverse ? items.Select(x => new LLink(this, x.ID_LINK(), linkType, lObject, new LObject(x, this), x.MAX_QUANTITY(), x.MIN_QUANTITY(), x.ID_UNIT(), x.ID_MEASURE())) :
                         items.Select(x => new LLink(this, x.ID_LINK(), linkType, new LObject(x, this), lObject, x.MAX_QUANTITY(), x.MIN_QUANTITY(), x.ID_UNIT(), x.ID_MEASURE()));
-    }
+    }  
     #endregion
 
     public string GetBOLocation(int objectId)
