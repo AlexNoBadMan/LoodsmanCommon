@@ -313,12 +313,12 @@ namespace LoodsmanCommon
       return lObject.IsDocument ? Enumerable.Empty<LFile>() : INetPC.Native_GetInfoAboutVersion(lObject.Id, GetInfoAboutVersionMode.Mode7).Select(x => new LFile(lObject, x));
     }
 
-    public string RegistrationOfFile(int documentId, string fileName, string filePath)
+    public string RegistrationOfFile(int documentId, string fileName, string folderPath, string filePath)
     {
       try
       {
-        filePath = CopyIfNeddedOnWorkDir(filePath);
-        INetPC.Native_RegistrationOfFile(documentId, fileName, filePath);
+        filePath = CopyIfNeddedOnWorkDir(filePath, fileName, folderPath);
+        INetPC.Native_RegistrationOfFile(documentId, fileName, folderPath);
         return filePath;
       }
       catch// (Exception ex)
@@ -328,12 +328,12 @@ namespace LoodsmanCommon
         //logger?
       }
     }
-    public string RegistrationOfFile(string typeName, string product, string version, string fileName, string filePath)
+    public string RegistrationOfFile(string typeName, string product, string version, string fileName, string folderPath, string filePath)
     {
       try
       {
-        filePath = CopyIfNeddedOnWorkDir(filePath);
-        INetPC.Native_RegistrationOfFile(typeName, product, version, fileName, filePath);
+        filePath = CopyIfNeddedOnWorkDir(filePath, fileName, folderPath);
+        INetPC.Native_RegistrationOfFile(typeName, product, version, fileName, folderPath);
         return filePath;
       }
       catch
@@ -352,11 +352,16 @@ namespace LoodsmanCommon
         try { File.Delete(filePath); } catch { }
     }
 
-    private string CopyIfNeddedOnWorkDir(string filePath)
+    private string CopyIfNeddedOnWorkDir(string filePath, string fileName = "", string folderPath = "")
     {
-      if (!filePath.Contains(_meta.CurrentUser.WorkDir))
+      var path = Path.Combine(_meta.CurrentUser.FileDir, folderPath);
+      if (!filePath.Contains(path))
       {
-        var newPath = Path.Combine(_meta.CurrentUser.WorkDir, Path.GetFileName(filePath));
+        Directory.CreateDirectory(path);
+        if (string.IsNullOrEmpty(fileName))
+          fileName = Path.GetFileName(filePath);
+
+        var newPath = Path.Combine(path, fileName);
         File.Copy(filePath, newPath, true);
         filePath = newPath;
       }

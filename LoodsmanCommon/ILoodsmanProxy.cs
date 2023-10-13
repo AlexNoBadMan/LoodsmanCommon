@@ -137,15 +137,16 @@ namespace LoodsmanCommon
     /// <summary> Регистрирует в базе данных файл, находящийся на рабочем диске пользователя. </summary>
     /// <param name="documentId"> Идентификатор версии объекта. </param>
     /// <param name="fileName"> Название файла (должен быть уникальным). </param>
-    /// <param name="filePath"> Путь к файлу относительно диска из настройки "Буква рабочего диска", доступный серверу приложений. </param>  
+    /// <param name="folderPath"> Путь к файлу относительно диска из настройки "Буква рабочего диска", доступный серверу приложений. </param>  
+    /// <param name="filePath"> Путь к исходному файлу. </param>  
     /// <remarks> Если путь указан не на рабочий диск Лоцмана <see cref="LUser.WorkDir"/>, то файл будет скопирован на рабочий диск. </remarks>
-    string RegistrationOfFile(int documentId, string fileName, string filePath);
+    string RegistrationOfFile(int documentId, string fileName, string folderPath, string filePath);
 
     /// <param name="typeName"> Название типа. </param>
     /// <param name="product"> Ключевой атрибут. </param>
     /// <param name="version"> Версия объекта. </param>
-    /// <inheritdoc cref="RegistrationOfFile(int, string, string)"/>
-    string RegistrationOfFile(string typeName, string product, string version, string fileName, string filePath);
+    /// <inheritdoc cref="RegistrationOfFile(int, string, string, string)"/>
+    string RegistrationOfFile(string typeName, string product, string version, string fileName, string folderPath, string filePath);
 
     /// <summary> Сохраняет вторичное представление документа. </summary>
     /// <param name="documentId"> Идентификатор версии объекта. </param>
