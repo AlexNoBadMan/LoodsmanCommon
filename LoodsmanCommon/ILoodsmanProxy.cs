@@ -155,10 +155,15 @@ namespace LoodsmanCommon
     /// <remarks> Если путь указан не на рабочий диск Лоцмана <see cref="LUser.WorkDir"/>, то файл будет скопирован на рабочий диск. </remarks>
     void SaveSecondaryView(int documentId, string filePath, bool removeAfterSave = true);
 
-    /// <summary> Возвращает все версии заданного объекта или "похожего" объекта, если в базе данных установлена соответствующая настройка. </summary>
+    /// <summary> Возвращает признак того что объект с задаными параметрами уже существует. </summary>
     /// <param name="typeName"> Название типа. </param>
     /// <param name="product"> Ключевой атрибут. </param>
     bool CheckUniqueName(string typeName, string product);
+
+    /// <summary> Возвращает признак того что файл и путь с задаными параметрами уже существует. </summary>
+    /// <param name="fileName"> Название файла. </param>
+    /// <param name="filePath"> Путь к файлу относительно диска из настройки «Буква рабочего диска». </param>
+    bool CheckFileNameEx(string fileName, string filePath);
 
     /// <summary> Возвращает данные для формирования отчета. </summary>
     /// <param name="reportName"> Название хранимой процедуры. </param>

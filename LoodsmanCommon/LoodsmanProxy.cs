@@ -374,6 +374,11 @@ namespace LoodsmanCommon
       return INetPC.Native_CheckUniqueName(typeName, product).Rows.Count != 0;
     }
 
+    public bool CheckFileNameEx(string fileName, string filePath)
+    {
+      return INetPC.Native_CheckFileNameEx(fileName, filePath).Rows.Count != 0;
+    }
+
     public DataTable GetReport(string reportName, IEnumerable<int> objectsIds = null, string reportParams = null)
     {
       return INetPC.Native_GetReport(reportName, objectsIds, reportParams);
