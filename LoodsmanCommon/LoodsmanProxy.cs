@@ -310,7 +310,7 @@ namespace LoodsmanCommon
 
     public IEnumerable<LFile> GetFiles(ILObject lObject)
     {
-      return lObject.IsDocument ? Enumerable.Empty<LFile>() : INetPC.Native_GetInfoAboutVersion(lObject.Id, GetInfoAboutVersionMode.Mode7).Select(x => new LFile(lObject, x));
+      return !lObject.IsDocument ? Enumerable.Empty<LFile>() : INetPC.Native_GetInfoAboutVersion(lObject.Id, GetInfoAboutVersionMode.Mode7).Select(x => new LFile(this, lObject, x));
     }
 
     public string RegistrationOfFile(int documentId, string fileName, string folderPath, string filePath)
