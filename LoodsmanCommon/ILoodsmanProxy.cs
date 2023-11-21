@@ -256,5 +256,18 @@ namespace LoodsmanCommon
     /// <param name="lObject"> Объект. </param>
     /// <returns> Возвращает список файлов, прикрепленных к документу, в случе если <paramref name="lObject"/> не является документом то вернёт пустой список без запроса. </returns>
     IEnumerable<LFile> GetFiles(ILObject lObject);
+
+    /// <summary> Выгружает файл из системы ЛОЦМАН:PLM.
+    /// <br/>В режиме базы данных копирует файл в зарезервированную временную папку пользователя.
+    /// <br/>В режиме редактирования объектов копирует файл на рабочий диск (настройка «Буква рабочего диска») пользователя.
+    /// </summary>
+    /// <param name="lObject"> Объект. </param>
+    /// <param name="fileName"> Название файла (должен быть уникальным). </param>
+    /// <param name="folderPath"> Путь к файлу относительно диска из настройки "Буква рабочего диска". </param>  
+    /// <returns>
+    /// В режиме базы данных возвращает полное имя файла с путем. Например: result='\\Server\DOMEN#USER\Temp\FileName.ext'.
+    /// <br/>В режиме редактирования объектов возвращает имя файла на рабочем диске. Например: result='Х:\Folder\SubFolder\FileName.ext'.
+    /// </returns>
+    string GetFile(ILObject lObject, string fileName, string folderPath);
   }
 }

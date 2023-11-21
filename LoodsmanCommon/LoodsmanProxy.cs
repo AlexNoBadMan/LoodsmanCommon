@@ -313,6 +313,14 @@ namespace LoodsmanCommon
       return !lObject.IsDocument ? Enumerable.Empty<LFile>() : INetPC.Native_GetInfoAboutVersion(lObject.Id, GetInfoAboutVersionMode.Mode7).Select(x => new LFile(this, lObject, x));
     }
 
+    public string GetFile(ILObject lObject, string fileName, string folderPath)
+    {
+      if (!lObject.IsDocument)
+        return string.Empty;
+
+      return INetPC.Native_GetFile(lObject.Id, fileName, folderPath);
+    }
+
     public string RegistrationOfFile(int documentId, string fileName, string folderPath, string filePath)
     {
       try
