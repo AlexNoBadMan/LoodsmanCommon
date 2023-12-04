@@ -906,7 +906,7 @@ namespace LoodsmanCommon
     /// <param name="reportParams"> Произвольный набор параметров. Применяется по усмотрению разработчика. </param>
     /// <returns> Набор данных с полями, определенными в соответствующей хранимой процедуре. </returns>
     public static DataTable Native_GetReport(this INetPluginCall pc, string reportName, IEnumerable<int> objectsIds = null, string reportParams = null) =>
-        pc.GetDataTable("GetReport", reportName, objectsIds, reportParams);
+        pc.GetDataTable("GetReport", reportName, objectsIds == null || objectsIds is int[] ? objectsIds : objectsIds.ToArray(), reportParams);
 
     /// <summary> Возвращает список отчетов и папок.
     /// <br/>Параметры отчета можно получить с помощью метода <see cref="Native_GetParameterList(INetPluginCall, int)">GetParameterList</see>
