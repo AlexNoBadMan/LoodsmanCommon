@@ -137,16 +137,16 @@ namespace LoodsmanCommon
     /// <summary> Регистрирует в базе данных файл, находящийся на рабочем диске пользователя. </summary>
     /// <param name="documentId"> Идентификатор версии объекта. </param>
     /// <param name="fileName"> Название файла (должен быть уникальным). </param>
-    /// <param name="folderPath"> Путь к файлу относительно диска из настройки "Буква рабочего диска", доступный серверу приложений. </param>  
+    /// <param name="relativePath"> Путь к файлу относительно диска из настройки "Буква рабочего диска", доступный серверу приложений. </param>  
     /// <param name="filePath"> Путь к исходному файлу. </param>  
     /// <remarks> Если путь указан не на рабочий диск Лоцмана <see cref="LUser.WorkDir"/>, то файл будет скопирован на рабочий диск. </remarks>
-    string RegistrationOfFile(int documentId, string fileName, string folderPath, string filePath);
+    string RegistrationOfFile(int documentId, string fileName, string relativePath, string filePath);
 
     /// <param name="typeName"> Название типа. </param>
     /// <param name="product"> Ключевой атрибут. </param>
     /// <param name="version"> Версия объекта. </param>
     /// <inheritdoc cref="RegistrationOfFile(int, string, string, string)"/>
-    string RegistrationOfFile(string typeName, string product, string version, string fileName, string folderPath, string filePath);
+    string RegistrationOfFile(string typeName, string product, string version, string fileName, string relativePath, string filePath);
 
     /// <summary> Сохраняет вторичное представление документа. </summary>
     /// <param name="documentId"> Идентификатор версии объекта. </param>
@@ -157,13 +157,27 @@ namespace LoodsmanCommon
 
     /// <summary> Возвращает признак того что объект с задаными параметрами уже существует. </summary>
     /// <param name="typeName"> Название типа. </param>
-    /// <param name="product"> Ключевой атрибут. </param>
-    bool CheckUniqueName(string typeName, string product);
+    /// <param name="name"> Ключевой атрибут. </param>
+    /// <returns> Возвращает признак существования объекта с задаными параметрами. </returns>
+    bool CheckUniqueName(string typeName, string name);
 
     /// <summary> Возвращает признак того что файл и путь с задаными параметрами уже существует. </summary>
     /// <param name="fileName"> Название файла. </param>
-    /// <param name="filePath"> Путь к файлу относительно диска из настройки «Буква рабочего диска». </param>
-    bool CheckFileNameEx(string fileName, string filePath);
+    /// <param name="relativePath"> Путь к файлу относительно диска из настройки «Буква рабочего диска». </param>
+    /// <returns> Возвращает признак существования файла с задаными параметрами. </returns>
+    bool CheckUniqueFileName(string fileName, string relativePath);
+
+    /// <summary> Проверяет уникальность ключевого атриубта для данного типа и возвращает уникальное наименование. </summary>
+    /// <param name="typeName"> Название типа. </param>
+    /// <param name="name"> Ключевой атрибут. </param>
+    /// <returns> Возвращает уникальный ключевой атрибут для заданного типа. </returns>
+    string GetUniqueName(string typeName, string name);
+
+    /// <summary> Проверяет уникальность наименования файла относительно пути и возвращает уникальное наименование. </summary>
+    /// <param name="fileName"> Название файла. </param>
+    /// <param name="relativePath"> Путь к файлу относительно диска из настройки «Буква рабочего диска». </param>
+    /// <returns> Возвращает уникальное наименование файла. </returns>
+    string GetUniqueFileName(string fileName, string relativePath);
 
     /// <summary> Возвращает данные для формирования отчета. </summary>
     /// <param name="reportName"> Название хранимой процедуры. </param>
@@ -263,11 +277,11 @@ namespace LoodsmanCommon
     /// </summary>
     /// <param name="lObject"> Объект. </param>
     /// <param name="fileName"> Название файла (должен быть уникальным). </param>
-    /// <param name="folderPath"> Путь к файлу относительно диска из настройки "Буква рабочего диска". </param>  
+    /// <param name="relativePath"> Путь к файлу относительно диска из настройки "Буква рабочего диска". </param>  
     /// <returns>
     /// В режиме базы данных возвращает полное имя файла с путем. Например: result='\\Server\DOMEN#USER\Temp\FileName.ext'.
     /// <br/>В режиме редактирования объектов возвращает имя файла на рабочем диске. Например: result='Х:\Folder\SubFolder\FileName.ext'.
     /// </returns>
-    string GetFile(ILObject lObject, string fileName, string folderPath);
+    string GetFile(ILObject lObject, string fileName, string relativePath);
   }
 }

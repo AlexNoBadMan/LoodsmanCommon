@@ -313,20 +313,20 @@ namespace LoodsmanCommon
       return !lObject.IsDocument ? Enumerable.Empty<LFile>() : INetPC.Native_GetInfoAboutVersion(lObject.Id, GetInfoAboutVersionMode.Mode7).Select(x => new LFile(this, lObject, x));
     }
 
-    public string GetFile(ILObject lObject, string fileName, string folderPath)
+    public string GetFile(ILObject lObject, string fileName, string relativePath)
     {
       if (!lObject.IsDocument)
         return string.Empty;
 
-      return INetPC.Native_GetFile(lObject.Id, fileName, folderPath);
+      return INetPC.Native_GetFile(lObject.Id, fileName, relativePath);
     }
 
-    public string RegistrationOfFile(int documentId, string fileName, string folderPath, string filePath)
+    public string RegistrationOfFile(int documentId, string fileName, string relativePath, string filePath)
     {
       try
       {
-        filePath = CopyIfNeddedOnWorkDir(filePath, fileName, folderPath);
-        INetPC.Native_RegistrationOfFile(documentId, fileName, folderPath);
+        filePath = CopyIfNeddedOnWorkDir(filePath, fileName, relativePath);
+        INetPC.Native_RegistrationOfFile(documentId, fileName, relativePath);
         return filePath;
       }
       catch// (Exception ex)
@@ -336,12 +336,12 @@ namespace LoodsmanCommon
         //logger?
       }
     }
-    public string RegistrationOfFile(string typeName, string product, string version, string fileName, string folderPath, string filePath)
+    public string RegistrationOfFile(string typeName, string product, string version, string fileName, string relativePath, string filePath)
     {
       try
       {
-        filePath = CopyIfNeddedOnWorkDir(filePath, fileName, folderPath);
-        INetPC.Native_RegistrationOfFile(typeName, product, version, fileName, folderPath);
+        filePath = CopyIfNeddedOnWorkDir(filePath, fileName, relativePath);
+        INetPC.Native_RegistrationOfFile(typeName, product, version, fileName, relativePath);
         return filePath;
       }
       catch
@@ -360,9 +360,9 @@ namespace LoodsmanCommon
         try { File.Delete(filePath); } catch { }
     }
 
-    private string CopyIfNeddedOnWorkDir(string filePath, string fileName = "", string folderPath = "")
+    private string CopyIfNeddedOnWorkDir(string filePath, string fileName = "", string relativePath = "")
     {
-      var path = Path.Combine(_meta.CurrentUser.FileDir, folderPath);
+      var path = Path.Combine(_meta.CurrentUser.FileDir, relativePath);
       if (!filePath.Contains(path))
       {
         Directory.CreateDirectory(path);
@@ -377,14 +377,32 @@ namespace LoodsmanCommon
       return filePath;
     }
 
-    public bool CheckUniqueName(string typeName, string product)
+    public bool CheckUniqueName(string typeName, string name)
     {
-      return INetPC.Native_CheckUniqueName(typeName, product).Rows.Count != 0;
+      return INetPC.Native_CheckUniqueName(typeName, name).Rows.Count != 0;
     }
 
-    public bool CheckFileNameEx(string fileName, string filePath)
+    public bool CheckUniqueFileName(string fileName, string relativePath)
     {
-      return INetPC.Native_CheckFileNameEx(fileName, filePath).Rows.Count != 0;
+      return INetPC.Native_CheckFileNameEx(fileName, relativePath).Rows.Count != 0;
+    }
+
+    public string GetUniqueName(string typeName, string name)
+    {
+      var uniqueName = name;
+      for (var i = 1; CheckUniqueName(typeName, uniqueName); i++)
+        uniqueName = $"{name}_{i}";
+
+      return uniqueName;
+    }
+
+    public string GetUniqueFileName(string fileName, string relativePath)
+    {
+      var uniqueFileName = fileName;
+      for (var i = 1; CheckUniqueFileName(uniqueFileName, relativePath); i++)
+        uniqueFileName = $"{fileName}_{i}";
+
+      return uniqueFileName;
     }
 
     public DataTable GetReport(string reportName, IEnumerable<int> objectsIds = null, string reportParams = null)
