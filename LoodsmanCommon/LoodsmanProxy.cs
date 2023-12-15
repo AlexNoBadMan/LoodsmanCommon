@@ -400,7 +400,7 @@ namespace LoodsmanCommon
     {
       var uniqueFileName = fileName;
       for (var i = 1; CheckUniqueFileName(uniqueFileName, relativePath); i++)
-        uniqueFileName = $"{fileName}_{i}";
+        uniqueFileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{i}{Path.GetExtension(fileName)}";
 
       return uniqueFileName;
     }
