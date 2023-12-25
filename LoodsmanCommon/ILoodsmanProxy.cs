@@ -86,17 +86,18 @@ namespace LoodsmanCommon
     /// <param name="idLink"> Идентификатор связи. </param>
     void DeleteLink(int idLink);
 
-    /// <summary> Возвращает список объектов, привязанных соответствующей связью. </summary>
-    /// <param name="objectId"> Идентификатор версии объекта. </param>
-    /// <param name="linkType"> Название типа связи. </param>
-    /// <param name="inverse"> Направление (true - обратное, false - прямое). </param>
-    IEnumerable<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false);
 
     /// <summary> Возвращает список связей, по заданной связи. </summary>
     /// <param name="lObject"> Объект Лоцман. </param>
     /// <param name="linkType"> Название типа связи. </param>
     /// <param name="inverse"> Направление (true - обратное, false - прямое). </param>
     IEnumerable<ILLink> GetLinkedFast(ILObject lObject, string linkType, bool inverse = false);
+
+    /// <summary> Возвращает список связанных объектов для отображения в дереве. </summary>
+    /// <param name="lObject"> Объект Лоцман. </param>
+    /// <param name="linkTypeNames"> Список связей. </param>
+    /// <param name="inverse"> Направление (true - обратное, false - прямое). </param>
+    IEnumerable<ILLink> GetTree(ILObject lObject, IEnumerable<string> linkTypeNames, bool inverse = false);
 
     /// <summary> Получение атрибутов объекта, включая служебные. </summary>
     /// <param name="lObject"> Объект Лоцман. </param>

@@ -211,17 +211,19 @@ namespace LoodsmanCommon
         throw new ArgumentNullException($"{nameof(child)} не задан потомок для создания связи");
     }
 
-    public IEnumerable<ILObject> GetLinkedFast(int objectId, string linkType, bool inverse = false)
-    {
-      return INetPC.Native_GetLinkedFast(objectId, linkType, inverse).Select(x => new LObject(x, this));
-    }
-
     public IEnumerable<ILLink> GetLinkedFast(ILObject lObject, string linkType, bool inverse = false)
     {
       var items = INetPC.Native_GetLinkedFast(lObject.Id, linkType, inverse);
       return !inverse ? items.Select(x => new LLink(this, x.ID_LINK(), linkType, lObject, new LObject(x, this), x.MAX_QUANTITY(), x.MIN_QUANTITY(), x.ID_UNIT(), x.ID_MEASURE())) :
                         items.Select(x => new LLink(this, x.ID_LINK(), linkType, new LObject(x, this), lObject, x.MAX_QUANTITY(), x.MIN_QUANTITY(), x.ID_UNIT(), x.ID_MEASURE()));
-    }  
+    }
+
+    public IEnumerable<ILLink> GetTree(ILObject lObject, IEnumerable<string> linkTypeNames, bool inverse = false)
+    {
+      var items = INetPC.Native_GetTree(lObject.Id, linkTypeNames, inverse);
+      return !inverse ? items.Select(x => new LLink(this, x.ID_LINK(), x.LINKTYPE(), lObject, new LObject(x, this), 0, 0, null, null)) :
+                        items.Select(x => new LLink(this, x.ID_LINK(), x.LINKTYPE(), new LObject(x, this), lObject, 0, 0, null, null));
+    }
     #endregion
 
     public string GetBOLocation(int objectId)
