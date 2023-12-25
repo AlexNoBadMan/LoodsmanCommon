@@ -218,11 +218,9 @@ namespace LoodsmanCommon
                         items.Select(x => new LLink(this, x.ID_LINK(), linkType, new LObject(x, this), lObject, x.MAX_QUANTITY(), x.MIN_QUANTITY(), x.ID_UNIT(), x.ID_MEASURE()));
     }
 
-    public IEnumerable<ILLink> GetTree(ILObject lObject, IEnumerable<string> linkTypeNames, bool inverse = false)
+    public IEnumerable<ILLink> GetTree(ILObject lObject, IEnumerable<string> linkTypeNames)
     {
-      var items = INetPC.Native_GetTree(lObject.Id, linkTypeNames, inverse);
-      return !inverse ? items.Select(x => new LLink(this, x.ID_LINK(), x.LINKTYPE(), lObject, new LObject(x, this), 0, 0, null, null)) :
-                        items.Select(x => new LLink(this, x.ID_LINK(), x.LINKTYPE(), new LObject(x, this), lObject, 0, 0, null, null));
+      return INetPC.Native_GetTree(lObject.Id, linkTypeNames, false).Select(x => new LLink(this, x.ID_LINK(), x.LINKTYPE(), lObject, new LObject(x, this), 0, 0, null, null));
     }
     #endregion
 

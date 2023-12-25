@@ -96,8 +96,7 @@ namespace LoodsmanCommon
     /// <summary> Возвращает список связанных объектов для отображения в дереве. </summary>
     /// <param name="lObject"> Объект Лоцман. </param>
     /// <param name="linkTypeNames"> Список связей. </param>
-    /// <param name="inverse"> Направление (true - обратное, false - прямое). </param>
-    IEnumerable<ILLink> GetTree(ILObject lObject, IEnumerable<string> linkTypeNames, bool inverse = false);
+    IEnumerable<ILLink> GetTree(ILObject lObject, IEnumerable<string> linkTypeNames);
 
     /// <summary> Получение атрибутов объекта, включая служебные. </summary>
     /// <param name="lObject"> Объект Лоцман. </param>
