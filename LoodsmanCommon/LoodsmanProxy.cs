@@ -83,14 +83,15 @@ namespace LoodsmanCommon
       var type = _meta.Types[typeName];
       var state = string.IsNullOrEmpty(stateName) ? type.DefaultState : _meta.States[stateName];
       var id = INetPC.Native_NewObject(type.Name, state.Name, product, isProject);
+      var dt = INetPC.Native_GetInfoAboutVersion(id, GetInfoAboutVersionMode.Mode15).Rows[0];
       if (type.IsBO)
       {
         var location = product;
         product = INetPC.Native_GetProductFromBO(type.Name, product);
-        return new LObject(this, id, product, type, state) { BOLocation = location };
+        return new LObject(this, id, product, type, state) { BOLocation = location, AccessLevel = dt.ACCESSLEVEL(), LockLevel = dt.LOCKED() };
       }
 
-      return new LObject(this, id, product, type, state);
+      return new LObject(this, id, product, type, state) { AccessLevel = dt.ACCESSLEVEL(), LockLevel = dt.LOCKED() };
     }
 
     private string StateIfNullGetDefault(string typeName, string stateName = null)
@@ -417,7 +418,7 @@ namespace LoodsmanCommon
 
     public ILObject PreviewBoObject(string typeName, string uniqueId)
     {
-      var xmlString = INetPC.Native_PreviewBoObject(typeName, uniqueId);
+      var xmlString = INetPC.Native_PreviewBoObject(typeName, uniqueId); // Проверить наличие AccesLevel, LockLevel
       var xDocument = XDocument.Parse(xmlString);
       var elements = xDocument.Descendants("PreviewBoObjectResult").Elements();
       var type = _meta.Types[typeName];
