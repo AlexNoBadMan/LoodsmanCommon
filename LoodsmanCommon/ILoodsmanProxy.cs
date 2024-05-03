@@ -19,7 +19,7 @@ namespace LoodsmanCommon
     /// <summary> Возвращает название подключенного чекаута. </summary>
     string CheckOutName { get; }
 
-    /// <summary> Регистрирует в базе данных файл, находящийся на рабочем диске пользователя. </summary>
+    /// <summary> Создает новый объект. </summary>
     /// <param name="typeName"> Название типа создаваемого объекта. </param>
     /// <param name="product"> Ключевой атрибут создаваемого объекта. </param>
     /// <param name="stateName"> Состояние вновь создаваемого объекта (если создается объект). </param>
